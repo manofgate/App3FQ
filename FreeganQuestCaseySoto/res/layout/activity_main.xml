@@ -9,8 +9,30 @@
     tools:context=".MainActivity" >
 
     <TextView
+        android:id="@+id/scavPlayerText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="@string/scavPlayText" />
+
+    <Button
+        android:id="@+id/startButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/scavPlayerText"
+        android:layout_below="@+id/scavPlayerText"
+        android:layout_marginTop="76dp"
+        android:text="Button" />
+
+    <Button
+        android:id="@+id/ResultsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/startButton"
+        android:layout_below="@+id/startButton"
+        android:layout_marginTop="79dp"
+        android:text="Button" />
 
 </RelativeLayout>
