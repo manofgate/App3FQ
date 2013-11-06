@@ -1,0 +1,11 @@
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <!-- Manager, should appear as action button -->
+    <item android:id="@+id/action_manage"
+          android:icon="@drawable/manager_image"
+          android:title="@string/action_manage"
+          android:showAsAction="ifRoom" />
+    
+    
+
+</menu>

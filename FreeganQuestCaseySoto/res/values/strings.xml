@@ -5,5 +5,8 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="scavPlayText">Svacenger Player </string>
-
+    <string name="startName">Start</string>
+    <string name="resultsName"> Results</string>
+    <string name="action_manage"> Manager Mode </string>
+ 
 </resources>

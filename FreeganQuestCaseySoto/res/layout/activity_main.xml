@@ -24,7 +24,7 @@
         android:layout_alignRight="@+id/scavPlayerText"
         android:layout_below="@+id/scavPlayerText"
         android:layout_marginTop="76dp"
-        android:text="Button" />
+        android:text="@string/startName" />
 
     <Button
         android:id="@+id/ResultsButton"
@@ -33,6 +33,16 @@
         android:layout_alignRight="@+id/startButton"
         android:layout_below="@+id/startButton"
         android:layout_marginTop="79dp"
-        android:text="Button" />
+        android:text="@string/resultsName" />
+
+    <Spinner
+        android:id="@+id/selectHunts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@+id/startButton"
+        android:layout_marginLeft="21dp"
+        android:layout_marginTop="16dp"
+        android:layout_toLeftOf="@+id/startButton" />
 
 </RelativeLayout>
