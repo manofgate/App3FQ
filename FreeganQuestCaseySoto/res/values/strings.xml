@@ -8,5 +8,21 @@
     <string name="startName">Start</string>
     <string name="resultsName"> Results</string>
     <string name="action_manage"> Manager Mode </string>
+    <string name="huntName">Name</string>
+    <string name="addHunt">Add</string>
+    <string name="statement">Add Quest</string>
+    <string name="menu_delete">Delete</string>
+    <string name="menu_edit">Edit</string>
+    <string name="default_message">Default Message</string>
+    <string name="dialog_done">Done</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="addItem">Add</string>
+    <string name="itemName"></string>
+    <string name="name"></string>
+    <string name="date"></string>
+    <string name="dateHint"></string>
+    <string name="description"></string>
+    <string name="descriptionHint"></string>
+    <string name="submit"></string>
  
 </resources>

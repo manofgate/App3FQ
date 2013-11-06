@@ -75,9 +75,9 @@ public class SchedulerContentProvider extends ContentProvider
 
     // Set the table
     if(tableName == COURSES){
-    	queryBuilder.setTables( CourseTable.TABLE_NAME );
+    	queryBuilder.setTables( ManagerHuntTable.TABLE_NAME );
     } else if(tableName == HOMEWORK){
-    	queryBuilder.setTables( HomeworkTable.TABLE_NAME );
+    	queryBuilder.setTables( ItemTable.TABLE_NAME );
     }
     
 
@@ -90,11 +90,11 @@ public class SchedulerContentProvider extends ContentProvider
     	  break;
       case COURSES_ID:
         // Adding the ID to the original query
-        queryBuilder.appendWhere( CourseTable.COLUMN_ID + "=" + uri.getLastPathSegment() );
+        queryBuilder.appendWhere( ManagerHuntTable.COLUMN_ID + "=" + uri.getLastPathSegment() );
         break;
       case HOMEWORK_ID:
           // Adding the ID to the original query
-          queryBuilder.appendWhere( HomeworkTable.COLUMN_ID + "=" + uri.getLastPathSegment() );
+          queryBuilder.appendWhere( ItemTable.COLUMN_ID + "=" + uri.getLastPathSegment() );
           break;
       default:
         throw new IllegalArgumentException( "Unknown URI: " + uri );
@@ -125,10 +125,10 @@ public class SchedulerContentProvider extends ContentProvider
     switch( uriType )
     {
       case COURSES:
-        id = sqlDB.insert( CourseTable.TABLE_NAME, null, values );
+        id = sqlDB.insert( ManagerHuntTable.TABLE_NAME, null, values );
         break;
       case HOMEWORK:
-          id = sqlDB.insert( HomeworkTable.TABLE_NAME, null, values );
+          id = sqlDB.insert( ItemTable.TABLE_NAME, null, values );
           break;
       default:
         throw new IllegalArgumentException( "Unknown URI: " + uri );
@@ -148,31 +148,31 @@ public class SchedulerContentProvider extends ContentProvider
     switch( uriType )
     {
       case COURSES:
-        rowsDeleted = sqlDB.delete( CourseTable.TABLE_NAME, selection, selectionArgs );
+        rowsDeleted = sqlDB.delete( ManagerHuntTable.TABLE_NAME, selection, selectionArgs );
         break;
       case HOMEWORK:
-          rowsDeleted = sqlDB.delete( HomeworkTable.TABLE_NAME, selection, selectionArgs );
+          rowsDeleted = sqlDB.delete( ItemTable.TABLE_NAME, selection, selectionArgs );
     	  break;
       case COURSES_ID:
         if( TextUtils.isEmpty( selection ) )
         {
-          rowsDeleted = sqlDB.delete( CourseTable.TABLE_NAME, CourseTable.COLUMN_ID + "=" + id, null );
+          rowsDeleted = sqlDB.delete( ManagerHuntTable.TABLE_NAME, ManagerHuntTable.COLUMN_ID + "=" + id, null );
         }
         else
         {
           rowsDeleted = sqlDB
-              .delete( CourseTable.TABLE_NAME, CourseTable.COLUMN_ID + "=" + id + " and " + selection, selectionArgs );
+              .delete( ManagerHuntTable.TABLE_NAME, ManagerHuntTable.COLUMN_ID + "=" + id + " and " + selection, selectionArgs );
         }
         break;
       case HOMEWORK_ID:
           if( TextUtils.isEmpty( selection ) )
           {
-            rowsDeleted = sqlDB.delete( HomeworkTable.TABLE_NAME, HomeworkTable.COLUMN_ID + "=" + id, null );
+            rowsDeleted = sqlDB.delete( ItemTable.TABLE_NAME, ItemTable.COLUMN_ID + "=" + id, null );
           }
           else
           {
             rowsDeleted = sqlDB
-                .delete( HomeworkTable.TABLE_NAME, HomeworkTable.COLUMN_ID + "=" + id + " and " + selection, selectionArgs );
+                .delete( ItemTable.TABLE_NAME, ItemTable.COLUMN_ID + "=" + id + " and " + selection, selectionArgs );
           }
           break;
       default:
@@ -192,32 +192,32 @@ public class SchedulerContentProvider extends ContentProvider
     switch( uriType )
     {
       case COURSES:
-        rowsUpdated = sqlDB.update( CourseTable.TABLE_NAME, values, selection, selectionArgs );
+        rowsUpdated = sqlDB.update( ManagerHuntTable.TABLE_NAME, values, selection, selectionArgs );
         break;
       case COURSES_ID:
         String id = uri.getLastPathSegment();
         if( TextUtils.isEmpty( selection ) )
         {
-          rowsUpdated = sqlDB.update( CourseTable.TABLE_NAME, values, CourseTable.COLUMN_ID + "=" + id, null );
+          rowsUpdated = sqlDB.update( ManagerHuntTable.TABLE_NAME, values, ManagerHuntTable.COLUMN_ID + "=" + id, null );
         }
         else
         {
-          rowsUpdated = sqlDB.update( CourseTable.TABLE_NAME, values, CourseTable.COLUMN_ID + "=" + id + " and " + selection,
+          rowsUpdated = sqlDB.update( ManagerHuntTable.TABLE_NAME, values, ManagerHuntTable.COLUMN_ID + "=" + id + " and " + selection,
               selectionArgs );
         }
         break;
       case HOMEWORK:
-          rowsUpdated = sqlDB.update( HomeworkTable.TABLE_NAME, values, selection, selectionArgs );
+          rowsUpdated = sqlDB.update( ItemTable.TABLE_NAME, values, selection, selectionArgs );
           break;
         case HOMEWORK_ID:
           id = uri.getLastPathSegment();
           if( TextUtils.isEmpty( selection ) )
           {
-            rowsUpdated = sqlDB.update( HomeworkTable.TABLE_NAME, values, HomeworkTable.COLUMN_ID + "=" + id, null );
+            rowsUpdated = sqlDB.update( ItemTable.TABLE_NAME, values, ItemTable.COLUMN_ID + "=" + id, null );
           }
           else
           {
-            rowsUpdated = sqlDB.update( HomeworkTable.TABLE_NAME, values, HomeworkTable.COLUMN_ID + "=" + id + " and " + selection,
+            rowsUpdated = sqlDB.update( ItemTable.TABLE_NAME, values, ItemTable.COLUMN_ID + "=" + id + " and " + selection,
                 selectionArgs );
           }
           break;
@@ -232,8 +232,8 @@ public class SchedulerContentProvider extends ContentProvider
   {
 	  int tableName = 0;
 	  
-    String[] availableCourses = { CourseTable.COLUMN_ID, CourseTable.COLUMN_NAME};
-    String[] availableHomeworks = { HomeworkTable.COLUMN_ID, HomeworkTable.COLUMN_NAME, HomeworkTable.COLUMN_DATE, HomeworkTable.COLUMN_DESCRIPTION, HomeworkTable.COLUMN_COURSE_NAME };
+    String[] availableCourses = { ManagerHuntTable.COLUMN_ID, ManagerHuntTable.COLUMN_NAME};
+    String[] availableHomeworks = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_DATE, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_COURSE_NAME };
     
     if( projection != null )
     {

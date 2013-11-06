@@ -37,7 +37,7 @@ import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
 @SuppressLint("NewApi")
-public class HomeworkActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+public class ItemActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
 	private static final int DELETE_ID = Menu.FIRST + 1; //integer id for the delete option for long press
 	private SimpleCursorAdapter adapter; //helps assist with database interactions 
@@ -54,10 +54,10 @@ public class HomeworkActivity extends ListActivity implements LoaderManager.Load
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
-		setContentView( R.layout.homework_list );
+		setContentView( R.layout.item_list );
 
 		//Get/set the courseName in the activity
-		courseName = getIntent().getStringExtra( MainActivity.COURSE_MNAME);
+		courseName = getIntent().getStringExtra( ManagerMain.HUNT_NAME);
 		TextView mCourseText = (TextView)findViewById(R.id.courseNameMid);
 		mCourseText.setText(courseName);
 
@@ -83,7 +83,7 @@ public class HomeworkActivity extends ListActivity implements LoaderManager.Load
 		Log.d("SchoolScheduler::OnlyCourse", "This Course name is "+ courseName);
 
 		//Retrieve homework info from database
-		String[] projection = { HomeworkTable.COLUMN_ID, HomeworkTable.COLUMN_NAME, HomeworkTable.COLUMN_DATE, HomeworkTable.COLUMN_DESCRIPTION, HomeworkTable.COLUMN_COURSE_NAME };
+		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_DATE, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_COURSE_NAME };
 		String[] selection = {courseName};
 		CursorLoader cursorLoader = new CursorLoader( this, SchedulerContentProvider.CONTENT_URI_H, projection, "course=?", selection, null );
 
@@ -116,7 +116,7 @@ public class HomeworkActivity extends ListActivity implements LoaderManager.Load
 	 */
 	private void fillData() {
 		//Fields in the DB from which we map 
-		String[] from = new String[] { HomeworkTable.COLUMN_NAME, HomeworkTable.COLUMN_DATE, HomeworkTable.COLUMN_DESCRIPTION };
+		String[] from = new String[] { ItemTable.COLUMN_NAME, ItemTable.COLUMN_DATE, ItemTable.COLUMN_DESCRIPTION };
 
 		// Fields on the UI to which we map
 		int[] to = new int[] { R.id.hwName, R.id.date, R.id.descrption };
@@ -126,7 +126,7 @@ public class HomeworkActivity extends ListActivity implements LoaderManager.Load
 
 		// Note the last parameter to this constructor (zero), which indicates the adaptor should
 		// not try to automatically re-query the data ... the loader will take care of this.
-		this.adapter = new SimpleCursorAdapter( this, R.layout.home_list_row, null, from, to, 0 ){
+		this.adapter = new SimpleCursorAdapter( this, R.layout.item_list_row, null, from, to, 0 ){
 			//Change the color of each ListItem to help the user
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
@@ -154,13 +154,13 @@ public class HomeworkActivity extends ListActivity implements LoaderManager.Load
 	 * @param view - this is necessary for the button to interact with the activity
 	 */
 	public void addHomeworkToList(View view) {
-		Intent intent = new Intent(this, AddHomeworkActivity.class);
-		intent.putExtra(MainActivity.COURSE_MNAME, courseName);
+		Intent intent = new Intent(this, AddItemActivity.class);
+		intent.putExtra(ManagerMain.HUNT_NAME, courseName);
 		//Set these to empty strings to prevent null point exception and prevent filling changeable
 		//elements in the next activity. 
-		intent.putExtra(MainActivity.HW_NAME_TEXT, "");
+		/*intent.putExtra(MainActivity.HW_NAME_TEXT, "");
 		intent.putExtra(MainActivity.DATE_TEXT, "");
-		intent.putExtra(MainActivity.DESC_TEXT, "");
+		intent.putExtra(MainActivity.DESC_TEXT, "");*/
 		startActivity(intent);
 	}
 
@@ -214,26 +214,26 @@ public class HomeworkActivity extends ListActivity implements LoaderManager.Load
 		super.onListItemClick( l, v, position, id );
 
 		//Get the AddHomeworkActivity intent
-		Intent i = new Intent( this, AddHomeworkActivity.class );
+		Intent i = new Intent( this, AddItemActivity.class );
 
 		//Query the database for the necessary information
 		Uri courseUri = Uri.parse( SchedulerContentProvider.CONTENT_URI_H + "/" + id );
-		String[] projection = { HomeworkTable.COLUMN_NAME, HomeworkTable.COLUMN_DATE, HomeworkTable.COLUMN_DESCRIPTION, HomeworkTable.COLUMN_COURSE_NAME };
+		String[] projection = { ItemTable.COLUMN_NAME, ItemTable.COLUMN_DATE, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_COURSE_NAME };
 		Cursor cursor = getContentResolver().query( courseUri, projection, null, null, null );
 
 		//Retrieve the information from the database. 
 		cursor.moveToFirst();	    
-		String name = cursor.getString( cursor.getColumnIndexOrThrow( HomeworkTable.COLUMN_NAME ) );
-		String date = cursor.getString( cursor.getColumnIndexOrThrow( HomeworkTable.COLUMN_DATE ) ).replace("-", "");
-		String desc = cursor.getString( cursor.getColumnIndexOrThrow( HomeworkTable.COLUMN_DESCRIPTION ) );
-		String courseName = cursor.getString( cursor.getColumnIndexOrThrow( HomeworkTable.COLUMN_COURSE_NAME ) );
+		String name = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_NAME ) );
+		String date = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_DATE ) ).replace("-", "");
+		String desc = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_DESCRIPTION ) );
+		String courseName = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_COURSE_NAME ) );
 		cursor.close();
 
 		//Set the variables that will be used in the AddHomeworkActivity
-		i.putExtra(MainActivity.HW_NAME_TEXT, name);
+		/*i.putExtra(MainActivity.HW_NAME_TEXT, name);
 		i.putExtra(MainActivity.DATE_TEXT, date);
 		i.putExtra(MainActivity.DESC_TEXT, desc);
-		i.putExtra(MainActivity.COURSE_MNAME, courseName);
+		i.putExtra(MainActivity.COURSE_MNAME, courseName);*/
 
 		startActivity( i );
 	}

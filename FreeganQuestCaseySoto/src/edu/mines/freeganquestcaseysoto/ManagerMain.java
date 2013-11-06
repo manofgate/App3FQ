@@ -27,16 +27,16 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 	private SimpleCursorAdapter adapter;
 	private static final int DELETE_ID = Menu.FIRST + 1;
 	private static final int EDIT_ID = Menu.FIRST + 2;
-	private String courseName;
-	public static final String COURSE_MNAME = "NameOfCourse";
-	public static final String HW_NAME_TEXT = "NameOfHW";
+	private String huntName;
+	public static final String HUNT_NAME = "NameOfCourse";
+	/*public static final String HW_NAME_TEXT = "NameOfHW";
 	public static final String DATE_TEXT = "DueDate";
-	public static final String DESC_TEXT = "Description";
+	public static final String DESC_TEXT = "Description";*/
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.classes_list);
+		setContentView(R.layout.hunts_list);
 		this.getListView().setDividerHeight( 4);
 		fillData();
 		registerForContextMenu( getListView() );
@@ -54,9 +54,9 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 	  {
 	    switch( item.getItemId() )
 	    {
-	    case R.id.action_allHomework:
+	    /*case R.id.action_allHomework:
 	    	Intent i = new Intent(this, AllHomeworkActivity.class);
-			startActivity(i);
+			startActivity(i);*/
 	    default:
 	          return super.onOptionsItemSelected(item);
 	    }
@@ -78,18 +78,18 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 	public void insertNewCourse(){
 		ContentValues values = new ContentValues();
 		//values.put(CourseTable.COLUMN_ID, "idd");
-		values.put( CourseTable.COLUMN_NAME, courseName );
-		String[] projection = { CourseTable.COLUMN_ID, CourseTable.COLUMN_NAME};
-		String[] selection = {courseName};
+		values.put( ManagerHuntTable.COLUMN_NAME, huntName );
+		String[] projection = { ManagerHuntTable.COLUMN_ID, ManagerHuntTable.COLUMN_NAME};
+		String[] selection = {huntName};
 		getContentResolver().insert( SchedulerContentProvider.CONTENT_URI, values );
 		
 		//chgecks to see if that course name has already been added
-		Cursor cursor = getContentResolver().query( SchedulerContentProvider.CONTENT_URI, projection, "name=?", selection, CourseTable.COLUMN_ID + " DESC" );
+		Cursor cursor = getContentResolver().query( SchedulerContentProvider.CONTENT_URI, projection, "name=?", selection, ManagerHuntTable.COLUMN_ID + " DESC" );
 		if(cursor.getCount() >1){
 			cursor.moveToFirst();
-			Uri courseUri = Uri.parse( SchedulerContentProvider.CONTENT_URI + "/" +  cursor.getString(cursor.getColumnIndexOrThrow( CourseTable.COLUMN_ID )) );
+			Uri courseUri = Uri.parse( SchedulerContentProvider.CONTENT_URI + "/" +  cursor.getString(cursor.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_ID )) );
 			getContentResolver().delete(courseUri, null, null);
-			Toast toast = Toast.makeText(getApplicationContext(),"Have already added " +courseName+" course!" , Toast.LENGTH_LONG);
+			Toast toast = Toast.makeText(getApplicationContext(),"Have already added " +huntName+" course!" , Toast.LENGTH_LONG);
 			toast.show();
 			fillData();
 		}
@@ -103,24 +103,24 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 	 */
 	public void updateNewCourse(String newCourseName){
 		ContentValues values = new ContentValues();
-		values.put( CourseTable.COLUMN_NAME, newCourseName );
-		String[] projection = { CourseTable.COLUMN_ID, CourseTable.COLUMN_NAME};
-		String[] selection = {courseName};
+		values.put( ManagerHuntTable.COLUMN_NAME, newCourseName );
+		String[] projection = { ManagerHuntTable.COLUMN_ID, ManagerHuntTable.COLUMN_NAME};
+		String[] selection = {huntName};
 		String[] querySelection = {newCourseName};
 		//chgecks to see if that course name is already in database and adds if not. 
-		Cursor cursor = getContentResolver().query( SchedulerContentProvider.CONTENT_URI, projection, "name=?", querySelection, CourseTable.COLUMN_ID + " DESC" );
+		Cursor cursor = getContentResolver().query( SchedulerContentProvider.CONTENT_URI, projection, "name=?", querySelection, ManagerHuntTable.COLUMN_ID + " DESC" );
 		//Log.d("SchoolScheduler::Update Debu", "curosor count : " + cursor.getCount());
 		if(cursor.getCount() <1){
 			int rowsUpdated = getContentResolver().update( SchedulerContentProvider.CONTENT_URI, values, "name=?", selection );
-			Log.d("SchoolScechulder::update Debug", rowsUpdated + ": " + this.courseName + ": " +newCourseName );	
+			Log.d("SchoolScechulder::update Debug", rowsUpdated + ": " + this.huntName + ": " +newCourseName );	
 			fillData();
 			
-			String[] selectionC = {courseName};
-			String[] projection2 = {HomeworkTable.COLUMN_ID, HomeworkTable.COLUMN_NAME, HomeworkTable.COLUMN_DATE, HomeworkTable.COLUMN_DESCRIPTION, HomeworkTable.COLUMN_COURSE_NAME};
+			String[] selectionC = {huntName};
+			String[] projection2 = {ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_DATE, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_COURSE_NAME};
 			
 			Cursor cursorC = getContentResolver().query(SchedulerContentProvider.CONTENT_URI_H, projection2, "course=?", selectionC, null);
 			ContentValues valuesC = new ContentValues();
-			valuesC.put( HomeworkTable.COLUMN_COURSE_NAME, newCourseName );
+			valuesC.put( ItemTable.COLUMN_COURSE_NAME, newCourseName );
 			for(int i=0; i < cursorC.getCount(); ++i){
 				rowsUpdated = getContentResolver().update( SchedulerContentProvider.CONTENT_URI_H, valuesC, "course=?", selectionC );
 				
@@ -137,17 +137,17 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 	protected void onListItemClick( ListView l, View v, int position, long id )
 	{
 		super.onListItemClick( l, v, position, id );
-		Intent i = new Intent( this, HomeworkActivity.class );
+		Intent i = new Intent( this, ItemActivity.class );
 		Uri courseUri = Uri.parse( SchedulerContentProvider.CONTENT_URI + "/" + id );
-		String[] projection = { CourseTable.COLUMN_NAME };
+		String[] projection = { ManagerHuntTable.COLUMN_NAME };
 
 		//gets the uris for the same id, moves it to first position.
 		Cursor cursor = getContentResolver().query( courseUri, projection, null, null, null );
 		String name= "";
 		cursor.moveToFirst();	    
-		name = cursor.getString( cursor.getColumnIndexOrThrow( CourseTable.COLUMN_NAME ) );
+		name = cursor.getString( cursor.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_NAME ) );
 		cursor.close();
-		i.putExtra(COURSE_MNAME, name);
+		i.putExtra(HUNT_NAME, name);
 		i.putExtra( SchedulerContentProvider.CONTENT_ITEM_TYPE, courseUri );
 		startActivity( i );
 	}
@@ -167,25 +167,25 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 			Uri uri = Uri.parse( SchedulerContentProvider.CONTENT_URI + "/" + info.id );
 			
 			//query to get the course name that is bieng deleted
-			String[] projection2 = { CourseTable.COLUMN_NAME };
+			String[] projection2 = { ManagerHuntTable.COLUMN_NAME };
 			Cursor cursor2 = getContentResolver().query( uri, projection2, null, null, null );
 			String name2= "";
 			cursor2.moveToFirst();	    
-			name2 = cursor2.getString( cursor2.getColumnIndexOrThrow( CourseTable.COLUMN_NAME ) );
+			name2 = cursor2.getString( cursor2.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_NAME ) );
 			cursor2.close();
-			this.courseName= name2;
+			this.huntName= name2;
 			
 			getContentResolver().delete( uri, null, null );
 			
 			//get all homework associsated with this course and delete it.
-			String[] projection = { HomeworkTable.COLUMN_ID, HomeworkTable.COLUMN_NAME, HomeworkTable.COLUMN_DATE, HomeworkTable.COLUMN_DESCRIPTION, HomeworkTable.COLUMN_COURSE_NAME };
-			String[] querySelection = { this.courseName };
+			String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_DATE, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_COURSE_NAME };
+			String[] querySelection = { this.huntName };
 			//gets the uris for the same id, moves it to first position.
 			uri = Uri.parse( SchedulerContentProvider.CONTENT_URI_H + "/");
 			Cursor cursor = getContentResolver().query( uri, projection, "course=?", querySelection, null );
 			cursor.moveToFirst();
 			for(int i=0; i < cursor.getCount(); ++i){
-				String id =  cursor.getString(cursor.getColumnIndexOrThrow(HomeworkTable.COLUMN_ID));
+				String id =  cursor.getString(cursor.getColumnIndexOrThrow(ItemTable.COLUMN_ID));
 				uri = Uri.parse( SchedulerContentProvider.CONTENT_URI_H + "/" + id );
 				getContentResolver().delete( uri, null, null );
 				cursor.moveToNext();
@@ -196,15 +196,15 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 		case EDIT_ID: 
 			info = (AdapterContextMenuInfo)item.getMenuInfo();
 			uri = Uri.parse( SchedulerContentProvider.CONTENT_URI + "/" + info.id );
-			String[] projection3 = { CourseTable.COLUMN_NAME };
+			String[] projection3 = { ManagerHuntTable.COLUMN_NAME };
 
 			//gets the uris for the same id, moves it to first position.
 			cursor2 = getContentResolver().query( uri, projection3, null, null, null );
 			name2= "";
 			cursor2.moveToFirst();	    
-			name2 = cursor2.getString( cursor2.getColumnIndexOrThrow( CourseTable.COLUMN_NAME ) );
+			name2 = cursor2.getString( cursor2.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_NAME ) );
 			cursor2.close();
-			this.courseName= name2;
+			this.huntName= name2;
 			Bundle args = new Bundle();
 			args.putInt( "dialogID", 2 );
 			args.putString( "prompt", getString( R.string.statement ) );
@@ -220,7 +220,7 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 	 */
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-		String[] projection = { CourseTable.COLUMN_ID, CourseTable.COLUMN_NAME };
+		String[] projection = { ManagerHuntTable.COLUMN_ID, ManagerHuntTable.COLUMN_NAME };
 		CursorLoader cursorLoader = new CursorLoader( this, SchedulerContentProvider.CONTENT_URI, projection, null, null, null );
 		return cursorLoader;
 	}
@@ -243,7 +243,7 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 	{
 		// Fields from the database (projection)
 		// Must include the _id column for the adapter to work
-		String[] from = new String[] { CourseTable.COLUMN_NAME };
+		String[] from = new String[] { ManagerHuntTable.COLUMN_NAME };
 
 		// Fields on the UI to which we map
 		int[] to = new int[] { R.id.label };
@@ -285,7 +285,7 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 		Log.d( "School_Scheduler", "\"" + input + "\" received from input dialog with id =" + dialogID );
 
 		if(dialogID == 1){
-			this.courseName = input;
+			this.huntName = input;
 			insertNewCourse();
 		}
 		else if(dialogID == 2){

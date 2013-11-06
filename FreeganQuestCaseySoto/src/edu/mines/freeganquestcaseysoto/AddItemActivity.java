@@ -38,7 +38,7 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class AddHomeworkActivity extends Activity {
+public class AddItemActivity extends Activity {
 
 	private final static int DESC_MAX = 140; //used to limit the users description to 140 characters
 	private boolean update = false; //used to help determine if homework is being updated or not
@@ -56,13 +56,13 @@ public class AddHomeworkActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_add_homework);
+		setContentView(R.layout.activity_add_item);
 
 		//Retrieve strings passed in from the HomeworkActivity
-		String message = getIntent().getStringExtra( MainActivity.COURSE_MNAME);
-		hwName = getIntent().getStringExtra( MainActivity.HW_NAME_TEXT);
+		String message = getIntent().getStringExtra( ManagerMain.HUNT_NAME);
+		/*hwName = getIntent().getStringExtra( MainActivity.HW_NAME_TEXT);
 		date = getIntent().getStringExtra( MainActivity.DATE_TEXT);
-		description = getIntent().getStringExtra( MainActivity.DESC_TEXT);
+		description = getIntent().getStringExtra( MainActivity.DESC_TEXT);*/
 
 		//Get the TextView item to be updated
 		TextView mCourseText = (TextView) findViewById(R.id.courseNameEnd);
@@ -100,7 +100,7 @@ public class AddHomeworkActivity extends Activity {
 		String hwName = nameInput.getText().toString();
 		String desc = descriptionInput.getText().toString();
 		String dueDate = dateInput.getText().toString();
-		String course = getIntent().getStringExtra( MainActivity.COURSE_MNAME);
+		String course = getIntent().getStringExtra( ManagerMain.HUNT_NAME);
 
 		//Make sure the name and desc have content, if not give it generic information. 
 		hwName = hwName.length() > 0 ? hwName : "Untitled";
@@ -194,17 +194,17 @@ public class AddHomeworkActivity extends Activity {
 		//that item respectively. 
 		ContentValues values = new ContentValues();
 		if(!name.equals(hwName)){
-			values.put( HomeworkTable.COLUMN_NAME, name );
+			values.put( ItemTable.COLUMN_NAME, name );
 			String[] selection = {hwName, date, description};
 			rowsUpdated = rowsUpdated + getContentResolver().update( SchedulerContentProvider.CONTENT_URI_H, values, "name=? AND date=? AND desc=?", selection );
 		}
 		if(!dueDate.equals(date)){
-			values.put( HomeworkTable.COLUMN_DATE, dueDate );
+			values.put( ItemTable.COLUMN_DATE, dueDate );
 			String[] selection = {date, name, description};
 			rowsUpdated = rowsUpdated + getContentResolver().update( SchedulerContentProvider.CONTENT_URI_H, values, "date=? AND name=? AND desc=?", selection );
 		}
 		if(!desc.equals(description)){
-			values.put( HomeworkTable.COLUMN_DESCRIPTION, desc );
+			values.put( ItemTable.COLUMN_DESCRIPTION, desc );
 			String[] selection = {description, name, dueDate};
 			rowsUpdated = rowsUpdated + getContentResolver().update( SchedulerContentProvider.CONTENT_URI_H, values, "desc=? AND name=? AND date=?", selection );
 		}
@@ -222,23 +222,23 @@ public class AddHomeworkActivity extends Activity {
 	 */
 	public void insertNewHW(String name, String date, String desc, String course){
 		ContentValues values = new ContentValues();
-		values.put( HomeworkTable.COLUMN_NAME, name );
-		values.put( HomeworkTable.COLUMN_DATE, date );
-		values.put( HomeworkTable.COLUMN_DESCRIPTION, desc);
-		values.put( HomeworkTable.COLUMN_COURSE_NAME, course);
+		values.put( ItemTable.COLUMN_NAME, name );
+		values.put( ItemTable.COLUMN_DATE, date );
+		values.put( ItemTable.COLUMN_DESCRIPTION, desc);
+		values.put( ItemTable.COLUMN_COURSE_NAME, course);
 		
 		//Insert values into the Homework Table
 		getContentResolver().insert( SchedulerContentProvider.CONTENT_URI_H, values );
 
 		//Verify if identical entries were inserted into the Homework Table 
-		String[] projection = { HomeworkTable.COLUMN_ID, HomeworkTable.COLUMN_NAME};
+		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME};
 		String[] selection = {name};
-		Cursor cursor = getContentResolver().query( SchedulerContentProvider.CONTENT_URI_H, projection, "name=?", selection, HomeworkTable.COLUMN_ID + " DESC" );
+		Cursor cursor = getContentResolver().query( SchedulerContentProvider.CONTENT_URI_H, projection, "name=?", selection, ItemTable.COLUMN_ID + " DESC" );
 		
 		//If there were multiple entries remove the last insert then notify the user. 
 		if(cursor.getCount() > 1){
 			cursor.moveToFirst();
-			Uri courseUri = Uri.parse( SchedulerContentProvider.CONTENT_URI_H + "/" +  cursor.getString(cursor.getColumnIndexOrThrow( HomeworkTable.COLUMN_ID )) );
+			Uri courseUri = Uri.parse( SchedulerContentProvider.CONTENT_URI_H + "/" +  cursor.getString(cursor.getColumnIndexOrThrow( ItemTable.COLUMN_ID )) );
 			getContentResolver().delete(courseUri, null, null);
 			Toast toast = Toast.makeText(getApplicationContext(),"Have already added " + name +"!" , Toast.LENGTH_LONG);
 			toast.show();

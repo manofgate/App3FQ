@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 
-public class HomeworkTable {
+public class ItemTable {
 	// Database table column names
 	public static final String TABLE_NAME = "homework";
 	public static final String COLUMN_ID = "_id";
@@ -47,7 +47,7 @@ public class HomeworkTable {
 	* @param newVersion - the integer value of the new version of the db (used only of logging purposes)
 	*/
 	public static void onUpgrade( SQLiteDatabase database, int oldVersion, int newVersion ) {
-		Log.w( HomeworkTable.class.getName(), "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data." );
+		Log.w( ItemTable.class.getName(), "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data." );
 		database.execSQL( "DROP TABLE IF EXISTS " + TABLE_NAME );
 		onCreate( database );
 	}

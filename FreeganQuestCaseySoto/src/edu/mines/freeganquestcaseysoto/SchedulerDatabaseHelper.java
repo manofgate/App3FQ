@@ -24,14 +24,14 @@ public class SchedulerDatabaseHelper extends SQLiteOpenHelper
   @Override
   public void onCreate( SQLiteDatabase database )
   {
-    CourseTable.onCreate( database );
-    HomeworkTable.onCreate(database);
+    ManagerHuntTable.onCreate( database );
+    ItemTable.onCreate(database);
   }
 
   /** Method is called during an upgrade of the database, e.g. if you increase the database version. */
   @Override
   public void onUpgrade( SQLiteDatabase database, int oldVersion, int newVersion )
   {
-    CourseTable.onUpgrade( database, oldVersion, newVersion );
+    ManagerHuntTable.onUpgrade( database, oldVersion, newVersion );
   }
 }
