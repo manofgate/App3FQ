@@ -22,6 +22,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <provider
+            android:name="edu.mines.freeganquestcaseysoto.SchedulerContentProvider"
+            android:authorities="edu.mines.freeganquestcaseysoto.coursecontentprovider"
+            android:exported="false" >
+        </provider>
+        <activity
+            android:name="edu.mines.freeganquestcaseysoto.ManagerMain"
+            android:label="@string/manMode" />
+        <activity
+            android:name="edu.mines.freeganquestcaseysoto.ItemActivity"
+            android:label="@string/manMode" />
+        <activity
+            android:name="edu.mines.freeganquestcaseysoto.AddItemActivity"
+            android:label="@string/manMode" />
     </application>
 
 </manifest>

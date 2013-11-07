@@ -31,7 +31,7 @@ public class SchedulerContentProvider extends ContentProvider
   private static final int HOMEWORK = 20;
   private static final int HOMEWORK_ID = 22;
 
-  private static final String AUTHORITY = "edu.mines.caseysoto.schoolschedulercaseysoto.coursecontentprovider";
+  private static final String AUTHORITY = "edu.mines.freeganquestcaseysoto.coursecontentprovider";
 
   private static final String BASE_PATH = "courses";
   private static final String BASE_PATH_H = "homework";

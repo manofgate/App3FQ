@@ -24,5 +24,6 @@
     <string name="description"></string>
     <string name="descriptionHint"></string>
     <string name="submit"></string>
+    <string name= "manMode">Manager</string>
  
 </resources>
