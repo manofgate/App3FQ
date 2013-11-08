@@ -1,4 +1,4 @@
-/** * Description: This class is for typing in the course name for either creating a new course or editing one. 
+/** * Description: This class is for typing in the hunt name for either creating a new hunt or editing one. 
  * 
  * @author Ben Casey
  * 
@@ -31,8 +31,8 @@ public class InputDialogFragment extends DialogFragment
   
   /**
    * given the dialogID which is either edit or Insert.
-   * given the prompt which is course
-   * On Create Dialog creates the dialog and brings it up to be able to input 1 string which will be the course name.
+   * given the prompt which is hunt
+   * On Create Dialog creates the dialog and brings it up to be able to input 1 string which will be the hunt name.
    */
   @Override
   public Dialog onCreateDialog( Bundle savedInstanceState )

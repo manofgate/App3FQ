@@ -13,12 +13,12 @@ import android.util.Log;
 
 public class ItemTable {
 	// Database table column names
-	public static final String TABLE_NAME = "homework";
+	public static final String TABLE_NAME = "items";
 	public static final String COLUMN_ID = "_id";
 	public static final String COLUMN_NAME = "name";
 	public static final String COLUMN_DATE = "date";
 	public static final String COLUMN_DESCRIPTION = "desc";
-	public static final String COLUMN_COURSE_NAME = "course";
+	public static final String COLUMN_HUNT_NAME = "hunt";
 
 	// Database creation SQL statement
 	private static final String TABLE_CREATE = "create table " + TABLE_NAME + "(" + 
@@ -26,10 +26,10 @@ public class ItemTable {
 			COLUMN_NAME + " text not null," + 
 			COLUMN_DATE + " text not null," +
 			COLUMN_DESCRIPTION + " text not null," +
-			COLUMN_COURSE_NAME + " text not null" + ");";
+			COLUMN_HUNT_NAME + " text not null" + ");";
 
 	/**
-	* The onCreate method is used to create the Homework Table by executing the .execSQL command.
+	* The onCreate method is used to create the items Table by executing the .execSQL command.
 	* 
 	* @param database - the database object that will be used to create the Homework Table
 	*/
@@ -38,7 +38,7 @@ public class ItemTable {
 	}
 
 	/**
-	* The onUpgrade method is used to update the Homework Table in the case where the database version
+	* The onUpgrade method is used to update the Items Table in the case where the database version
 	* needs to be updated. It will execute the SQL command to drop the table then call onCreate to 
 	* create the table again.   
 	* 

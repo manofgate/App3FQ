@@ -30,12 +30,15 @@ import java.util.Date;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 
 public class AddItemActivity extends Activity {
@@ -48,7 +51,7 @@ public class AddItemActivity extends Activity {
 
 	/**
 	 * The onCreate method retrieves any saved instances and sets the content view layout. It
-	 * retrieves and sets the course name, homwork name, due date, and description (if present
+	 * retrieves and sets the hunt name, homwork name, due date, and description (if present
 	 * from the HomeworkActivity, fills the respective TextViews.    
 	 * 
 	 * @param savedInstanceState - a bundle of any saved instance values 
@@ -65,13 +68,13 @@ public class AddItemActivity extends Activity {
 		description = getIntent().getStringExtra( MainActivity.DESC_TEXT);*/
 
 		//Get the TextView item to be updated
-		TextView mCourseText = (TextView) findViewById(R.id.courseNameEnd);
+		//TextView mhuntText = (TextView) findViewById(R.id.huntNameEnd);
 		TextView hwNameText = (TextView) findViewById(R.id.nameInput);
 		TextView dateText = (TextView) findViewById(R.id.dateInput);
 		TextView descText = (TextView) findViewById(R.id.descriptionInput);
 
 		//Set the TextView item to the new text form the HomeworkActivity
-		mCourseText.setText(message);
+		//mhuntText.setText(message);
 
 		//If HomeworkActivity will be updating info, the hwName won't be empty nor will description
 		//or date guaranteed (we normalize the info put into the db so we will always have this). We
@@ -83,7 +86,31 @@ public class AddItemActivity extends Activity {
 			update = true;
 		}
 	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.mm, menu);
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
 
+	@Override
+	  public boolean onOptionsItemSelected( MenuItem item )
+	  {
+	    switch( item.getItemId() )
+	    {
+	      case R.id.action_manage:
+	      {
+	        Intent i = new Intent(this, ManagerMain.class);
+	        startActivity(i);
+
+	        return true;
+	      }
+	      default:
+	          return super.onOptionsItemSelected(item);
+	    }
+	  }
 	/**
 	 * The submit method retrieves the EditText content for the name, due date, and description from
 	 * the activity. It also validates and normalizes the user input, updates or inserts the input,
@@ -100,7 +127,7 @@ public class AddItemActivity extends Activity {
 		String hwName = nameInput.getText().toString();
 		String desc = descriptionInput.getText().toString();
 		String dueDate = dateInput.getText().toString();
-		String course = getIntent().getStringExtra( ManagerMain.HUNT_NAME);
+		String hunt = getIntent().getStringExtra( ManagerMain.HUNT_NAME);
 
 		//Make sure the name and desc have content, if not give it generic information. 
 		hwName = hwName.length() > 0 ? hwName : "Untitled";
@@ -132,7 +159,7 @@ public class AddItemActivity extends Activity {
 		if(update){
 			updateHW(hwName, dueDate, desc);
 		} else {
-			insertNewHW(hwName, dueDate, desc, course);
+			insertNewHW(hwName, dueDate, desc, hunt);
 		}
 
 		finish();
@@ -196,17 +223,17 @@ public class AddItemActivity extends Activity {
 		if(!name.equals(hwName)){
 			values.put( ItemTable.COLUMN_NAME, name );
 			String[] selection = {hwName, date, description};
-			rowsUpdated = rowsUpdated + getContentResolver().update( SchedulerContentProvider.CONTENT_URI_H, values, "name=? AND date=? AND desc=?", selection );
+			rowsUpdated = rowsUpdated + getContentResolver().update( FreeganContentProvider.CONTENT_URI_H, values, "name=? AND date=? AND desc=?", selection );
 		}
 		if(!dueDate.equals(date)){
 			values.put( ItemTable.COLUMN_DATE, dueDate );
 			String[] selection = {date, name, description};
-			rowsUpdated = rowsUpdated + getContentResolver().update( SchedulerContentProvider.CONTENT_URI_H, values, "date=? AND name=? AND desc=?", selection );
+			rowsUpdated = rowsUpdated + getContentResolver().update( FreeganContentProvider.CONTENT_URI_H, values, "date=? AND name=? AND desc=?", selection );
 		}
 		if(!desc.equals(description)){
 			values.put( ItemTable.COLUMN_DESCRIPTION, desc );
 			String[] selection = {description, name, dueDate};
-			rowsUpdated = rowsUpdated + getContentResolver().update( SchedulerContentProvider.CONTENT_URI_H, values, "desc=? AND name=? AND date=?", selection );
+			rowsUpdated = rowsUpdated + getContentResolver().update( FreeganContentProvider.CONTENT_URI_H, values, "desc=? AND name=? AND date=?", selection );
 		}
 
 		if(rowsUpdated == 0){
@@ -220,26 +247,26 @@ public class AddItemActivity extends Activity {
 	 * 
 	 * @param view - this is necessary for the button to interact with the activity
 	 */
-	public void insertNewHW(String name, String date, String desc, String course){
+	public void insertNewHW(String name, String date, String desc, String hunt){
 		ContentValues values = new ContentValues();
 		values.put( ItemTable.COLUMN_NAME, name );
 		values.put( ItemTable.COLUMN_DATE, date );
 		values.put( ItemTable.COLUMN_DESCRIPTION, desc);
-		values.put( ItemTable.COLUMN_COURSE_NAME, course);
+		values.put( ItemTable.COLUMN_HUNT_NAME, hunt);
 		
 		//Insert values into the Homework Table
-		getContentResolver().insert( SchedulerContentProvider.CONTENT_URI_H, values );
+		getContentResolver().insert( FreeganContentProvider.CONTENT_URI_H, values );
 
 		//Verify if identical entries were inserted into the Homework Table 
 		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME};
 		String[] selection = {name};
-		Cursor cursor = getContentResolver().query( SchedulerContentProvider.CONTENT_URI_H, projection, "name=?", selection, ItemTable.COLUMN_ID + " DESC" );
+		Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI_H, projection, "name=?", selection, ItemTable.COLUMN_ID + " DESC" );
 		
 		//If there were multiple entries remove the last insert then notify the user. 
 		if(cursor.getCount() > 1){
 			cursor.moveToFirst();
-			Uri courseUri = Uri.parse( SchedulerContentProvider.CONTENT_URI_H + "/" +  cursor.getString(cursor.getColumnIndexOrThrow( ItemTable.COLUMN_ID )) );
-			getContentResolver().delete(courseUri, null, null);
+			Uri huntUri = Uri.parse( FreeganContentProvider.CONTENT_URI_H + "/" +  cursor.getString(cursor.getColumnIndexOrThrow( ItemTable.COLUMN_ID )) );
+			getContentResolver().delete(huntUri, null, null);
 			Toast toast = Toast.makeText(getApplicationContext(),"Have already added " + name +"!" , Toast.LENGTH_LONG);
 			toast.show();
 			finish();

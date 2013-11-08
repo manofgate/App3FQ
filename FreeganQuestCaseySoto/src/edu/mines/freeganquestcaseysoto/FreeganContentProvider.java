@@ -1,4 +1,4 @@
-/** * Description: This class is for the database interaction with the homework, course tables on insert, delete, update, and query 
+/** * Description: This class is for the database interaction with the homework, hunt tables on insert, delete, update, and query 
  * 
  * @author Ben Casey
  * @author Craig Soto II
@@ -21,46 +21,46 @@ import android.net.Uri;
 import android.text.TextUtils;
 
 
-public class SchedulerContentProvider extends ContentProvider
+public class FreeganContentProvider extends ContentProvider
 {
-  private SchedulerDatabaseHelper database;
+  private FreeganDatabaseHelper database;
 
   // Used for the UriMacher
-  private static final int COURSES = 10;
-  private static final int COURSES_ID = 11;
-  private static final int HOMEWORK = 20;
-  private static final int HOMEWORK_ID = 22;
+  private static final int HUNTS = 7;
+  private static final int HUNTS_ID = 8;
+  private static final int ITEMS = 21;
+  private static final int ITEMS_ID = 22;
 
-  private static final String AUTHORITY = "edu.mines.freeganquestcaseysoto.coursecontentprovider";
+  private static final String AUTHORITY = "edu.mines.freeganquestcaseysoto.freeganquestcontentprovider";
 
-  private static final String BASE_PATH = "courses";
-  private static final String BASE_PATH_H = "homework";
+  private static final String BASE_PATH = "hunts";
+  private static final String BASE_PATH_H = "items";
   public static final Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY + "/" + BASE_PATH );
   public static final Uri CONTENT_URI_H = Uri.parse( "content://" + AUTHORITY + "/" + BASE_PATH_H );
 
-  public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/courses";
-  public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/course";
+  public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/hunts";
+  public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/hunts";
   
-  public static final String CONTENT_TYPE_H = ContentResolver.CURSOR_DIR_BASE_TYPE + "/homework"; // TODO
-  public static final String CONTENT_ITEM_TYPE_H = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/homework"; // TODO
+  public static final String CONTENT_TYPE_H = ContentResolver.CURSOR_DIR_BASE_TYPE + "/items"; // TODO
+  public static final String CONTENT_ITEM_TYPE_H = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/items"; // TODO
   
   private static final UriMatcher sURIMatcher = new UriMatcher( UriMatcher.NO_MATCH );
 
   static
   {
-	  //Courses
-    sURIMatcher.addURI( AUTHORITY, BASE_PATH, COURSES );
-    sURIMatcher.addURI( AUTHORITY, BASE_PATH + "/#", COURSES_ID );
+	  //quests
+    sURIMatcher.addURI( AUTHORITY, BASE_PATH, HUNTS );
+    sURIMatcher.addURI( AUTHORITY, BASE_PATH + "/#", HUNTS_ID );
     
-    //HW
-    sURIMatcher.addURI( AUTHORITY, BASE_PATH_H, HOMEWORK );
-    sURIMatcher.addURI( AUTHORITY, BASE_PATH_H + "/#", HOMEWORK_ID );
+    //items/objects
+    sURIMatcher.addURI( AUTHORITY, BASE_PATH_H, ITEMS );
+    sURIMatcher.addURI( AUTHORITY, BASE_PATH_H + "/#", ITEMS_ID );
   }
 
   @Override
   public boolean onCreate()
   {
-    database = new SchedulerDatabaseHelper( getContext() );
+    database = new FreeganDatabaseHelper( getContext() );
     return false;
   }
 
@@ -74,9 +74,9 @@ public class SchedulerContentProvider extends ContentProvider
     int tableName = checkColumns( projection );
 
     // Set the table
-    if(tableName == COURSES){
+    if(tableName == HUNTS){
     	queryBuilder.setTables( ManagerHuntTable.TABLE_NAME );
-    } else if(tableName == HOMEWORK){
+    } else if(tableName == ITEMS){
     	queryBuilder.setTables( ItemTable.TABLE_NAME );
     }
     
@@ -84,15 +84,15 @@ public class SchedulerContentProvider extends ContentProvider
     int uriType = sURIMatcher.match( uri );
     switch( uriType )
     {
-      case COURSES:
+      case HUNTS:
         break;
-      case HOMEWORK:
+      case ITEMS:
     	  break;
-      case COURSES_ID:
+      case HUNTS_ID:
         // Adding the ID to the original query
         queryBuilder.appendWhere( ManagerHuntTable.COLUMN_ID + "=" + uri.getLastPathSegment() );
         break;
-      case HOMEWORK_ID:
+      case ITEMS_ID:
           // Adding the ID to the original query
           queryBuilder.appendWhere( ItemTable.COLUMN_ID + "=" + uri.getLastPathSegment() );
           break;
@@ -124,10 +124,10 @@ public class SchedulerContentProvider extends ContentProvider
     long id = 0;
     switch( uriType )
     {
-      case COURSES:
+      case HUNTS:
         id = sqlDB.insert( ManagerHuntTable.TABLE_NAME, null, values );
         break;
-      case HOMEWORK:
+      case ITEMS:
           id = sqlDB.insert( ItemTable.TABLE_NAME, null, values );
           break;
       default:
@@ -147,13 +147,13 @@ public class SchedulerContentProvider extends ContentProvider
 
     switch( uriType )
     {
-      case COURSES:
+      case HUNTS:
         rowsDeleted = sqlDB.delete( ManagerHuntTable.TABLE_NAME, selection, selectionArgs );
         break;
-      case HOMEWORK:
+      case ITEMS:
           rowsDeleted = sqlDB.delete( ItemTable.TABLE_NAME, selection, selectionArgs );
     	  break;
-      case COURSES_ID:
+      case HUNTS_ID:
         if( TextUtils.isEmpty( selection ) )
         {
           rowsDeleted = sqlDB.delete( ManagerHuntTable.TABLE_NAME, ManagerHuntTable.COLUMN_ID + "=" + id, null );
@@ -164,7 +164,7 @@ public class SchedulerContentProvider extends ContentProvider
               .delete( ManagerHuntTable.TABLE_NAME, ManagerHuntTable.COLUMN_ID + "=" + id + " and " + selection, selectionArgs );
         }
         break;
-      case HOMEWORK_ID:
+      case ITEMS_ID:
           if( TextUtils.isEmpty( selection ) )
           {
             rowsDeleted = sqlDB.delete( ItemTable.TABLE_NAME, ItemTable.COLUMN_ID + "=" + id, null );
@@ -191,10 +191,10 @@ public class SchedulerContentProvider extends ContentProvider
     int rowsUpdated = 0;
     switch( uriType )
     {
-      case COURSES:
+      case HUNTS:
         rowsUpdated = sqlDB.update( ManagerHuntTable.TABLE_NAME, values, selection, selectionArgs );
         break;
-      case COURSES_ID:
+      case HUNTS_ID:
         String id = uri.getLastPathSegment();
         if( TextUtils.isEmpty( selection ) )
         {
@@ -206,10 +206,10 @@ public class SchedulerContentProvider extends ContentProvider
               selectionArgs );
         }
         break;
-      case HOMEWORK:
+      case ITEMS:
           rowsUpdated = sqlDB.update( ItemTable.TABLE_NAME, values, selection, selectionArgs );
           break;
-        case HOMEWORK_ID:
+        case ITEMS_ID:
           id = uri.getLastPathSegment();
           if( TextUtils.isEmpty( selection ) )
           {
@@ -232,22 +232,22 @@ public class SchedulerContentProvider extends ContentProvider
   {
 	  int tableName = 0;
 	  
-    String[] availableCourses = { ManagerHuntTable.COLUMN_ID, ManagerHuntTable.COLUMN_NAME};
-    String[] availableHomeworks = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_DATE, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_COURSE_NAME };
+    String[] availableHunts = { ManagerHuntTable.COLUMN_ID, ManagerHuntTable.COLUMN_NAME};
+    String[] availableItems = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_DATE, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME };
     
     if( projection != null )
     {
       HashSet<String> requestedColumns = new HashSet<String>( Arrays.asList( projection ) );
-      HashSet<String> availableColumnsCourses = new HashSet<String>( Arrays.asList( availableCourses ) );
-      HashSet<String> availableColumnsHomework = new HashSet<String>( Arrays.asList( availableHomeworks ) );
+      HashSet<String> availableColumnsHunts = new HashSet<String>( Arrays.asList( availableHunts ) );
+      HashSet<String> availableColumnsItems = new HashSet<String>( Arrays.asList( availableItems ) );
       // Check if all columns which are requested are available
-      if( !availableColumnsCourses.containsAll( requestedColumns )  &&  !availableColumnsHomework.containsAll( requestedColumns ) )
+      if( !availableColumnsHunts.containsAll( requestedColumns )  &&  !availableColumnsItems.containsAll( requestedColumns ) )
       {
         throw new IllegalArgumentException( "Unknown columns in projection" );
-      } else if( availableColumnsCourses.containsAll( requestedColumns ) ){
-    	  tableName = COURSES;
+      } else if( availableColumnsHunts.containsAll( requestedColumns ) ){
+    	  tableName = HUNTS;
       } else {
-    	  tableName = HOMEWORK;
+    	  tableName = ITEMS;
       }
     }
     return tableName;

@@ -1,5 +1,5 @@
 /**
- * Description: This class displays the list of homework based on which course was selected. The 
+ * Description: This class displays the list of homework based on which hunt was selected. The 
  * 	user will be able to either add a homework (touching the add button), edit a homework (touching
  * 	the homework in the list), and deleting a homework (long press homework in list). 
  *
@@ -42,12 +42,12 @@ public class ItemActivity extends ListActivity implements LoaderManager.LoaderCa
 	private static final int DELETE_ID = Menu.FIRST + 1; //integer id for the delete option for long press
 	private SimpleCursorAdapter adapter; //helps assist with database interactions 
 	public static final String HW_NAME = "NameOfHomework";
-	private String courseName; //receives and passes on course name from the MainActivity
+	private String huntName; //receives and passes on hunt name from the MainActivity
 
 	/**
 	 * The onCreate method retrieves any saved instances and sets the content view layout. It
-	 * retrieves and sets the course name from the MainActivity, fills the homework table with the 
-	 * respective course's homework, and sets up the context menu.   
+	 * retrieves and sets the hunt name from the MainActivity, fills the homework table with the 
+	 * respective hunt's homework, and sets up the context menu.   
 	 * 
 	 * @param savedInstanceState - a bundle of any saved instance values 
 	 */
@@ -56,10 +56,10 @@ public class ItemActivity extends ListActivity implements LoaderManager.LoaderCa
 		super.onCreate( savedInstanceState );
 		setContentView( R.layout.item_list );
 
-		//Get/set the courseName in the activity
-		courseName = getIntent().getStringExtra( ManagerMain.HUNT_NAME);
-		TextView mCourseText = (TextView)findViewById(R.id.courseNameMid);
-		mCourseText.setText(courseName);
+		//Get/set the huntName in the activity
+		huntName = getIntent().getStringExtra( ManagerMain.HUNT_NAME);
+		//TextView mhuntText = (TextView)findViewById(R.id.huntNameMid);
+		//mhuntText.setText(huntName);
 
 		//Set up ListView
 		this.getListView().setDividerHeight( 2 );
@@ -69,9 +69,32 @@ public class ItemActivity extends ListActivity implements LoaderManager.LoaderCa
 		fillData();
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.mm, menu);
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+	@Override
+	  public boolean onOptionsItemSelected( MenuItem item )
+	  {
+	    switch( item.getItemId() )
+	    {
+	      case R.id.action_manage:
+	      {
+	        Intent i = new Intent(this, ManagerMain.class);
+	        startActivity(i);
+
+	        return true;
+	      }
+	      default:
+	          return super.onOptionsItemSelected(item);
+	    }
+	  }
 	/**
-	 * The onCreateLoader loads the homework specific to the course. This makes sure we only see the 
-	 * homework for that course and no others. 
+	 * The onCreateLoader loads the homework specific to the hunt. This makes sure we only see the 
+	 * homework for that hunt and no others. 
 	 * 
 	 * @param arg0 - unused but needed for abstract method
 	 * @param arg1 - unused but needed for abstract method
@@ -80,12 +103,12 @@ public class ItemActivity extends ListActivity implements LoaderManager.LoaderCa
 	 */
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-		Log.d("SchoolScheduler::OnlyCourse", "This Course name is "+ courseName);
+		Log.d("SchoolScheduler::Onlyhunt", "This hunt name is "+ huntName);
 
 		//Retrieve homework info from database
-		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_DATE, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_COURSE_NAME };
-		String[] selection = {courseName};
-		CursorLoader cursorLoader = new CursorLoader( this, SchedulerContentProvider.CONTENT_URI_H, projection, "course=?", selection, null );
+		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_DATE, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME };
+		String[] selection = {huntName};
+		CursorLoader cursorLoader = new CursorLoader( this, FreeganContentProvider.CONTENT_URI_H, projection, "hunt=?", selection, null );
 
 		return cursorLoader;
 	}
@@ -155,7 +178,7 @@ public class ItemActivity extends ListActivity implements LoaderManager.LoaderCa
 	 */
 	public void addHomeworkToList(View view) {
 		Intent intent = new Intent(this, AddItemActivity.class);
-		intent.putExtra(ManagerMain.HUNT_NAME, courseName);
+		intent.putExtra(ManagerMain.HUNT_NAME, huntName);
 		//Set these to empty strings to prevent null point exception and prevent filling changeable
 		//elements in the next activity. 
 		/*intent.putExtra(MainActivity.HW_NAME_TEXT, "");
@@ -191,7 +214,7 @@ public class ItemActivity extends ListActivity implements LoaderManager.LoaderCa
 		//When the delete option is selected delete the homework row from the db
 		case DELETE_ID:
 			AdapterContextMenuInfo info = (AdapterContextMenuInfo)item.getMenuInfo();
-			Uri uri = Uri.parse( SchedulerContentProvider.CONTENT_URI_H + "/" + info.id );
+			Uri uri = Uri.parse( FreeganContentProvider.CONTENT_URI_H + "/" + info.id );
 			getContentResolver().delete( uri, null, null );
 			fillData();
 			return true;
@@ -217,23 +240,23 @@ public class ItemActivity extends ListActivity implements LoaderManager.LoaderCa
 		Intent i = new Intent( this, AddItemActivity.class );
 
 		//Query the database for the necessary information
-		Uri courseUri = Uri.parse( SchedulerContentProvider.CONTENT_URI_H + "/" + id );
-		String[] projection = { ItemTable.COLUMN_NAME, ItemTable.COLUMN_DATE, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_COURSE_NAME };
-		Cursor cursor = getContentResolver().query( courseUri, projection, null, null, null );
+		Uri huntUri = Uri.parse( FreeganContentProvider.CONTENT_URI_H + "/" + id );
+		String[] projection = { ItemTable.COLUMN_NAME, ItemTable.COLUMN_DATE, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME };
+		Cursor cursor = getContentResolver().query( huntUri, projection, null, null, null );
 
 		//Retrieve the information from the database. 
 		cursor.moveToFirst();	    
 		String name = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_NAME ) );
 		String date = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_DATE ) ).replace("-", "");
 		String desc = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_DESCRIPTION ) );
-		String courseName = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_COURSE_NAME ) );
+		String huntName = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_HUNT_NAME ) );
 		cursor.close();
 
 		//Set the variables that will be used in the AddHomeworkActivity
 		/*i.putExtra(MainActivity.HW_NAME_TEXT, name);
 		i.putExtra(MainActivity.DATE_TEXT, date);
 		i.putExtra(MainActivity.DESC_TEXT, desc);
-		i.putExtra(MainActivity.COURSE_MNAME, courseName);*/
+		i.putExtra(MainActivity.hunt_MNAME, huntName);*/
 
 		startActivity( i );
 	}

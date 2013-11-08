@@ -1,4 +1,4 @@
-/** * Description: This class is for the course portion of the database. it is te helper with sql to actually make the database 
+/** * Description: This class is for the hunt portion of the database. it is te helper with sql to actually make the database 
  * 
  * @author Ben Casey
  * 
@@ -10,12 +10,12 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class SchedulerDatabaseHelper extends SQLiteOpenHelper
+public class FreeganDatabaseHelper extends SQLiteOpenHelper
 {
-  private static final String DATABASE_NAME = "coursetable.db";
+  private static final String DATABASE_NAME = "freeganQuest.db";
   private static final int DATABASE_VERSION = 1;
 
-  public SchedulerDatabaseHelper( Context context )
+  public FreeganDatabaseHelper( Context context )
   {
     super( context, DATABASE_NAME, null, DATABASE_VERSION );
   }

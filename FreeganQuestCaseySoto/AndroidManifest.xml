@@ -23,8 +23,8 @@
             </intent-filter>
         </activity>
         <provider
-            android:name="edu.mines.freeganquestcaseysoto.SchedulerContentProvider"
-            android:authorities="edu.mines.freeganquestcaseysoto.coursecontentprovider"
+            android:name="edu.mines.freeganquestcaseysoto.FreeganContentProvider"
+            android:authorities="edu.mines.freeganquestcaseysoto.freeganquestcontentprovider"
             android:exported="false" >
         </provider>
         <activity

@@ -28,7 +28,7 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 	private static final int DELETE_ID = Menu.FIRST + 1;
 	private static final int EDIT_ID = Menu.FIRST + 2;
 	private String huntName;
-	public static final String HUNT_NAME = "NameOfCourse";
+	public static final String HUNT_NAME = "NameOfHunt";
 	/*public static final String HW_NAME_TEXT = "NameOfHW";
 	public static final String DATE_TEXT = "DueDate";
 	public static final String DESC_TEXT = "Description";*/
@@ -46,21 +46,28 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.mm, menu);
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
+	
 	@Override
 	  public boolean onOptionsItemSelected( MenuItem item )
 	  {
 	    switch( item.getItemId() )
 	    {
-	    /*case R.id.action_allHomework:
-	    	Intent i = new Intent(this, AllHomeworkActivity.class);
-			startActivity(i);*/
-	    default:
+	      case R.id.action_manage:
+	      {
+	        Intent i = new Intent(this, ManagerMain.class);
+	        startActivity(i);
+
+	        return true;
+	      }
+	      default:
 	          return super.onOptionsItemSelected(item);
 	    }
 	  }
+	
 	public void onDialog(View view){
 		Bundle args = new Bundle();
 		args.putInt( "dialogID", 1 );
@@ -72,24 +79,24 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 
 	}
 	/**
-	 * Inserts the course into the Course Table.
-	 * checks to see if there are now 2 course of the same name and deletes the last inserted course
+	 * Inserts the hunt into the hunt Table.
+	 * checks to see if there are now 2 hunt of the same name and deletes the last inserted hunt
 	 */
-	public void insertNewCourse(){
+	public void insertNewHunt(){
 		ContentValues values = new ContentValues();
-		//values.put(CourseTable.COLUMN_ID, "idd");
+		//values.put(huntTable.COLUMN_ID, "idd");
 		values.put( ManagerHuntTable.COLUMN_NAME, huntName );
 		String[] projection = { ManagerHuntTable.COLUMN_ID, ManagerHuntTable.COLUMN_NAME};
 		String[] selection = {huntName};
-		getContentResolver().insert( SchedulerContentProvider.CONTENT_URI, values );
+		getContentResolver().insert( FreeganContentProvider.CONTENT_URI, values );
 		
-		//chgecks to see if that course name has already been added
-		Cursor cursor = getContentResolver().query( SchedulerContentProvider.CONTENT_URI, projection, "name=?", selection, ManagerHuntTable.COLUMN_ID + " DESC" );
+		//chgecks to see if that hunt name has already been added
+		Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI, projection, "name=?", selection, ManagerHuntTable.COLUMN_ID + " DESC" );
 		if(cursor.getCount() >1){
 			cursor.moveToFirst();
-			Uri courseUri = Uri.parse( SchedulerContentProvider.CONTENT_URI + "/" +  cursor.getString(cursor.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_ID )) );
-			getContentResolver().delete(courseUri, null, null);
-			Toast toast = Toast.makeText(getApplicationContext(),"Have already added " +huntName+" course!" , Toast.LENGTH_LONG);
+			Uri huntUri = Uri.parse( FreeganContentProvider.CONTENT_URI + "/" +  cursor.getString(cursor.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_ID )) );
+			getContentResolver().delete(huntUri, null, null);
+			Toast toast = Toast.makeText(getApplicationContext(),"Have already added " +huntName+" hunt!" , Toast.LENGTH_LONG);
 			toast.show();
 			fillData();
 		}
@@ -98,31 +105,31 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 	}
 	
 	/**
-	 * Updates the course Name and it's corresponding homework.
-	 * @param newCourseName : used to update the name while courseName is the old course name to query
+	 * Updates the hunt Name and it's corresponding homework.
+	 * @param newhuntName : used to update the name while huntName is the old hunt name to query
 	 */
-	public void updateNewCourse(String newCourseName){
+	public void updateNewHunt(String newHuntName){
 		ContentValues values = new ContentValues();
-		values.put( ManagerHuntTable.COLUMN_NAME, newCourseName );
+		values.put( ManagerHuntTable.COLUMN_NAME, newHuntName );
 		String[] projection = { ManagerHuntTable.COLUMN_ID, ManagerHuntTable.COLUMN_NAME};
 		String[] selection = {huntName};
-		String[] querySelection = {newCourseName};
-		//chgecks to see if that course name is already in database and adds if not. 
-		Cursor cursor = getContentResolver().query( SchedulerContentProvider.CONTENT_URI, projection, "name=?", querySelection, ManagerHuntTable.COLUMN_ID + " DESC" );
+		String[] querySelection = {newHuntName};
+		//chgecks to see if that hunt name is already in database and adds if not. 
+		Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI, projection, "name=?", querySelection, ManagerHuntTable.COLUMN_ID + " DESC" );
 		//Log.d("SchoolScheduler::Update Debu", "curosor count : " + cursor.getCount());
 		if(cursor.getCount() <1){
-			int rowsUpdated = getContentResolver().update( SchedulerContentProvider.CONTENT_URI, values, "name=?", selection );
-			Log.d("SchoolScechulder::update Debug", rowsUpdated + ": " + this.huntName + ": " +newCourseName );	
+			int rowsUpdated = getContentResolver().update( FreeganContentProvider.CONTENT_URI, values, "name=?", selection );
+			Log.d("SchoolScechulder::update Debug", rowsUpdated + ": " + this.huntName + ": " +newHuntName );	
 			fillData();
 			
 			String[] selectionC = {huntName};
-			String[] projection2 = {ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_DATE, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_COURSE_NAME};
+			String[] projection2 = {ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_DATE, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME};
 			
-			Cursor cursorC = getContentResolver().query(SchedulerContentProvider.CONTENT_URI_H, projection2, "course=?", selectionC, null);
+			Cursor cursorC = getContentResolver().query(FreeganContentProvider.CONTENT_URI_H, projection2, "hunt=?", selectionC, null);
 			ContentValues valuesC = new ContentValues();
-			valuesC.put( ItemTable.COLUMN_COURSE_NAME, newCourseName );
+			valuesC.put( ItemTable.COLUMN_HUNT_NAME, newHuntName );
 			for(int i=0; i < cursorC.getCount(); ++i){
-				rowsUpdated = getContentResolver().update( SchedulerContentProvider.CONTENT_URI_H, valuesC, "course=?", selectionC );
+				rowsUpdated = getContentResolver().update( FreeganContentProvider.CONTENT_URI_H, valuesC, "hunt=?", selectionC );
 				
 			}
 		}
@@ -131,31 +138,31 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 		
 	}
 	/**
-	 * overriden function from listView that when clicked will open up the homework activity to show the courses homework.
+	 * overriden function from listView that when clicked will open up the homework activity to show the hunts homework.
 	 */
 	@Override
 	protected void onListItemClick( ListView l, View v, int position, long id )
 	{
 		super.onListItemClick( l, v, position, id );
 		Intent i = new Intent( this, ItemActivity.class );
-		Uri courseUri = Uri.parse( SchedulerContentProvider.CONTENT_URI + "/" + id );
+		Uri huntUri = Uri.parse( FreeganContentProvider.CONTENT_URI + "/" + id );
 		String[] projection = { ManagerHuntTable.COLUMN_NAME };
 
 		//gets the uris for the same id, moves it to first position.
-		Cursor cursor = getContentResolver().query( courseUri, projection, null, null, null );
+		Cursor cursor = getContentResolver().query( huntUri, projection, null, null, null );
 		String name= "";
 		cursor.moveToFirst();	    
 		name = cursor.getString( cursor.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_NAME ) );
 		cursor.close();
 		i.putExtra(HUNT_NAME, name);
-		i.putExtra( SchedulerContentProvider.CONTENT_ITEM_TYPE, courseUri );
+		i.putExtra( FreeganContentProvider.CONTENT_ITEM_TYPE, huntUri );
 		startActivity( i );
 	}
 
 	/**
-	 * overridden function from listview, if long pressed will delete or edit the course.
-	 * The delete, deletes the course and deletes the corresponding homework from the homework table
-	 * The edit uses the input Dialog and that changes the course name and corresponding homework.
+	 * overridden function from listview, if long pressed will delete or edit the hunt.
+	 * The delete, deletes the hunt and deletes the corresponding homework from the homework table
+	 * The edit uses the input Dialog and that changes the hunt name and corresponding homework.
 	 */
 	@Override
 	public boolean onContextItemSelected( MenuItem item )
@@ -164,9 +171,9 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 		{
 		case DELETE_ID:
 			AdapterContextMenuInfo info = (AdapterContextMenuInfo)item.getMenuInfo();
-			Uri uri = Uri.parse( SchedulerContentProvider.CONTENT_URI + "/" + info.id );
+			Uri uri = Uri.parse( FreeganContentProvider.CONTENT_URI + "/" + info.id );
 			
-			//query to get the course name that is bieng deleted
+			//query to get the hunt name that is bieng deleted
 			String[] projection2 = { ManagerHuntTable.COLUMN_NAME };
 			Cursor cursor2 = getContentResolver().query( uri, projection2, null, null, null );
 			String name2= "";
@@ -177,16 +184,16 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 			
 			getContentResolver().delete( uri, null, null );
 			
-			//get all homework associsated with this course and delete it.
-			String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_DATE, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_COURSE_NAME };
+			//get all homework associsated with this hunt and delete it.
+			String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_DATE, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME };
 			String[] querySelection = { this.huntName };
 			//gets the uris for the same id, moves it to first position.
-			uri = Uri.parse( SchedulerContentProvider.CONTENT_URI_H + "/");
-			Cursor cursor = getContentResolver().query( uri, projection, "course=?", querySelection, null );
+			uri = Uri.parse( FreeganContentProvider.CONTENT_URI_H + "/");
+			Cursor cursor = getContentResolver().query( uri, projection, "hunt=?", querySelection, null );
 			cursor.moveToFirst();
 			for(int i=0; i < cursor.getCount(); ++i){
 				String id =  cursor.getString(cursor.getColumnIndexOrThrow(ItemTable.COLUMN_ID));
-				uri = Uri.parse( SchedulerContentProvider.CONTENT_URI_H + "/" + id );
+				uri = Uri.parse( FreeganContentProvider.CONTENT_URI_H + "/" + id );
 				getContentResolver().delete( uri, null, null );
 				cursor.moveToNext();
 			}
@@ -195,7 +202,7 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 			return true;
 		case EDIT_ID: 
 			info = (AdapterContextMenuInfo)item.getMenuInfo();
-			uri = Uri.parse( SchedulerContentProvider.CONTENT_URI + "/" + info.id );
+			uri = Uri.parse( FreeganContentProvider.CONTENT_URI + "/" + info.id );
 			String[] projection3 = { ManagerHuntTable.COLUMN_NAME };
 
 			//gets the uris for the same id, moves it to first position.
@@ -216,12 +223,12 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 		return super.onContextItemSelected( item );
 	}
 	/**
-	 * onCreateLoader loads the initial course table with anything that follows the projection in the database.
+	 * onCreateLoader loads the initial hunt table with anything that follows the projection in the database.
 	 */
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 		String[] projection = { ManagerHuntTable.COLUMN_ID, ManagerHuntTable.COLUMN_NAME };
-		CursorLoader cursorLoader = new CursorLoader( this, SchedulerContentProvider.CONTENT_URI, projection, null, null, null );
+		CursorLoader cursorLoader = new CursorLoader( this, FreeganContentProvider.CONTENT_URI, projection, null, null, null );
 		return cursorLoader;
 	}
 
@@ -275,7 +282,7 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 	}
 
 	/**
-	 * overrides the dialog fragment for inputting course. depending on eit or inserting. 
+	 * overrides the dialog fragment for inputting hunt. depending on eit or inserting. 
 	 * @param dialogID : the id returned to see if it is an insert or edit.
 	 * @param input : the returned string.
 	 */
@@ -286,10 +293,10 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 
 		if(dialogID == 1){
 			this.huntName = input;
-			insertNewCourse();
+			insertNewHunt();
 		}
 		else if(dialogID == 2){
-			updateNewCourse(input);
+			updateNewHunt(input);
 			
 			
 		}

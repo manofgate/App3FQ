@@ -1,4 +1,4 @@
-/** * Description: This class is for the course portion of the database. It holds the creation of the table and columns. 
+/** * Description: This class is for the hunt portion of the database. It holds the creation of the table and columns. 
  * 
  * @author Ben Casey
  * 
