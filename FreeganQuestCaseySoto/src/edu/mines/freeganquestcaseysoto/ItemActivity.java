@@ -84,6 +84,7 @@ public class ItemActivity extends ListActivity implements LoaderManager.LoaderCa
 	      case R.id.action_manage:
 	      {
 	        Intent i = new Intent(this, ManagerMain.class);
+	        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 	        startActivity(i);
 
 	        return true;
