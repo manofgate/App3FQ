@@ -233,7 +233,8 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 			cursor2.moveToFirst();	    
 			name2 = cursor2.getString( cursor2.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_NAME ) );
 			cursor2.close();
-
+			Log.d("FREEQUEST: ", "name is: " + name2);
+			
 			Intent i = new Intent(this, LocationActivity.class);
 			i.putExtra(HUNT_NAME, name2);
 			startActivity(i);

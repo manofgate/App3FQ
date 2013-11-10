@@ -41,7 +41,7 @@ public class LocationActivity extends ListActivity implements LoaderManager.Load
 
 	private static final int DELETE_ID = Menu.FIRST + 1; //integer id for the delete option for long press
 	private SimpleCursorAdapter adapter; //helps assist with database interactions 
-	public static final String HT_NAME = "NameOfHunt";
+	public static final String HUNT_NAME = "NameOfHunt";
 	private String huntName; //receives and passes on hunt name from the MainActivity
 
 	/**
@@ -106,8 +106,8 @@ public class LocationActivity extends ListActivity implements LoaderManager.Load
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 		Log.d("SchoolScheduler::Onlyhunt", "This hunt name is "+ huntName);
 
-		//Retrieve homework info from database
-		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME };
+		//Retrieve item  info from database
+		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_HUNT_NAME };
 		String[] selection = {huntName};
 		CursorLoader cursorLoader = new CursorLoader( this, FreeganContentProvider.CONTENT_URI_H, projection, "hunt=?", selection, null );
 
@@ -140,7 +140,7 @@ public class LocationActivity extends ListActivity implements LoaderManager.Load
 	 */
 	private void fillData() {
 		//Fields in the DB from which we map 
-		String[] from = new String[] { ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION };
+		String[] from = new String[] { ItemTable.COLUMN_NAME, ItemTable.COLUMN_HUNT_NAME };
 
 		// Fields on the UI to which we map
 		int[] to = new int[] { R.id.itemName, R.id.location };
