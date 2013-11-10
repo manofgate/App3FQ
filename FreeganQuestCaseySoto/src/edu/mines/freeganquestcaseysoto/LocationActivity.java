@@ -37,11 +37,11 @@ import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
 @SuppressLint("NewApi")
-public class ItemActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+public class LocationActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
 	private static final int DELETE_ID = Menu.FIRST + 1; //integer id for the delete option for long press
 	private SimpleCursorAdapter adapter; //helps assist with database interactions 
-	public static final String HW_NAME = "NameOfHomework";
+	public static final String HT_NAME = "NameOfHunt";
 	private String huntName; //receives and passes on hunt name from the MainActivity
 
 	/**
@@ -54,7 +54,7 @@ public class ItemActivity extends ListActivity implements LoaderManager.LoaderCa
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
-		setContentView( R.layout.item_list );
+		setContentView( R.layout.item_loc_list );
 
 		//Get/set the huntName in the activity
 		huntName = getIntent().getStringExtra( ManagerMain.HUNT_NAME);
@@ -140,17 +140,17 @@ public class ItemActivity extends ListActivity implements LoaderManager.LoaderCa
 	 */
 	private void fillData() {
 		//Fields in the DB from which we map 
-		String[] from = new String[] { ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION };
+		String[] from = new String[] { ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION };
 
 		// Fields on the UI to which we map
-		int[] to = new int[] { R.id.hwName, R.id.date, R.id.descrption };
+		int[] to = new int[] { R.id.itemName, R.id.location };
 
 		// Ensure a loader is initialized and active.
 		getLoaderManager().initLoader( 0, null, this );
 
 		// Note the last parameter to this constructor (zero), which indicates the adaptor should
 		// not try to automatically re-query the data ... the loader will take care of this.
-		this.adapter = new SimpleCursorAdapter( this, R.layout.item_list_row, null, from, to, 0 ){
+		this.adapter = new SimpleCursorAdapter( this, R.layout.item_loc_list, null, from, to, 0 ){
 			//Change the color of each ListItem to help the user
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
@@ -224,9 +224,7 @@ public class ItemActivity extends ListActivity implements LoaderManager.LoaderCa
 	}
 
 	/**
-	 * The onListItemClick method retrieves the information from the list, queries the database, 
-	 * sets the respective variables with that info, then starts the AddHomeworkActivity for editing
-	 * purposes. 
+	 * 
 	 * 
 	 * @param l - the list from the Activity
 	 * @param v - the view from the Activity
@@ -237,28 +235,5 @@ public class ItemActivity extends ListActivity implements LoaderManager.LoaderCa
 	protected void onListItemClick( ListView l, View v, int position, long id ) {
 		super.onListItemClick( l, v, position, id );
 
-		//Get the AddHomeworkActivity intent
-		Intent i = new Intent( this, AddItemActivity.class );
-
-		//Query the database for the necessary information
-		Uri huntUri = Uri.parse( FreeganContentProvider.CONTENT_URI_H + "/" + id );
-		String[] projection = { ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME };
-		Cursor cursor = getContentResolver().query( huntUri, projection, null, null, null );
-
-		//Retrieve the information from the database. 
-		cursor.moveToFirst();	    
-		String name = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_NAME ) );
-		String date = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_LOCATION ) ).replace("-", "");
-		String desc = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_DESCRIPTION ) );
-		String huntName = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_HUNT_NAME ) );
-		cursor.close();
-
-		//Set the variables that will be used in the AddHomeworkActivity
-		/*i.putExtra(MainActivity.HW_NAME_TEXT, name);
-		i.putExtra(MainActivity.DATE_TEXT, date);
-		i.putExtra(MainActivity.DESC_TEXT, desc);
-		i.putExtra(MainActivity.hunt_MNAME, huntName);*/
-
-		startActivity( i );
 	}
 }

@@ -25,5 +25,5 @@
     <string name="descriptionHint"></string>
     <string name="submit"></string>
     <string name= "manMode">Manager</string>
- 
+ 	<string name="menu_show_loc">Show Locations</string>
 </resources>

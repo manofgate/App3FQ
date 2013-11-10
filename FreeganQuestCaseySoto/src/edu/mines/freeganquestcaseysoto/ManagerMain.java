@@ -27,6 +27,7 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 	private SimpleCursorAdapter adapter;
 	private static final int DELETE_ID = Menu.FIRST + 1;
 	private static final int EDIT_ID = Menu.FIRST + 2;
+	private static final int SHOW_LOC_ID = Menu.FIRST + 3;
 	private String huntName;
 	public static final String HUNT_NAME = "NameOfHunt";
 	/*public static final String HW_NAME_TEXT = "NameOfHW";
@@ -124,7 +125,7 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 			fillData();
 			
 			String[] selectionC = {huntName};
-			String[] projection2 = {ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_DATE, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME};
+			String[] projection2 = {ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME};
 			
 			Cursor cursorC = getContentResolver().query(FreeganContentProvider.CONTENT_URI_H, projection2, "hunt=?", selectionC, null);
 			ContentValues valuesC = new ContentValues();
@@ -139,7 +140,7 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 		
 	}
 	/**
-	 * overriden function from listView that when clicked will open up the homework activity to show the hunts homework.
+	 * overriden function from listView that when clicked will open up the Item activity to show the hunts Items.
 	 */
 	@Override
 	protected void onListItemClick( ListView l, View v, int position, long id )
@@ -162,8 +163,8 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 
 	/**
 	 * overridden function from listview, if long pressed will delete or edit the hunt.
-	 * The delete, deletes the hunt and deletes the corresponding homework from the homework table
-	 * The edit uses the input Dialog and that changes the hunt name and corresponding homework.
+	 * The delete, deletes the hunt and deletes the corresponding items from the item table
+	 * The edit uses the input Dialog and that changes the hunt name and corresponding items.
 	 */
 	@Override
 	public boolean onContextItemSelected( MenuItem item )
@@ -186,7 +187,7 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 			getContentResolver().delete( uri, null, null );
 			
 			//get all homework associsated with this hunt and delete it.
-			String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_DATE, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME };
+			String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME };
 			String[] querySelection = { this.huntName };
 			//gets the uris for the same id, moves it to first position.
 			uri = Uri.parse( FreeganContentProvider.CONTENT_URI_H + "/");
@@ -220,6 +221,22 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 			InputDialogFragment dialog = new InputDialogFragment();
 			dialog.setArguments( args );
 			dialog.show( getFragmentManager(), "Dialog" );
+			return true;
+		case SHOW_LOC_ID:
+			info = (AdapterContextMenuInfo)item.getMenuInfo();
+			uri = Uri.parse( FreeganContentProvider.CONTENT_URI + "/" + info.id );
+			String[] projection4 = { ManagerHuntTable.COLUMN_NAME };
+
+			//gets the uris for the same id, moves it to first position.
+			cursor2 = getContentResolver().query( uri, projection4, null, null, null );
+			name2= "";
+			cursor2.moveToFirst();	    
+			name2 = cursor2.getString( cursor2.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_NAME ) );
+			cursor2.close();
+
+			Intent i = new Intent(this, LocationActivity.class);
+			i.putExtra(HUNT_NAME, name2);
+			startActivity(i);
 		}
 		return super.onContextItemSelected( item );
 	}
@@ -322,5 +339,6 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 		super.onCreateContextMenu( menu, v, menuInfo );
 		menu.add( 0, DELETE_ID, 0, R.string.menu_delete );
 		menu.add( 0, EDIT_ID, 0, R.string.menu_edit );
+		menu.add(0, SHOW_LOC_ID, 0, R.string.menu_show_loc);
 	}
 }

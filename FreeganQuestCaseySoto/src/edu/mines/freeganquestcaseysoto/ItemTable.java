@@ -16,7 +16,7 @@ public class ItemTable {
 	public static final String TABLE_NAME = "items";
 	public static final String COLUMN_ID = "_id";
 	public static final String COLUMN_NAME = "name";
-	public static final String COLUMN_DATE = "date";
+	public static final String COLUMN_LOCATION = "loc";
 	public static final String COLUMN_DESCRIPTION = "desc";
 	public static final String COLUMN_HUNT_NAME = "hunt";
 
@@ -24,7 +24,7 @@ public class ItemTable {
 	private static final String TABLE_CREATE = "create table " + TABLE_NAME + "(" + 
 			COLUMN_ID + " integer primary key autoincrement, " + 
 			COLUMN_NAME + " text not null," + 
-			COLUMN_DATE + " text not null," +
+			COLUMN_LOCATION + " text not null," +
 			COLUMN_DESCRIPTION + " text not null," +
 			COLUMN_HUNT_NAME + " text not null" + ");";
 

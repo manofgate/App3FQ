@@ -227,7 +227,7 @@ public class AddItemActivity extends Activity {
 			rowsUpdated = rowsUpdated + getContentResolver().update( FreeganContentProvider.CONTENT_URI_H, values, "name=? AND date=? AND desc=?", selection );
 		}
 		if(!dueDate.equals(date)){
-			values.put( ItemTable.COLUMN_DATE, dueDate );
+			values.put( ItemTable.COLUMN_LOCATION, dueDate );
 			String[] selection = {date, name, description};
 			rowsUpdated = rowsUpdated + getContentResolver().update( FreeganContentProvider.CONTENT_URI_H, values, "date=? AND name=? AND desc=?", selection );
 		}
@@ -251,7 +251,7 @@ public class AddItemActivity extends Activity {
 	public void insertNewHW(String name, String date, String desc, String hunt){
 		ContentValues values = new ContentValues();
 		values.put( ItemTable.COLUMN_NAME, name );
-		values.put( ItemTable.COLUMN_DATE, date );
+		values.put( ItemTable.COLUMN_LOCATION, date );
 		values.put( ItemTable.COLUMN_DESCRIPTION, desc);
 		values.put( ItemTable.COLUMN_HUNT_NAME, hunt);
 		
