@@ -1,7 +1,7 @@
 /**
- * Description: This class takes in user input for the homework's name, due date, and description. 
+ * Description: This class takes in user input for the item's name, due date, and description. 
  * 	Once the user submits this data it validates and normalizes the input and adds it to the database. 
- * 	The class handles adding new homework as well as updating homework.  
+ * 	The class handles adding new item as well as updating item.  
  *
  * @author Craig J. Soto II
  * @author Ben Casey
@@ -44,15 +44,15 @@ import android.database.Cursor;
 public class AddItemActivity extends Activity {
 
 	private final static int DESC_MAX = 140; //used to limit the users description to 140 characters
-	private boolean update = false; //used to help determine if homework is being updated or not
+	private boolean update = false; //used to help determine if item is being updated or not
 	private String hwName = ""; //used for checking if name needs to be updated
 	private String date = ""; //used for checking if date needs to be updated
 	private String description = ""; //used for checking if description needs to be updated
 
 	/**
 	 * The onCreate method retrieves any saved instances and sets the content view layout. It
-	 * retrieves and sets the hunt name, homwork name, due date, and description (if present
-	 * from the HomeworkActivity, fills the respective TextViews.    
+	 * retrieves and sets the hunt name,item name, due date, and description (if present
+	 * from the itemActivity, fills the respective TextViews.    
 	 * 
 	 * @param savedInstanceState - a bundle of any saved instance values 
 	 */
@@ -61,7 +61,7 @@ public class AddItemActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_add_item);
 
-		//Retrieve strings passed in from the HomeworkActivity
+		//Retrieve strings passed in from the itemActivity
 		String message = getIntent().getStringExtra( ManagerMain.HUNT_NAME);
 		/*hwName = getIntent().getStringExtra( MainActivity.HW_NAME_TEXT);
 		date = getIntent().getStringExtra( MainActivity.DATE_TEXT);
@@ -73,10 +73,10 @@ public class AddItemActivity extends Activity {
 		TextView dateText = (TextView) findViewById(R.id.dateInput);
 		TextView descText = (TextView) findViewById(R.id.descriptionInput);
 
-		//Set the TextView item to the new text form the HomeworkActivity
+		//Set the TextView item to the new text form the itemActivity
 		//mhuntText.setText(message);
 
-		//If HomeworkActivity will be updating info, the hwName won't be empty nor will description
+		//If itemActivity will be updating info, the hwName won't be empty nor will description
 		//or date guaranteed (we normalize the info put into the db so we will always have this). We
 		//also set the update value to true to follow update logic. 
 		if(!hwName.equals("")){
@@ -199,7 +199,7 @@ public class AddItemActivity extends Activity {
 				correctInput = !dueDate.before(today);
 			} catch (ParseException e) {
 				correctInput = false;
-				Log.d("ADDHOMEWORKACTIVITY", "Error parsing dates." + e);
+				Log.d("ADDitemACTIVITY", "Error parsing dates." + e);
 			}
 		}
 
@@ -218,7 +218,7 @@ public class AddItemActivity extends Activity {
 		int rowsUpdated = 0;
 		
 		//If the name/date/description was updated by the user it won't match the values that were passed
-		//from HomeworkActivity when the user clicked a homework to be updated. In this case, updated
+		//from itemActivity when the user clicked a item to be updated. In this case, updated
 		//that item respectively. 
 		ContentValues values = new ContentValues();
 		if(!name.equals(hwName)){
@@ -238,7 +238,7 @@ public class AddItemActivity extends Activity {
 		}
 
 		if(rowsUpdated == 0){
-			Log.d("ADDHOMEWORK", "Now rows were updated");
+			Log.d("ADDitem", "Now rows were updated");
 		}
 	}
 
@@ -255,10 +255,10 @@ public class AddItemActivity extends Activity {
 		values.put( ItemTable.COLUMN_DESCRIPTION, desc);
 		values.put( ItemTable.COLUMN_HUNT_NAME, hunt);
 		
-		//Insert values into the Homework Table
+		//Insert values into the item Table
 		getContentResolver().insert( FreeganContentProvider.CONTENT_URI_H, values );
 
-		//Verify if identical entries were inserted into the Homework Table 
+		//Verify if identical entries were inserted into the item Table 
 		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME};
 		String[] selection = {name};
 		Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI_H, projection, "name=?", selection, ItemTable.COLUMN_ID + " DESC" );

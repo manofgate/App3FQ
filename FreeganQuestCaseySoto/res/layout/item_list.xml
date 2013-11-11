@@ -30,7 +30,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_marginRight="34dp"
-        android:onClick="addHomeworkToList"
+        android:onClick="addItemToList"
         android:text="@string/addItem" />
 
     <TextView

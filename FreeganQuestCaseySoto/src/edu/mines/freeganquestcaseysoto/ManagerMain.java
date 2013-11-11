@@ -86,13 +86,13 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 	 */
 	public void insertNewHunt(){
 		ContentValues values = new ContentValues();
-		//values.put(huntTable.COLUMN_ID, "idd");
+		
 		values.put( ManagerHuntTable.COLUMN_NAME, huntName );
 		String[] projection = { ManagerHuntTable.COLUMN_ID, ManagerHuntTable.COLUMN_NAME};
 		String[] selection = {huntName};
 		getContentResolver().insert( FreeganContentProvider.CONTENT_URI, values );
 		
-		//chgecks to see if that hunt name has already been added
+		//checks to see if that hunt name has already been added
 		Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI, projection, "name=?", selection, ManagerHuntTable.COLUMN_ID + " DESC" );
 		if(cursor.getCount() >1){
 			cursor.moveToFirst();
@@ -107,7 +107,7 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 	}
 	
 	/**
-	 * Updates the hunt Name and it's corresponding homework.
+	 * Updates the hunt Name and it's corresponding items.
 	 * @param newhuntName : used to update the name while huntName is the old hunt name to query
 	 */
 	public void updateNewHunt(String newHuntName){
@@ -116,12 +116,12 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 		String[] projection = { ManagerHuntTable.COLUMN_ID, ManagerHuntTable.COLUMN_NAME};
 		String[] selection = {huntName};
 		String[] querySelection = {newHuntName};
-		//chgecks to see if that hunt name is already in database and adds if not. 
+		
+		//checks to see if that hunt name is already in database and adds if not. 
 		Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI, projection, "name=?", querySelection, ManagerHuntTable.COLUMN_ID + " DESC" );
-		//Log.d("SchoolScheduler::Update Debu", "curosor count : " + cursor.getCount());
+		
 		if(cursor.getCount() <1){
 			int rowsUpdated = getContentResolver().update( FreeganContentProvider.CONTENT_URI, values, "name=?", selection );
-			Log.d("SchoolScechulder::update Debug", rowsUpdated + ": " + this.huntName + ": " +newHuntName );	
 			fillData();
 			
 			String[] selectionC = {huntName};
@@ -308,7 +308,6 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 	@Override
 	public void onInputDone( int dialogID, String input )
 	{
-		Log.d( "School_Scheduler", "\"" + input + "\" received from input dialog with id =" + dialogID );
 
 		if(dialogID == 1){
 			this.huntName = input;
@@ -330,7 +329,6 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 	@Override
 	public void onInputCancel( int dialogID )
 	{
-		Log.d( "School_Scheduler", "No input received from input dialog with id =" + dialogID );
 	}
 
 	/** The menu displayed on a long touch. */
@@ -343,3 +341,4 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 		menu.add(0, SHOW_LOC_ID, 0, R.string.menu_show_loc);
 	}
 }
+

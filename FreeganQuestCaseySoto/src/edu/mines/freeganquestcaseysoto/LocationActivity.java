@@ -1,7 +1,6 @@
 /**
- * Description: This class displays the list of homework based on which hunt was selected. The 
- * 	user will be able to either add a homework (touching the add button), edit a homework (touching
- * 	the homework in the list), and deleting a homework (long press homework in list). 
+ * Description: This class displays the list of items location and names based on which hunt was selected. The user
+ *  will be able to delete an item (long press item in list). 
  *
  * @author Craig J. Soto II
  * @author Ben Casey
@@ -46,8 +45,8 @@ public class LocationActivity extends ListActivity implements LoaderManager.Load
 
 	/**
 	 * The onCreate method retrieves any saved instances and sets the content view layout. It
-	 * retrieves and sets the hunt name from the MainActivity, fills the homework table with the 
-	 * respective hunt's homework, and sets up the context menu.   
+	 * retrieves and sets the hunt name from the ManagerMain, fills the item table with the 
+	 * respective hunt's items, and sets up the context menu.   
 	 * 
 	 * @param savedInstanceState - a bundle of any saved instance values 
 	 */
@@ -94,18 +93,16 @@ public class LocationActivity extends ListActivity implements LoaderManager.Load
 	    }
 	  }
 	/**
-	 * The onCreateLoader loads the homework specific to the hunt. This makes sure we only see the 
-	 * homework for that hunt and no others. 
+	 * The onCreateLoader loads the item specific to the hunt. This makes sure we only see the 
+	 * item for that hunt and no others. 
 	 * 
 	 * @param arg0 - unused but needed for abstract method
 	 * @param arg1 - unused but needed for abstract method
 	 * 
-	 * @return cursorLoader - the homework information from the database
+	 * @return cursorLoader - the item information from the database
 	 */
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-		Log.d("SchoolScheduler::Onlyhunt", "This hunt name is "+ huntName);
-
 		//Retrieve item  info from database
 		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_DESCRIPTION ,ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_HUNT_NAME };
 		String[] selection = {huntName};
@@ -136,7 +133,7 @@ public class LocationActivity extends ListActivity implements LoaderManager.Load
 	}
 
 	/**
-	 * The fillData method fills the ListView with the homework. 
+	 * The fillData method fills the ListView with the items. 
 	 */
 	private void fillData() {
 		//Fields in the DB from which we map 

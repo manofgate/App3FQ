@@ -1,4 +1,4 @@
-/** * Description: This class is for the database interaction with the homework, hunt tables on insert, delete, update, and query 
+/** * Description: This class is for the database interaction with the item, hunt tables on insert, delete, update, and query 
  * 
  * @author Ben Casey
  * @author Craig Soto II

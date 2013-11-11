@@ -1,7 +1,7 @@
 /**
- * Description: This class displays the list of homework based on which hunt was selected. The 
- * 	user will be able to either add a homework (touching the add button), edit a homework (touching
- * 	the homework in the list), and deleting a homework (long press homework in list). 
+ * Description: This class displays the list of items based on which hunt was selected. The 
+ * 	user will be able to either add an item (touching the add button), edit an item (touching
+ * 	the item in the list), and deleting an item (long press item in list). 
  *
  * @author Craig J. Soto II
  * @author Ben Casey
@@ -41,13 +41,13 @@ public class ItemActivity extends ListActivity implements LoaderManager.LoaderCa
 
 	private static final int DELETE_ID = Menu.FIRST + 1; //integer id for the delete option for long press
 	private SimpleCursorAdapter adapter; //helps assist with database interactions 
-	public static final String HW_NAME = "NameOfHomework";
+	public static final String HW_NAME = "NameOfitem";
 	private String huntName; //receives and passes on hunt name from the MainActivity
 
 	/**
 	 * The onCreate method retrieves any saved instances and sets the content view layout. It
-	 * retrieves and sets the hunt name from the MainActivity, fills the homework table with the 
-	 * respective hunt's homework, and sets up the context menu.   
+	 * retrieves and sets the hunt name from the ManagerMain, fills the item table with the 
+	 * respective hunt's item, and sets up the context menu.   
 	 * 
 	 * @param savedInstanceState - a bundle of any saved instance values 
 	 */
@@ -94,19 +94,18 @@ public class ItemActivity extends ListActivity implements LoaderManager.LoaderCa
 	    }
 	  }
 	/**
-	 * The onCreateLoader loads the homework specific to the hunt. This makes sure we only see the 
-	 * homework for that hunt and no others. 
+	 * The onCreateLoader loads the item specific to the hunt. This makes sure we only see the 
+	 * item for that hunt and no others. 
 	 * 
 	 * @param arg0 - unused but needed for abstract method
 	 * @param arg1 - unused but needed for abstract method
 	 * 
-	 * @return cursorLoader - the homework information from the database
+	 * @return cursorLoader - the item information from the database
 	 */
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-		Log.d("SchoolScheduler::Onlyhunt", "This hunt name is "+ huntName);
 
-		//Retrieve homework info from database
+		//Retrieve item info from database
 		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME };
 		String[] selection = {huntName};
 		CursorLoader cursorLoader = new CursorLoader( this, FreeganContentProvider.CONTENT_URI_H, projection, "hunt=?", selection, null );
@@ -136,7 +135,7 @@ public class ItemActivity extends ListActivity implements LoaderManager.LoaderCa
 	}
 
 	/**
-	 * The fillData method fills the ListView with the homework. 
+	 * The fillData method fills the ListView with the item. 
 	 */
 	private void fillData() {
 		//Fields in the DB from which we map 
@@ -172,12 +171,12 @@ public class ItemActivity extends ListActivity implements LoaderManager.LoaderCa
 	}
 
 	/**
-	 * The addHomeworkToList method starts the AddHomeworkActivity. It also sets the needed elements
+	 * The additemToList method starts the AdditemActivity. It also sets the needed elements
 	 * used in that activity. 
 	 * 
 	 * @param view - this is necessary for the button to interact with the activity
 	 */
-	public void addHomeworkToList(View view) {
+	public void addItemToList(View view) {
 		Intent intent = new Intent(this, AddItemActivity.class);
 		intent.putExtra(ManagerMain.HUNT_NAME, huntName);
 		//Set these to empty strings to prevent null point exception and prevent filling changeable
@@ -212,7 +211,7 @@ public class ItemActivity extends ListActivity implements LoaderManager.LoaderCa
 	@Override
 	public boolean onContextItemSelected( MenuItem item ) {
 		switch( item.getItemId() ) {
-		//When the delete option is selected delete the homework row from the db
+		//When the delete option is selected delete the item row from the db
 		case DELETE_ID:
 			AdapterContextMenuInfo info = (AdapterContextMenuInfo)item.getMenuInfo();
 			Uri uri = Uri.parse( FreeganContentProvider.CONTENT_URI_H + "/" + info.id );
@@ -225,7 +224,7 @@ public class ItemActivity extends ListActivity implements LoaderManager.LoaderCa
 
 	/**
 	 * The onListItemClick method retrieves the information from the list, queries the database, 
-	 * sets the respective variables with that info, then starts the AddHomeworkActivity for editing
+	 * sets the respective variables with that info, then starts the AdditemActivity for editing
 	 * purposes. 
 	 * 
 	 * @param l - the list from the Activity
@@ -237,7 +236,7 @@ public class ItemActivity extends ListActivity implements LoaderManager.LoaderCa
 	protected void onListItemClick( ListView l, View v, int position, long id ) {
 		super.onListItemClick( l, v, position, id );
 
-		//Get the AddHomeworkActivity intent
+		//Get the AdditemActivity intent
 		Intent i = new Intent( this, AddItemActivity.class );
 
 		//Query the database for the necessary information
@@ -253,7 +252,7 @@ public class ItemActivity extends ListActivity implements LoaderManager.LoaderCa
 		String huntName = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_HUNT_NAME ) );
 		cursor.close();
 
-		//Set the variables that will be used in the AddHomeworkActivity
+		//Set the variables that will be used in the AdditemActivity
 		/*i.putExtra(MainActivity.HW_NAME_TEXT, name);
 		i.putExtra(MainActivity.DATE_TEXT, date);
 		i.putExtra(MainActivity.DESC_TEXT, desc);

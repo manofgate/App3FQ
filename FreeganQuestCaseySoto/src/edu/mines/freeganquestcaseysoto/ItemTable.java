@@ -1,5 +1,5 @@
 /**
-* Description: This class sets up the homework table for the database.  
+* Description: This class sets up the item table for the database.  
 *
 * @author Craig J. Soto II
 * @author Ben Casey
@@ -31,7 +31,7 @@ public class ItemTable {
 	/**
 	* The onCreate method is used to create the items Table by executing the .execSQL command.
 	* 
-	* @param database - the database object that will be used to create the Homework Table
+	* @param database - the database object that will be used to create the item Table
 	*/
 	public static void onCreate( SQLiteDatabase database ) {
 		database.execSQL( TABLE_CREATE );
