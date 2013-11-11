@@ -107,7 +107,7 @@ public class LocationActivity extends ListActivity implements LoaderManager.Load
 		Log.d("SchoolScheduler::Onlyhunt", "This hunt name is "+ huntName);
 
 		//Retrieve item  info from database
-		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_HUNT_NAME };
+		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_DESCRIPTION ,ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_HUNT_NAME };
 		String[] selection = {huntName};
 		CursorLoader cursorLoader = new CursorLoader( this, FreeganContentProvider.CONTENT_URI_H, projection, "hunt=?", selection, null );
 
@@ -140,7 +140,7 @@ public class LocationActivity extends ListActivity implements LoaderManager.Load
 	 */
 	private void fillData() {
 		//Fields in the DB from which we map 
-		String[] from = new String[] { ItemTable.COLUMN_NAME, ItemTable.COLUMN_HUNT_NAME };
+		String[] from = new String[] { ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION };
 
 		// Fields on the UI to which we map
 		int[] to = new int[] { R.id.itemName, R.id.location };
@@ -150,7 +150,7 @@ public class LocationActivity extends ListActivity implements LoaderManager.Load
 
 		// Note the last parameter to this constructor (zero), which indicates the adaptor should
 		// not try to automatically re-query the data ... the loader will take care of this.
-		this.adapter = new SimpleCursorAdapter( this, R.layout.item_loc_list, null, from, to, 0 ){
+		this.adapter = new SimpleCursorAdapter( this, R.layout.item_loc_list_row, null, from, to, 0 ){
 			//Change the color of each ListItem to help the user
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
@@ -171,22 +171,6 @@ public class LocationActivity extends ListActivity implements LoaderManager.Load
 		setListAdapter( this.adapter );
 	}
 
-	/**
-	 * The addHomeworkToList method starts the AddHomeworkActivity. It also sets the needed elements
-	 * used in that activity. 
-	 * 
-	 * @param view - this is necessary for the button to interact with the activity
-	 */
-	public void addHomeworkToList(View view) {
-		Intent intent = new Intent(this, AddItemActivity.class);
-		intent.putExtra(ManagerMain.HUNT_NAME, huntName);
-		//Set these to empty strings to prevent null point exception and prevent filling changeable
-		//elements in the next activity. 
-		/*intent.putExtra(MainActivity.HW_NAME_TEXT, "");
-		intent.putExtra(MainActivity.DATE_TEXT, "");
-		intent.putExtra(MainActivity.DESC_TEXT, "");*/
-		startActivity(intent);
-	}
 
 	/**
 	 * The onCreateContextMenu method sets up the menu displayed on a long touch.
