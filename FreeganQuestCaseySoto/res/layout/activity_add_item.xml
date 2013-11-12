@@ -7,13 +7,13 @@
     tools:ignore="NewApi" >
 
     <LinearLayout
-        android:id="@+id/courseLayout"
+        android:id="@+id/huntLayout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="True" >
 
         <TextView
-            android:id="@+id/courseEnd"
+            android:id="@+id/huntNameText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight=".3"
@@ -21,7 +21,7 @@
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <TextView
-            android:id="@+id/courseNameEnd"
+            android:id="@+id/huntName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight=".7"
@@ -29,22 +29,14 @@
             android:textSize="24sp" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/homeworkEnd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/courseLayout"
-        android:text="@string/itemName"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
     <LinearLayout
-        android:id="@+id/nameLayout"
+        android:id="@+id/itemLayout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/homeworkEnd" >
+        android:layout_below="@id/huntLayout">
 
         <TextView
-            android:id="@+id/nameText"
+            android:id="@+id/itemNameText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight=".3"
@@ -52,7 +44,7 @@
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <EditText
-            android:id="@+id/nameInput"
+            android:id="@+id/itemNameInput"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight=".7"
@@ -67,24 +59,24 @@
         android:id="@+id/dateLayout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/nameLayout" >
+        android:layout_below="@id/itemLayout" >
 
         <TextView
-            android:id="@+id/dateText"
+            android:id="@+id/locationText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight=".3"
-            android:text="@string/date"
+            android:text="@string/location"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <EditText
-            android:id="@+id/dateInput"
+            android:id="@+id/locationInput"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight=".7"
             android:ems="10"
-            android:inputType="date"
-            android:hint="@string/dateHint" />
+            android:inputType="textPersonName"
+            android:hint="@string/locationHint" />
     </LinearLayout>
 
     <TextView

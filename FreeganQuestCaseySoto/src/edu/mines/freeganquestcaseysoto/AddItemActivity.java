@@ -22,11 +22,6 @@
 
 package edu.mines.freeganquestcaseysoto;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -46,7 +41,7 @@ public class AddItemActivity extends Activity {
 	private final static int DESC_MAX = 140; //used to limit the users description to 140 characters
 	private boolean update = false; //used to help determine if item is being updated or not
 	private String hwName = ""; //used for checking if name needs to be updated
-	private String date = ""; //used for checking if date needs to be updated
+	private String location = ""; //used for checking if date needs to be updated
 	private String description = ""; //used for checking if description needs to be updated
 
 	/**
@@ -69,8 +64,8 @@ public class AddItemActivity extends Activity {
 
 		//Get the TextView item to be updated
 		//TextView mhuntText = (TextView) findViewById(R.id.huntNameEnd);
-		TextView hwNameText = (TextView) findViewById(R.id.nameInput);
-		TextView dateText = (TextView) findViewById(R.id.dateInput);
+		TextView hwNameText = (TextView) findViewById(R.id.itemNameInput);
+		TextView dateText = (TextView) findViewById(R.id.locationInput);
 		TextView descText = (TextView) findViewById(R.id.descriptionInput);
 
 		//Set the TextView item to the new text form the itemActivity
@@ -82,7 +77,7 @@ public class AddItemActivity extends Activity {
 		if(!hwName.equals("")){
 			((TextView) hwNameText).setText(hwName);
 			((TextView) descText).setText(description);
-			((TextView) dateText).setText(date);
+			((TextView) dateText).setText(location);
 			update = true;
 		}
 	}
@@ -121,17 +116,18 @@ public class AddItemActivity extends Activity {
 	 */
 	public void submit(View view){
 		//Retrieve the user input
-		EditText nameInput = (EditText) findViewById(R.id.nameInput);
+		EditText nameInput = (EditText) findViewById(R.id.itemNameInput);
 		EditText descriptionInput = (EditText) findViewById(R.id.descriptionInput);
-		EditText dateInput = (EditText) findViewById(R.id.dateInput);
+		EditText dateInput = (EditText) findViewById(R.id.locationInput);
 
 		String hwName = nameInput.getText().toString();
 		String desc = descriptionInput.getText().toString();
-		String dueDate = dateInput.getText().toString();
+		String loc = dateInput.getText().toString();
 		String hunt = getIntent().getStringExtra( ManagerMain.HUNT_NAME);
 
 		//Make sure the name and desc have content, if not give it generic information. 
 		hwName = hwName.length() > 0 ? hwName : "Untitled";
+		loc = loc.length() > 0 ? loc : "Unkown";
 		desc = desc.length() > 0 ? desc : "None";
 
 		//Trim the desc to 140 characters
@@ -139,82 +135,25 @@ public class AddItemActivity extends Activity {
 			desc = desc.substring(0, DESC_MAX);
 		}
 
-		//Validate that the date is in the correct format and in the future. 
-		if(checkDate(dueDate)){
-			//Normalize dueDate
-			if(!dueDate.contains("-")){
-				dueDate = dueDate.substring(0, 2) + "-" + dueDate.substring(2, 4) + "-" + dueDate.substring(4, 8);
-			}
-		} else {
-			//Notify the user that the date was incorrect. 
-			Toast toast = Toast.makeText(getApplicationContext(), "Incorrect date format. Set to today's date." , Toast.LENGTH_LONG);
-			toast.show();
-
-			//Set dueDate to today's date. 
-			Calendar currentDate = Calendar.getInstance(); 
-			SimpleDateFormat today = new SimpleDateFormat("MM-dd-yyyy", java.util.Locale.getDefault()); 
-			dueDate = today.format(currentDate.getTime());
-		}
-
 		//Call the respective method based on what the user is doing
 		if(update){
-			updateHW(hwName, dueDate, desc);
+			updateHW(hwName, loc, desc);
 		} else {
-			insertNewHW(hwName, dueDate, desc, hunt);
+			insertNewHW(hwName, loc, desc, hunt);
 		}
 
 		finish();
 	}
-
-	/**
-	 * The checkDate method checks that the input is a date, the date is in mmddyyyy format, and that
-	 * it is in the future. If it doesn't meet this criteria, it will return false.  
-	 * 
-	 * @param dateInput - the user input date
-	 * 
-	 * @return correctInput - return if input is valid
-	 */
-	private boolean checkDate(String dateInput) {
-		boolean correctInput = false;
-
-		//Add hyphens to the dateInput for verifying
-		if(dateInput.length() == 8){
-			dateInput = dateInput.substring(0, 2) + "-" + dateInput.substring(2, 4) + "-" + dateInput.substring(4, 8);
-		}
-
-		if(dateInput.length() == 10){
-			//Format that will be usedfor the date
-			SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy", java.util.Locale.getDefault());
-
-			//Get current date and convert it to a string
-			Calendar currentDate = Calendar.getInstance();
-			String dateNow = sdf.format(currentDate.getTime());
-
-			//Parse user input date and today's date to Date objects then make sure user date not
-			//before (can be today's date or future date) today's date. If any input is incorrect, 
-			//catch the exception and don't set correctInput to true;
-			try {
-				Date dueDate = sdf.parse(dateInput);
-				Date today = sdf.parse(dateNow);
-				correctInput = !dueDate.before(today);
-			} catch (ParseException e) {
-				correctInput = false;
-				Log.d("ADDitemACTIVITY", "Error parsing dates." + e);
-			}
-		}
-
-		return correctInput;
-	}
-	
+		
 	/**
 	 * The updateHW method checks to see if the name, due date, or description needs to be updated. 
 	 * If any of them need to be updated then update it. 
 	 * 
 	 * @param name - name retrieved from Activity
-	 * @param dueDate - date retrieved from Activity
+	 * @param loc - date retrieved from Activity
 	 * @param desc - description retrieved from Activity
 	 */
-	private void updateHW(String name, String dueDate, String desc) {
+	private void updateHW(String name, String loc, String desc) {
 		int rowsUpdated = 0;
 		
 		//If the name/date/description was updated by the user it won't match the values that were passed
@@ -223,22 +162,22 @@ public class AddItemActivity extends Activity {
 		ContentValues values = new ContentValues();
 		if(!name.equals(hwName)){
 			values.put( ItemTable.COLUMN_NAME, name );
-			String[] selection = {hwName, date, description};
+			String[] selection = {hwName, location, description};
 			rowsUpdated = rowsUpdated + getContentResolver().update( FreeganContentProvider.CONTENT_URI_H, values, "name=? AND date=? AND desc=?", selection );
 		}
-		if(!dueDate.equals(date)){
-			values.put( ItemTable.COLUMN_LOCATION, dueDate );
-			String[] selection = {date, name, description};
+		if(!loc.equals(location)){
+			values.put( ItemTable.COLUMN_LOCATION, loc );
+			String[] selection = {location, name, description};
 			rowsUpdated = rowsUpdated + getContentResolver().update( FreeganContentProvider.CONTENT_URI_H, values, "date=? AND name=? AND desc=?", selection );
 		}
 		if(!desc.equals(description)){
 			values.put( ItemTable.COLUMN_DESCRIPTION, desc );
-			String[] selection = {description, name, dueDate};
+			String[] selection = {description, name, loc};
 			rowsUpdated = rowsUpdated + getContentResolver().update( FreeganContentProvider.CONTENT_URI_H, values, "desc=? AND name=? AND date=?", selection );
 		}
 
 		if(rowsUpdated == 0){
-			Log.d("ADDitem", "Now rows were updated");
+			Log.d("ADDitem", "No rows were updated");
 		}
 	}
 
@@ -246,12 +185,15 @@ public class AddItemActivity extends Activity {
 	 * The insertNewHW method checks to see if the name, due date, or description needs to be updated. 
 	 * If any of them need to be updated then update it.   
 	 * 
-	 * @param view - this is necessary for the button to interact with the activity
+	 * @param name - name retrieved from Activity
+	 * @param loc - date retrieved from Activity
+	 * @param desc - description retrieved from Activity
+	 * @param hunt - name of the hunt
 	 */
-	public void insertNewHW(String name, String date, String desc, String hunt){
+	public void insertNewHW(String name, String loc, String desc, String hunt){
 		ContentValues values = new ContentValues();
 		values.put( ItemTable.COLUMN_NAME, name );
-		values.put( ItemTable.COLUMN_LOCATION, date );
+		values.put( ItemTable.COLUMN_LOCATION, loc );
 		values.put( ItemTable.COLUMN_DESCRIPTION, desc);
 		values.put( ItemTable.COLUMN_HUNT_NAME, hunt);
 		

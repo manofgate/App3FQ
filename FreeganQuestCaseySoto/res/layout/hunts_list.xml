@@ -6,14 +6,14 @@
     android:background="#e5efff" >
 
     <TextView
-        android:id="@+id/courseMain"
+        android:id="@+id/huntMain"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/huntName"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <Button
-        android:id="@+id/addCourseb"
+        android:id="@+id/addHunt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
@@ -28,7 +28,7 @@
         android:layout_height="300dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/addCourseb" >
+        android:layout_below="@+id/addHunt" >
     </ListView>
 
 </RelativeLayout>

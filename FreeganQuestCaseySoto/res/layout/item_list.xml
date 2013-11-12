@@ -6,25 +6,14 @@
     android:background="#e5efff" >
 
     <TextView
-        android:id="@+id/courseMid"
+        android:id="@+id/huntName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/huntName"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <TextView
-        android:id="@+id/courseNameMid"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/courseMid"
-        android:layout_alignBottom="@+id/courseMid"
-        android:layout_marginLeft="27dp"
-        android:layout_toRightOf="@+id/courseMid"
-        android:text=""
-        android:textSize="24sp" />
-
     <Button
-        android:id="@+id/addHomeworkb"
+        android:id="@+id/addItemButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
@@ -34,10 +23,10 @@
         android:text="@string/addItem" />
 
     <TextView
-        android:id="@+id/homeworkMain"
+        android:id="@+id/itemMain"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/courseMid"
+        android:layout_below="@+id/huntName"
         android:layout_marginLeft="15dp"
         android:text="@string/itemName"
         android:textAppearance="?android:attr/textAppearanceLarge" />
@@ -48,7 +37,7 @@
         android:layout_height="300dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/homeworkMain" >
+        android:layout_below="@+id/itemMain" >
 
     </ListView>
 
