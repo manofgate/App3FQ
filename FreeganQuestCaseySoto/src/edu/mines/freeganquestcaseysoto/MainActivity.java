@@ -1,6 +1,13 @@
 package edu.mines.freeganquestcaseysoto;
 
-
+/**
+ * Description of intermediate submission. There is a manager mode button in the action bar. Once clicked, it will bring up managerMain
+ * which is a list of hunts. Can click on add button and it does bring up an inputDialog. This adds hunts. Can click on each hunt and add
+ * items to it. The addItemActivity allows to add name, location, description, and wehather the answer should be word or picture.
+ * Also Can long tap on each hunt and can delete it, edit it, or show the locations of it. 
+ * @author Ben Casey
+ * @author Craig Soto
+ */
 import java.util.ArrayList;
 
 import android.app.Activity;
