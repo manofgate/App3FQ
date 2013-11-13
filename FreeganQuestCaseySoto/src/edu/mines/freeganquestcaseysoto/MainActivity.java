@@ -38,7 +38,7 @@ public class MainActivity extends Activity {
             public void onItemSelected(AdapterView<?> parent, View view,
                     int position, long arg3) 
             {
-                String huntN = "The quest is " + parent.getItemAtPosition(position).toString();
+                //String huntN = "The quest is " + parent.getItemAtPosition(position).toString();
                 //Toast.makeText(parent.getContext(), city, Toast.LENGTH_LONG).show();
 
             }

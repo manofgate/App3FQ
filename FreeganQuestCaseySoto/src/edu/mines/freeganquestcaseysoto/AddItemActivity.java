@@ -22,6 +22,10 @@
 
 package edu.mines.freeganquestcaseysoto;
 
+import android.app.Activity;
+import android.content.ContentValues;
+import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,12 +33,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.app.Activity;
-import android.content.ContentValues;
-import android.content.Intent;
-import android.database.Cursor;
 
 public class AddItemActivity extends Activity {
 
@@ -43,6 +44,7 @@ public class AddItemActivity extends Activity {
 	private String hwName = ""; //used for checking if name needs to be updated
 	private String location = ""; //used for checking if date needs to be updated
 	private String description = ""; //used for checking if description needs to be updated
+	private String answerDisp = "word";
 
 	/**
 	 * The onCreate method retrieves any saved instances and sets the content view layout. It
@@ -58,18 +60,20 @@ public class AddItemActivity extends Activity {
 
 		//Retrieve strings passed in from the itemActivity
 		String message = getIntent().getStringExtra( ManagerMain.HUNT_NAME);
-		/*hwName = getIntent().getStringExtra( MainActivity.HW_NAME_TEXT);
-		date = getIntent().getStringExtra( MainActivity.DATE_TEXT);
-		description = getIntent().getStringExtra( MainActivity.DESC_TEXT);*/
+		if(getIntent().getStringExtra( ManagerMain.ITEM_NAME_TEXT) != null){
+			hwName = getIntent().getStringExtra( ManagerMain.ITEM_NAME_TEXT);
+		}
+		location = getIntent().getStringExtra( ManagerMain.LOC_TEXT);
+		description = getIntent().getStringExtra( ManagerMain.DESC_TEXT);
 
 		//Get the TextView item to be updated
-		//TextView mhuntText = (TextView) findViewById(R.id.huntNameEnd);
+		TextView mhuntText = (TextView) findViewById(R.id.huntName);
 		TextView hwNameText = (TextView) findViewById(R.id.itemNameInput);
 		TextView dateText = (TextView) findViewById(R.id.locationInput);
 		TextView descText = (TextView) findViewById(R.id.descriptionInput);
 
 		//Set the TextView item to the new text form the itemActivity
-		//mhuntText.setText(message);
+		mhuntText.setText(message);
 
 		//If itemActivity will be updating info, the hwName won't be empty nor will description
 		//or date guaranteed (we normalize the info put into the db so we will always have this). We
@@ -196,6 +200,7 @@ public class AddItemActivity extends Activity {
 		values.put( ItemTable.COLUMN_LOCATION, loc );
 		values.put( ItemTable.COLUMN_DESCRIPTION, desc);
 		values.put( ItemTable.COLUMN_HUNT_NAME, hunt);
+		values.put(ItemTable.COLUMN_DISPLAY, answerDisp);
 		
 		//Insert values into the item Table
 		getContentResolver().insert( FreeganContentProvider.CONTENT_URI_H, values );
@@ -215,5 +220,21 @@ public class AddItemActivity extends Activity {
 			finish();
 		}
 		cursor.close();
+	}
+	public void onRadioButtonClicked(View view) {
+	    // Is the button now checked?
+	    boolean checked = ((RadioButton) view).isChecked();
+	    
+	    // Check which radio button was clicked
+	    switch(view.getId()) {
+	        case R.id.radBWord:
+	            if (checked)
+	                answerDisp = "word";
+	            break;
+	        case R.id.radBPic:
+	            if (checked)
+	                answerDisp = "picture";
+	            break;
+	    }
 	}
 }

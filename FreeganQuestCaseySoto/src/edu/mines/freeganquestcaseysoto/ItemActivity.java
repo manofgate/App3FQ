@@ -24,7 +24,6 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -58,8 +57,8 @@ public class ItemActivity extends ListActivity implements LoaderManager.LoaderCa
 
 		//Get/set the huntName in the activity
 		huntName = getIntent().getStringExtra( ManagerMain.HUNT_NAME);
-		//TextView mhuntText = (TextView)findViewById(R.id.huntNameMid);
-		//mhuntText.setText(huntName);
+		TextView mhuntText = (TextView)findViewById(R.id.huntName);
+		mhuntText.setText(huntName);
 
 		//Set up ListView
 		this.getListView().setDividerHeight( 2 );
@@ -253,10 +252,10 @@ public class ItemActivity extends ListActivity implements LoaderManager.LoaderCa
 		cursor.close();
 
 		//Set the variables that will be used in the AdditemActivity
-		/*i.putExtra(MainActivity.HW_NAME_TEXT, name);
-		i.putExtra(MainActivity.DATE_TEXT, date);
-		i.putExtra(MainActivity.DESC_TEXT, desc);
-		i.putExtra(MainActivity.hunt_MNAME, huntName);*/
+		i.putExtra(ManagerMain.ITEM_NAME_TEXT, name);
+		i.putExtra(ManagerMain.LOC_TEXT, date);
+		i.putExtra(ManagerMain.DESC_TEXT, desc);
+		i.putExtra(ManagerMain.HUNT_NAME, huntName);
 
 		startActivity( i );
 	}

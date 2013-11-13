@@ -23,7 +23,6 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -57,8 +56,8 @@ public class LocationActivity extends ListActivity implements LoaderManager.Load
 
 		//Get/set the huntName in the activity
 		huntName = getIntent().getStringExtra( ManagerMain.HUNT_NAME);
-		//TextView mhuntText = (TextView)findViewById(R.id.huntNameMid);
-		//mhuntText.setText(huntName);
+		TextView mhuntText = (TextView)findViewById(R.id.huntName);
+		mhuntText.setText(huntName);
 
 		//Set up ListView
 		this.getListView().setDividerHeight( 2 );

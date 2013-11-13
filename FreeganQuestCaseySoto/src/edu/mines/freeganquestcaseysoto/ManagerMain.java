@@ -30,9 +30,9 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 	private static final int SHOW_LOC_ID = Menu.FIRST + 3;
 	private String huntName;
 	public static final String HUNT_NAME = "NameOfHunt";
-	/*public static final String HW_NAME_TEXT = "NameOfHW";
-	public static final String DATE_TEXT = "DueDate";
-	public static final String DESC_TEXT = "Description";*/
+	public static final String ITEM_NAME_TEXT = "NameOfItem";
+	public static final String LOC_TEXT = "DueDate";
+	public static final String DESC_TEXT = "Description";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -123,7 +123,7 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 		if(cursor.getCount() <1){
 			int rowsUpdated = getContentResolver().update( FreeganContentProvider.CONTENT_URI, values, "name=?", selection );
 			fillData();
-			
+			Log.d("FREEGANQUEST::EDIT", "updated rows: " + rowsUpdated);
 			String[] selectionC = {huntName};
 			String[] projection2 = {ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME};
 			

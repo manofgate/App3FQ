@@ -26,5 +26,7 @@
     <string name="manMode">Manager</string>
     <string name="menu_show_loc">Show Locations</string>
     <string name="itemName">Name:</string>
+    <string name="radWord">Words</string>
+    <string name="radPics">Pictures</string>
 
 </resources>
