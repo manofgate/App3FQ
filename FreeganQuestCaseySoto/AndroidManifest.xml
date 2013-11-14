@@ -39,6 +39,9 @@
         <activity
             android:name="edu.mines.freeganquestcaseysoto.LocationActivity"
             android:label="@string/manMode" />
+         <activity
+            android:name="edu.mines.freeganquestcaseysoto.HuntActivity"
+            android:label="@string/app_name" />
     </application>
 
 </manifest>

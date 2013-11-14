@@ -11,19 +11,30 @@ package edu.mines.freeganquestcaseysoto;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.LoaderManager;
 import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor>, InputDialogFragment.Listener{
 
 	private Spinner mHunts;
+	private SimpleCursorAdapter adapter;
+	private String hName = "";
+	public static final String HUNT_NAME = "NameofHunt";
+	private ArrayList<String> arrayList1 = new ArrayList<String>();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -31,10 +42,21 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		mHunts = (Spinner)findViewById( R.id.selectHunts );
 		
-		ArrayList<String> arrayList1 = new ArrayList<String>();
+		
 
         arrayList1.add("Select a Hunt...");
-        arrayList1.add("Delhi");
+        
+        String[] projection = { ManagerHuntTable.COLUMN_ID, ManagerHuntTable.COLUMN_NAME};
+        Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI, projection, null, null, ManagerHuntTable.COLUMN_ID + " ASC" );
+        //cursor.moveToFirst();
+        for(int i=0; i < cursor.getCount(); i++){
+        	cursor.moveToPosition(i);
+			  hName = cursor.getString(cursor.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_NAME ));
+			  arrayList1.add(hName);
+		}
+		cursor.close();
+		
+        //arrayList1.add("Delhi");
         ArrayAdapter<String> adp = new ArrayAdapter<String> (this,android.R.layout.simple_spinner_dropdown_item,arrayList1);
         mHunts.setAdapter(adp);
 
@@ -57,7 +79,28 @@ public class MainActivity extends Activity {
         });
 		
 	}
-
+	 @Override
+	  protected void onResume()
+	  {
+	    super.onResume(); // Must do this or app will crash!
+	    arrayList1.clear();
+	    arrayList1.add("Select a Hunt...");
+        
+        String[] projection = { ManagerHuntTable.COLUMN_ID, ManagerHuntTable.COLUMN_NAME};
+        Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI, projection, null, null, ManagerHuntTable.COLUMN_ID + " ASC" );
+        //cursor.moveToFirst();
+        for(int i=0; i < cursor.getCount(); i++){
+        	cursor.moveToPosition(i);
+			  hName = cursor.getString(cursor.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_NAME ));
+			  arrayList1.add(hName);
+		}
+		cursor.close();
+		
+        //arrayList1.add("Delhi");
+        ArrayAdapter<String> adp = new ArrayAdapter<String> (this,android.R.layout.simple_spinner_dropdown_item,arrayList1);
+        mHunts.setAdapter(adp);
+	  }
+	
 	@Override
 	  public boolean onOptionsItemSelected( MenuItem item )
 	  {
@@ -75,6 +118,12 @@ public class MainActivity extends Activity {
 	    }
 	  }
 	
+	public void onStartHunt(View view){
+		Intent i = new Intent(this, HuntActivity.class);
+		i.putExtra(HUNT_NAME, arrayList1.get(mHunts.getSelectedItemPosition()));
+		startActivity(i);
+		
+	}
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -82,6 +131,36 @@ public class MainActivity extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		
 		return true;
+	}
+
+	@Override
+	public void onInputDone(int dialogID, String input) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onInputCancel(int dialogID) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
+		this.adapter.swapCursor( arg1 );
+		
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> arg0) {
+		this.adapter.swapCursor( null );
+		
 	}
 
 }

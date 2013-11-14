@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#e5efff" >
+
+    <TextView
+        android:id="@+id/huntMain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/huntName"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="fill_parent"
+        android:layout_height="300dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/huntMain" >
+
+    </ListView>
+    
+    <Button
+        android:id="@+id/finishB"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@android:id/list"
+        android:layout_marginTop="10dp"
+        android:onClick="onDialog"
+        android:text="@string/finishName" />
+
+    <TextView
+        android:id="@+id/timeView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/huntMain"
+        android:layout_alignBottom="@+id/huntMain"
+        android:layout_marginLeft="18dp"
+        android:layout_toRightOf="@+id/finishB"
+        android:textSize="24sp"
+        android:text="@string/timeDisp" />
+
+    <TextView
+        android:id="@+id/huntName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="26dp"
+        android:layout_toRightOf="@+id/huntMain"
+        android:text="" />
+
+</RelativeLayout>

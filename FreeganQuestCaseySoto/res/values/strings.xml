@@ -28,5 +28,6 @@
     <string name="itemName">Name:</string>
     <string name="radWord">Words</string>
     <string name="radPics">Pictures</string>
-
+    <string name="timeDisp">00:00:00</string>
+	<string name="finishName">Finish</string>
 </resources>
