@@ -229,7 +229,7 @@ public class HuntActivity extends ListActivity implements LoaderManager.LoaderCa
 		super.onListItemClick( l, v, position, id );
 
 		//Get the AdditemActivity intent
-		/*Intent i = new Intent( this, AddItemActivity.class );
+		Intent i = new Intent( this, AddAnswerActivity.class );
 
 		//Query the database for the necessary information
 		Uri huntUri = Uri.parse( FreeganContentProvider.CONTENT_URI_H + "/" + id );
@@ -238,19 +238,16 @@ public class HuntActivity extends ListActivity implements LoaderManager.LoaderCa
 
 		//Retrieve the information from the database. 
 		cursor.moveToFirst();	    
-		String name = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_NAME ) );
-		String date = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_LOCATION ) ).replace("-", "");
-		String desc = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_DESCRIPTION ) );
+		//String name = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_NAME ) );
 		String huntName = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_HUNT_NAME ) );
 		cursor.close();
 
 		//Set the variables that will be used in the AdditemActivity
-		i.putExtra(ManagerMain.ITEM_NAME_TEXT, name);
-		i.putExtra(ManagerMain.LOC_TEXT, date);
-		i.putExtra(ManagerMain.DESC_TEXT, desc);
+		//i.putExtra(ManagerMain.ITEM_NAME_TEXT, name);
+		
 		i.putExtra(ManagerMain.HUNT_NAME, huntName);
 
 		startActivity( i );
-		*/
+		
 	}
 }
