@@ -30,19 +30,26 @@ public class FreeganContentProvider extends ContentProvider
   private static final int HUNTS_ID = 8;
   private static final int ITEMS = 21;
   private static final int ITEMS_ID = 22;
+  private static final int ANSWERS = 11;
+  private static final int ANSWERS_ID = 12;
 
   private static final String AUTHORITY = "edu.mines.freeganquestcaseysoto.freeganquestcontentprovider";
 
   private static final String BASE_PATH = "hunts";
   private static final String BASE_PATH_H = "items";
+  private static final String BASE_PATH_A = "answers";
   public static final Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY + "/" + BASE_PATH );
   public static final Uri CONTENT_URI_H = Uri.parse( "content://" + AUTHORITY + "/" + BASE_PATH_H );
+  public static final Uri CONTENT_URI_A = Uri.parse( "content://" + AUTHORITY + "/" + BASE_PATH_A );
 
   public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/hunts";
   public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/hunts";
   
   public static final String CONTENT_TYPE_H = ContentResolver.CURSOR_DIR_BASE_TYPE + "/items"; // TODO
   public static final String CONTENT_ITEM_TYPE_H = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/items"; // TODO
+  
+  public static final String CONTENT_TYPE_A = ContentResolver.CURSOR_DIR_BASE_TYPE + "/answers"; // TODO
+  public static final String CONTENT_ITEM_TYPE_A = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/answers"; // TODO
   
   private static final UriMatcher sURIMatcher = new UriMatcher( UriMatcher.NO_MATCH );
 
@@ -55,6 +62,10 @@ public class FreeganContentProvider extends ContentProvider
     //items/objects
     sURIMatcher.addURI( AUTHORITY, BASE_PATH_H, ITEMS );
     sURIMatcher.addURI( AUTHORITY, BASE_PATH_H + "/#", ITEMS_ID );
+    
+    //answers
+    sURIMatcher.addURI( AUTHORITY, BASE_PATH_A, ANSWERS );
+    sURIMatcher.addURI( AUTHORITY, BASE_PATH_A + "/#", ANSWERS_ID );
   }
 
   @Override
@@ -78,6 +89,8 @@ public class FreeganContentProvider extends ContentProvider
     	queryBuilder.setTables( ManagerHuntTable.TABLE_NAME );
     } else if(tableName == ITEMS){
     	queryBuilder.setTables( ItemTable.TABLE_NAME );
+    } else if(tableName == ANSWERS){
+    	queryBuilder.setTables( AnswerTable.TABLE_NAME );
     }
     
 
@@ -95,6 +108,10 @@ public class FreeganContentProvider extends ContentProvider
       case ITEMS_ID:
           // Adding the ID to the original query
           queryBuilder.appendWhere( ItemTable.COLUMN_ID + "=" + uri.getLastPathSegment() );
+          break;
+      case ANSWERS_ID:
+          // Adding the ID to the original query
+          queryBuilder.appendWhere( AnswerTable.COLUMN_ID + "=" + uri.getLastPathSegment() );
           break;
       default:
         throw new IllegalArgumentException( "Unknown URI: " + uri );
@@ -130,6 +147,9 @@ public class FreeganContentProvider extends ContentProvider
       case ITEMS:
           id = sqlDB.insert( ItemTable.TABLE_NAME, null, values );
           break;
+      case ANSWERS:
+          id = sqlDB.insert( AnswerTable.TABLE_NAME, null, values );
+          break;
       default:
         throw new IllegalArgumentException( "Unknown URI: " + uri );
     }
@@ -153,6 +173,9 @@ public class FreeganContentProvider extends ContentProvider
       case ITEMS:
           rowsDeleted = sqlDB.delete( ItemTable.TABLE_NAME, selection, selectionArgs );
     	  break;
+      case ANSWERS:
+          rowsDeleted = sqlDB.delete( AnswerTable.TABLE_NAME, selection, selectionArgs );
+    	  break;
       case HUNTS_ID:
         if( TextUtils.isEmpty( selection ) )
         {
@@ -173,6 +196,17 @@ public class FreeganContentProvider extends ContentProvider
           {
             rowsDeleted = sqlDB
                 .delete( ItemTable.TABLE_NAME, ItemTable.COLUMN_ID + "=" + id + " and " + selection, selectionArgs );
+          }
+          break;
+      case ANSWERS_ID:
+          if( TextUtils.isEmpty( selection ) )
+          {
+            rowsDeleted = sqlDB.delete( AnswerTable.TABLE_NAME, AnswerTable.COLUMN_ID + "=" + id, null );
+          }
+          else
+          {
+            rowsDeleted = sqlDB
+                .delete( AnswerTable.TABLE_NAME, AnswerTable.COLUMN_ID + "=" + id + " and " + selection, selectionArgs );
           }
           break;
       default:
@@ -221,6 +255,21 @@ public class FreeganContentProvider extends ContentProvider
                 selectionArgs );
           }
           break;
+        case ANSWERS:
+            rowsUpdated = sqlDB.update( AnswerTable.TABLE_NAME, values, selection, selectionArgs );
+            break;
+          case ANSWERS_ID:
+            id = uri.getLastPathSegment();
+            if( TextUtils.isEmpty( selection ) )
+            {
+              rowsUpdated = sqlDB.update( AnswerTable.TABLE_NAME, values, AnswerTable.COLUMN_ID + "=" + id, null );
+            }
+            else
+            {
+              rowsUpdated = sqlDB.update( AnswerTable.TABLE_NAME, values, AnswerTable.COLUMN_ID + "=" + id + " and " + selection,
+                  selectionArgs );
+            }
+            break;
       default:
         throw new IllegalArgumentException( "Unknown URI: " + uri );
     }
@@ -234,20 +283,24 @@ public class FreeganContentProvider extends ContentProvider
 	  
     String[] availableHunts = { ManagerHuntTable.COLUMN_ID, ManagerHuntTable.COLUMN_NAME};
     String[] availableItems = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME };
-    
+    String[] availableAnswers = { AnswerTable.COLUMN_ID, AnswerTable.COLUMN_ANSWER, AnswerTable.COLUMN_DESCRIPTION, AnswerTable.COLUMN_HUNT_NAME };
     if( projection != null )
     {
       HashSet<String> requestedColumns = new HashSet<String>( Arrays.asList( projection ) );
       HashSet<String> availableColumnsHunts = new HashSet<String>( Arrays.asList( availableHunts ) );
       HashSet<String> availableColumnsItems = new HashSet<String>( Arrays.asList( availableItems ) );
+      HashSet<String> availableColumnsAnswers = new HashSet<String>( Arrays.asList( availableAnswers ) );
       // Check if all columns which are requested are available
-      if( !availableColumnsHunts.containsAll( requestedColumns )  &&  !availableColumnsItems.containsAll( requestedColumns ) )
+      if( !availableColumnsHunts.containsAll( requestedColumns )  &&  !availableColumnsItems.containsAll( requestedColumns ) &&  !availableColumnsAnswers.containsAll( requestedColumns ) )
       {
         throw new IllegalArgumentException( "Unknown columns in projection" );
       } else if( availableColumnsHunts.containsAll( requestedColumns ) ){
     	  tableName = HUNTS;
-      } else {
+      } else if( availableColumnsItems.containsAll( requestedColumns ) ){
     	  tableName = ITEMS;
+      } else {
+    	  tableName = ANSWERS;
+    	  
       }
     }
     return tableName;

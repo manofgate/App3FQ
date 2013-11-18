@@ -26,6 +26,7 @@ public class FreeganDatabaseHelper extends SQLiteOpenHelper
   {
     ManagerHuntTable.onCreate( database );
     ItemTable.onCreate(database);
+    AnswerTable.onCreate(database);
   }
 
   /** Method is called during an upgrade of the database, e.g. if you increase the database version. */
