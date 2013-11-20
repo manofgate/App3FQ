@@ -43,7 +43,7 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 		registerForContextMenu( getListView() );
 	}
 
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -51,25 +51,25 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-	
-	@Override
-	  public boolean onOptionsItemSelected( MenuItem item )
-	  {
-	    switch( item.getItemId() )
-	    {
-	      case R.id.action_manage:
-	      {
-	        Intent i = new Intent(this, ManagerMain.class);
-	        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-	        startActivity(i);
 
-	        return true;
-	      }
-	      default:
-	          return super.onOptionsItemSelected(item);
-	    }
-	  }
-	
+	@Override
+	public boolean onOptionsItemSelected( MenuItem item )
+	{
+		switch( item.getItemId() )
+		{
+		case R.id.action_manage:
+		{
+			Intent i = new Intent(this, ManagerMain.class);
+			i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(i);
+
+			return true;
+		}
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+
 	public void onDialog(View view){
 		Bundle args = new Bundle();
 		args.putInt( "dialogID", 1 );
@@ -86,12 +86,12 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 	 */
 	public void insertNewHunt(){
 		ContentValues values = new ContentValues();
-		
+
 		values.put( ManagerHuntTable.COLUMN_NAME, huntName );
 		String[] projection = { ManagerHuntTable.COLUMN_ID, ManagerHuntTable.COLUMN_NAME};
 		String[] selection = {huntName};
 		getContentResolver().insert( FreeganContentProvider.CONTENT_URI, values );
-		
+
 		//checks to see if that hunt name has already been added
 		Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI, projection, "name=?", selection, ManagerHuntTable.COLUMN_ID + " DESC" );
 		if(cursor.getCount() >1){
@@ -103,9 +103,9 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 			fillData();
 		}
 		cursor.close();
-		
+
 	}
-	
+
 	/**
 	 * Updates the hunt Name and it's corresponding items.
 	 * @param newhuntName : used to update the name while huntName is the old hunt name to query
@@ -116,28 +116,28 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 		String[] projection = { ManagerHuntTable.COLUMN_ID, ManagerHuntTable.COLUMN_NAME};
 		String[] selection = {huntName};
 		String[] querySelection = {newHuntName};
-		
+
 		//checks to see if that hunt name is already in database and adds if not. 
 		Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI, projection, "name=?", querySelection, ManagerHuntTable.COLUMN_ID + " DESC" );
-		
+
 		if(cursor.getCount() <1){
 			int rowsUpdated = getContentResolver().update( FreeganContentProvider.CONTENT_URI, values, "name=?", selection );
 			fillData();
 			Log.d("FREEGANQUEST::EDIT", "updated rows: " + rowsUpdated);
 			String[] selectionC = {huntName};
 			String[] projection2 = {ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME};
-			
+
 			Cursor cursorC = getContentResolver().query(FreeganContentProvider.CONTENT_URI_H, projection2, "hunt=?", selectionC, null);
 			ContentValues valuesC = new ContentValues();
 			valuesC.put( ItemTable.COLUMN_HUNT_NAME, newHuntName );
 			for(int i=0; i < cursorC.getCount(); ++i){
 				rowsUpdated = getContentResolver().update( FreeganContentProvider.CONTENT_URI_H, valuesC, "hunt=?", selectionC );
-				
+
 			}
 		}
 		cursor.close();
-		
-		
+
+
 	}
 	/**
 	 * overriden function from listView that when clicked will open up the Item activity to show the hunts Items.
@@ -174,7 +174,7 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 		case DELETE_ID:
 			AdapterContextMenuInfo info = (AdapterContextMenuInfo)item.getMenuInfo();
 			Uri uri = Uri.parse( FreeganContentProvider.CONTENT_URI + "/" + info.id );
-			
+
 			//query to get the hunt name that is bieng deleted
 			String[] projection2 = { ManagerHuntTable.COLUMN_NAME };
 			Cursor cursor2 = getContentResolver().query( uri, projection2, null, null, null );
@@ -183,9 +183,9 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 			name2 = cursor2.getString( cursor2.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_NAME ) );
 			cursor2.close();
 			this.huntName= name2;
-			
+
 			getContentResolver().delete( uri, null, null );
-			
+
 			//get all homework associsated with this hunt and delete it.
 			String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME };
 			String[] querySelection = { this.huntName };
@@ -234,7 +234,7 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 			name2 = cursor2.getString( cursor2.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_NAME ) );
 			cursor2.close();
 			Log.d("FREEQUEST: ", "name is: " + name2);
-			
+
 			Intent i = new Intent(this, LocationActivity.class);
 			i.putExtra(HUNT_NAME, name2);
 			startActivity(i);
@@ -260,7 +260,7 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 	public void onLoaderReset(Loader<Cursor> arg0) {
 		this.adapter.swapCursor( null );
 	}
-	
+
 	/**
 	 * the main aspect of updated the listview, so that the insertion, deletion, and editing shows up. 
 	 * the adapter also adds background color for odd- even rows.
@@ -281,18 +281,18 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 		// not try to automatically re-query the data ... the loader will take care of this.
 		this.adapter = new SimpleCursorAdapter( this, R.layout.list_row, null, from, to, 0 ){
 			@Override
-		    public View getView(int position, View convertView, ViewGroup parent) {
-				 View v = super.getView(position, convertView, parent);
+			public View getView(int position, View convertView, ViewGroup parent) {
+				View v = super.getView(position, convertView, parent);
 
-			        if (position %2 ==1) {
-			            v.setBackgroundColor(Color.argb(TRIM_MEMORY_MODERATE, 100, 100, 100));
-			        } else {
-			            v.setBackgroundColor(Color.argb(TRIM_MEMORY_MODERATE, 170, 170, 170)); //or whatever was original
-			        }
+				if (position %2 ==1) {
+					v.setBackgroundColor(Color.argb(TRIM_MEMORY_MODERATE, 100, 100, 100));
+				} else {
+					v.setBackgroundColor(Color.argb(TRIM_MEMORY_MODERATE, 170, 170, 170)); //or whatever was original
+				}
 
-			        return v;
+				return v;
 			}
-			
+
 		};
 
 
@@ -315,8 +315,8 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 		}
 		else if(dialogID == 2){
 			updateNewHunt(input);
-			
-			
+
+
 		}
 
 	}
