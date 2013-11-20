@@ -22,11 +22,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <provider
             android:name="edu.mines.freeganquestcaseysoto.FreeganContentProvider"
             android:authorities="edu.mines.freeganquestcaseysoto.freeganquestcontentprovider"
             android:exported="false" >
         </provider>
+
         <activity
             android:name="edu.mines.freeganquestcaseysoto.ManagerMain"
             android:label="@string/manMode" />
@@ -39,13 +41,16 @@
         <activity
             android:name="edu.mines.freeganquestcaseysoto.LocationActivity"
             android:label="@string/manMode" />
-         <activity
+        <activity
             android:name="edu.mines.freeganquestcaseysoto.HuntActivity"
             android:label="@string/app_name" />
-         
-          <activity
+        <activity
             android:name="edu.mines.freeganquestcaseysoto.AddAnswerActivity"
             android:label="@string/app_name" />
+        <activity
+            android:name="edu.mines.freeganquestcaseysoto.ResultsActivity"
+            android:label="@string/title_activity_results" >
+        </activity>
     </application>
 
 </manifest>

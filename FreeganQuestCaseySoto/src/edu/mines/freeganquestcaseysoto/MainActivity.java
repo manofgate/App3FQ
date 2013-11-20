@@ -45,29 +45,6 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
 		ArrayList<String> arrayList1 = new ArrayList<String>();
 
 		arrayList1.add("Select a Hunt...");
-		arrayList1.add("Delhi");
-		ArrayAdapter<String> adp = new ArrayAdapter<String> (this,android.R.layout.simple_spinner_dropdown_item,arrayList1);
-		mHunts.setAdapter(adp);
-
-		mHunts.setVisibility(View.VISIBLE);
-		//Set listener Called when the item is selected in spinner
-		mHunts.setOnItemSelectedListener(new OnItemSelectedListener() 
-		{
-			public void onItemSelected(AdapterView<?> parent, View view,
-					int position, long arg3) 
-			{
-				//String huntN = "The quest is " + parent.getItemAtPosition(position).toString();
-				//Toast.makeText(parent.getContext(), city, Toast.LENGTH_LONG).show();
-
-			}
-
-			public void onNothingSelected(AdapterView<?> arg0) 
-			{
-				// TODO Auto-generated method stub
-			}
-		});	
-
-		arrayList1.add("Select a Hunt...");
 
 		String[] projection = { ManagerHuntTable.COLUMN_ID, ManagerHuntTable.COLUMN_NAME};
 		Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI, projection, null, null, ManagerHuntTable.COLUMN_ID + " ASC" );
@@ -123,22 +100,6 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
 		mHunts.setAdapter(adp);
 	}
 
-	@Override
-	public boolean onOptionsItemSelected( MenuItem item )
-	{
-		switch( item.getItemId() )
-		{
-		case R.id.action_manage:
-		{
-			Intent i = new Intent(this, ManagerMain.class);
-			startActivity(i);
-
-			return true;
-		}
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-	}
 
 	public boolean onOptionsItemSelected( MenuItem item )
 	{
@@ -162,6 +123,12 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
 		startActivity(i);
 
 	}
+	
+	public void onResults(View view){
+		Intent i = new Intent(this, ResultsActivity.class);
+		startActivity(i);
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.

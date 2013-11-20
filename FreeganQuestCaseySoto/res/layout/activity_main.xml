@@ -34,6 +34,7 @@
         android:layout_alignRight="@+id/startButton"
         android:layout_below="@+id/startButton"
         android:layout_marginTop="79dp"
+        android:onClick="onResults"
         android:text="@string/resultsName" />
 
     <Spinner

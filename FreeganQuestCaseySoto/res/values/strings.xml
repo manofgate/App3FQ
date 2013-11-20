@@ -29,8 +29,9 @@
     <string name="radWord">Words</string>
     <string name="radPics">Pictures</string>
     <string name="timeDisp">00:00:00</string>
-	<string name="finishName">Finish</string>
-	<string name="word">Answer.</string>
-	<string name="capture">Capture</string>
-	
+    <string name="finishName">Finish</string>
+    <string name="word">Answer.</string>
+    <string name="capture">Capture</string>
+    <string name="title_activity_results">ResultsActivity</string>
+
 </resources>
