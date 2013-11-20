@@ -32,6 +32,7 @@ public class FreeganContentProvider extends ContentProvider
   private static final int ITEMS_ID = 22;
   private static final int ANSWERS = 11;
   private static final int ANSWERS_ID = 12;
+  //this is a change
 
   private static final String AUTHORITY = "edu.mines.freeganquestcaseysoto.freeganquestcontentprovider";
 
