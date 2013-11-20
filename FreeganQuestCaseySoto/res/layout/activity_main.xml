@@ -24,6 +24,7 @@
         android:layout_alignRight="@+id/scavPlayerText"
         android:layout_below="@+id/scavPlayerText"
         android:layout_marginTop="76dp"
+        android:onClick="onStartHunt"
         android:text="@string/startName" />
 
     <Button

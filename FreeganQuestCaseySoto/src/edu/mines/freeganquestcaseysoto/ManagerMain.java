@@ -236,6 +236,7 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 			Log.d("FREEQUEST: ", "name is: " + name2);
 
 			Intent i = new Intent(this, LocationActivity.class);
+			
 			i.putExtra(HUNT_NAME, name2);
 			startActivity(i);
 		}
