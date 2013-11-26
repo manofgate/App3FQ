@@ -119,6 +119,7 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
 		i.putExtra(HUNT_NAME, arrayList1.get(mHunts.getSelectedItemPosition()));
 		startActivity(i);
 
+		finish();
 	}
 	
 	public void onResults(View view){

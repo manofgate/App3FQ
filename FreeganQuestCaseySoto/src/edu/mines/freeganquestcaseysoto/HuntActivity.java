@@ -17,6 +17,7 @@ package edu.mines.freeganquestcaseysoto;
 import android.annotation.SuppressLint;
 import android.app.ListActivity;
 import android.app.LoaderManager;
+import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -35,6 +36,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 @SuppressLint("NewApi")
 public class HuntActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor>{
@@ -43,9 +45,9 @@ public class HuntActivity extends ListActivity implements LoaderManager.LoaderCa
 	public static final String HW_NAME = "NameOfitem";
 	private String huntName; //receives and passes on hunt name from the MainActivity
 	private long startTime = 0L;
-	long timeInMilliseconds = 0L;
-	long timeSwapBuff = 0L;
-	long updatedTime = 0L;
+	private long timeInMilliseconds = 0L;
+	private long timeSwapBuff = 0L;
+	private long updatedTime = 0L;
 	private TextView timerValue;
 	private Handler customHandler = new Handler();
 
@@ -82,14 +84,7 @@ public class HuntActivity extends ListActivity implements LoaderManager.LoaderCa
 	private Runnable updateTimerThread = new Runnable() {
 		public void run() {
 			timeInMilliseconds = SystemClock.uptimeMillis() - startTime;
-			updatedTime = timeSwapBuff + timeInMilliseconds;
-			int secs = (int) (updatedTime / 1000);
-			int mins = secs / 60;
-			secs = secs % 60;
-			int milliseconds = (int) (updatedTime % 1000);
-			timerValue.setText("" + mins + ":"
-					+ String.format("%02d", secs) + ":"
-					+ String.format("%03d", milliseconds));
+			timerValue.setText(getTime(timeInMilliseconds, timeSwapBuff, updatedTime));
 			customHandler.postDelayed(this, 0);
 		}
 	};
@@ -278,5 +273,95 @@ public class HuntActivity extends ListActivity implements LoaderManager.LoaderCa
 
 		startActivity( i );
 
+	}
+
+	@Override
+	public void onBackPressed() {
+		Toast.makeText(getApplicationContext(), "Must finish Quest before going back", Toast.LENGTH_LONG).show();
+	}
+
+	
+	/**
+	 * The onSaveInstanceState method saves all the global variables used within the activity. It does 
+	 * this when the phone changes its orientation so that the variables can maintain the same values 
+	 * when rotating the phone/emulator. It stores these values in the savedInstanceState.  
+	 * 
+	 * @param savedInstanceState - a bundle of any saved instance values
+	 */
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+		super.onSaveInstanceState(savedInstanceState);
+
+		//Save the game scores, round scores, and tosses amounts for the respective teams
+		savedInstanceState.putLong("START_TIME", startTime);
+	}
+
+	/**
+	 * The onRestoreInstanceState method restores all the global variables that were saved when the phone
+	 * changed orientation. 
+	 * 
+	 * @param savedInstanceState - a bundle of any saved instance values
+	 */
+	@Override
+	public void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+
+		//Sets the respective values for game information
+		startTime = savedInstanceState.getLong("START_TIME");
+	}
+	
+	public void onDialog(View view){
+		Intent i = new Intent(this, MainActivity.class);
+		i.putExtra(ManagerMain.HUNT_NAME, huntName);
+		startActivity(i);		
+		
+		String finalTime = getTime(SystemClock.uptimeMillis() - startTime, 0L, 0L);
+		
+		insertTimer(finalTime);
+		
+		finish();
+	}
+	/**
+	 * Inserts the hunt into the hunt Table.
+	 * checks to see if there are now 2 hunt of the same name and deletes the last inserted hunt
+	 */
+	public void insertTimer(String finalTime){
+		ContentValues values = new ContentValues();
+
+		values.put( TimerTable.COLUMN_HUNT_NAME, huntName );
+		values.put(TimerTable.COLUMN_TIME, finalTime);
+		
+		String[] projection = { TimerTable.COLUMN_ID, TimerTable.COLUMN_HUNT_NAME, TimerTable.COLUMN_TIME};
+		String[] selection = {huntName, finalTime};
+		getContentResolver().insert( FreeganContentProvider.CONTENT_URI_T, values );
+
+		//checks to see if that hunt name has already been added
+		Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI_T, projection, "name=?", selection, TimerTable.COLUMN_ID + " DESC" );
+		if(cursor.getCount() >1){
+			cursor.moveToFirst();
+			Uri huntUri = Uri.parse( FreeganContentProvider.CONTENT_URI_T + "/" +  cursor.getString(cursor.getColumnIndexOrThrow( TimerTable.COLUMN_ID )) );
+			getContentResolver().delete(huntUri, null, null);
+			Toast toast = Toast.makeText(getApplicationContext(),"Have already added " +huntName+" hunt!" , Toast.LENGTH_LONG);
+			toast.show();
+			fillData();
+		}
+		cursor.close();
+
+	}
+	
+	private String getTime(long milliTime, long locTimeSwapBuff, long locUpdatedTime ){
+		String time = "";
+		
+		locUpdatedTime = locTimeSwapBuff + milliTime;
+		int secs = (int) (locUpdatedTime / 1000);
+		int mins = secs / 60;
+		secs = secs % 60;
+		int milliseconds = (int) (locUpdatedTime % 1000);
+		
+		time = "" + mins + ":"
+				+ String.format("%02d", secs) + ":"
+				+ String.format("%03d", milliseconds);
+		
+		return time;
 	}
 }
