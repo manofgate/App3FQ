@@ -36,6 +36,15 @@
             android:name="edu.mines.freeganquestcaseysoto.ItemActivity"
             android:label="@string/manMode" />
         <activity
+            android:name="edu.mines.freeganquestcaseysoto.CopyOfManagerMain"
+            android:label="@string/manMode" />
+        <activity
+            android:name="edu.mines.freeganquestcaseysoto.ManagerFragment"
+            android:label="@string/manMode" />
+        <activity
+            android:name="edu.mines.freeganquestcaseysoto.CopyOfItemActivity"
+            android:label="@string/manMode" />
+        <activity
             android:name="edu.mines.freeganquestcaseysoto.AddItemActivity"
             android:label="@string/manMode" />
         <activity

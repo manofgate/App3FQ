@@ -1,29 +1,33 @@
 package edu.mines.freeganquestcaseysoto;
 
 
-import android.app.ListActivity;
-import android.app.LoaderManager;
+import android.app.Activity;
 import android.content.ContentValues;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
-public class ManagerMain extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor>, InputDialogFragment.Listener{
+public class CopyOfManagerMain extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>{
 	private SimpleCursorAdapter adapter;
 	private static final int DELETE_ID = Menu.FIRST + 1;
 	private static final int EDIT_ID = Menu.FIRST + 2;
@@ -34,131 +38,107 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 	public static final String LOC_TEXT = "DueDate";
 	public static final String DESC_TEXT = "Description";
 
+	 OnHeadlineSelectedListener mCallback;
+	    // The container Activity must implement this interface so the frag can deliver messages
+	    public interface OnHeadlineSelectedListener {
+	        /** Called by HeadlinesFragment when a list item is selected */
+	        public void onArticleSelected(String position);
+	    }
+	    
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.hunts_list);
-		this.getListView().setDividerHeight( 4);
+		//getActivity().setContentView(R.layout.hunts_frag);
+		
+		int layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
+                R.layout.hunts_frag : R.layout.hunts_frag;
+		
+		
+		//Set up ListView
+		//this.getListView().setDividerHeight( 2 );
+		//registerForContextMenu( getListView() );
+				
+				
+        // Create an array adapter for the list view, using the Ipsum headlines array
+        fillData();
+	}
+	
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+	    super.onActivityCreated(savedInstanceState);
+
+	    registerForContextMenu(this.getListView());
+	}
+	/*
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+		 // We need to use a different list item layout for devices older than Honeycomb
+        int layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
+                android.R.layout.simple_list_item_activated_1 : android.R.layout.simple_list_item_1;
+
+        // Create an array adapter for the list view, using the Ipsum headlines array
+        fillData();
+        
+		//View view = inflater.inflate(R.layout.hunts_list,
+		        //container, false);
 		fillData();
-		registerForContextMenu( getListView() );
+		return view;
 	}
+	*/
+	 @Override
+	    public void onAttach(Activity activity) {
+	        super.onAttach(activity);
 
+	        // This makes sure that the container activity has implemented
+	        // the callback interface. If not, it throws an exception.
+	        try {
+	            mCallback = (OnHeadlineSelectedListener) activity;
+	        } catch (ClassCastException e) {
+	            throw new ClassCastException(activity.toString()
+	                    + " must implement OnHeadlineSelectedListener");
+	        }
+	    }
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.mm, menu);
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
+    public void onStart() {
+        super.onStart();
 
-	@Override
-	public boolean onOptionsItemSelected( MenuItem item )
-	{
-		switch( item.getItemId() )
-		{
-		case R.id.action_manage:
-		{
-			Intent i = new Intent(this, ManagerMain.class);
-			i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(i);
+        // When in two-pane layout, set the listview to highlight the selected list item
+        // (We do this during onStart because at the point the listview is available.)
+        if (getFragmentManager().findFragmentById(R.id.items_fragment) != null) {
+            getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        }
+    }
 
-			return true;
-		}
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-	}
-
-	public void onDialog(View view){
-		Bundle args = new Bundle();
-		args.putInt( "dialogID", 1 );
-		args.putString( "prompt", getString( R.string.statement ) );
-
-		InputDialogFragment dialog = new InputDialogFragment();
-		dialog.setArguments( args );
-		dialog.show( getFragmentManager(), "Dialog" );
-
-	}
+	
 	/**
 	 * Inserts the hunt into the hunt Table.
 	 * checks to see if there are now 2 hunt of the same name and deletes the last inserted hunt
 	 */
-	public void insertNewHunt(){
-		ContentValues values = new ContentValues();
+	
 
-		values.put( ManagerHuntTable.COLUMN_NAME, huntName );
-		String[] projection = { ManagerHuntTable.COLUMN_ID, ManagerHuntTable.COLUMN_NAME};
-		String[] selection = {huntName};
-		getContentResolver().insert( FreeganContentProvider.CONTENT_URI, values );
-
-		//checks to see if that hunt name has already been added
-		Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI, projection, "name=?", selection, ManagerHuntTable.COLUMN_ID + " DESC" );
-		if(cursor.getCount() >1){
-			cursor.moveToFirst();
-			Uri huntUri = Uri.parse( FreeganContentProvider.CONTENT_URI + "/" +  cursor.getString(cursor.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_ID )) );
-			getContentResolver().delete(huntUri, null, null);
-			Toast toast = Toast.makeText(getApplicationContext(),"Have already added " +huntName+" hunt!" , Toast.LENGTH_LONG);
-			toast.show();
-			fillData();
-		}
-		cursor.close();
-
-	}
-
-	/**
-	 * Updates the hunt Name and it's corresponding items.
-	 * @param newhuntName : used to update the name while huntName is the old hunt name to query
-	 */
-	public void updateNewHunt(String newHuntName){
-		ContentValues values = new ContentValues();
-		values.put( ManagerHuntTable.COLUMN_NAME, newHuntName );
-		String[] projection = { ManagerHuntTable.COLUMN_ID, ManagerHuntTable.COLUMN_NAME};
-		String[] selection = {huntName};
-		String[] querySelection = {newHuntName};
-
-		//checks to see if that hunt name is already in database and adds if not. 
-		Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI, projection, "name=?", querySelection, ManagerHuntTable.COLUMN_ID + " DESC" );
-
-		if(cursor.getCount() <1){
-			int rowsUpdated = getContentResolver().update( FreeganContentProvider.CONTENT_URI, values, "name=?", selection );
-			fillData();
-			Log.d("FREEGANQUEST::EDIT", "updated rows: " + rowsUpdated);
-			String[] selectionC = {huntName};
-			String[] projection2 = {ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME};
-
-			Cursor cursorC = getContentResolver().query(FreeganContentProvider.CONTENT_URI_H, projection2, "hunt=?", selectionC, null);
-			ContentValues valuesC = new ContentValues();
-			valuesC.put( ItemTable.COLUMN_HUNT_NAME, newHuntName );
-			for(int i=0; i < cursorC.getCount(); ++i){
-				rowsUpdated = getContentResolver().update( FreeganContentProvider.CONTENT_URI_H, valuesC, "hunt=?", selectionC );
-
-			}
-		}
-		cursor.close();
-
-
-	}
+	
 	/**
 	 * overriden function from listView that when clicked will open up the Item activity to show the hunts Items.
 	 */
 	@Override
-	protected void onListItemClick( ListView l, View v, int position, long id )
+	public void onListItemClick( ListView l, View v, int position, long id )
 	{
 		super.onListItemClick( l, v, position, id );
-		Intent i = new Intent( this, ItemActivity.class );
+		//Intent i = new Intent( this, ItemActivity.class );
 		Uri huntUri = Uri.parse( FreeganContentProvider.CONTENT_URI + "/" + id );
 		String[] projection = { ManagerHuntTable.COLUMN_NAME };
 
 		//gets the uris for the same id, moves it to first position.
-		Cursor cursor = getContentResolver().query( huntUri, projection, null, null, null );
+		Cursor cursor = getActivity().getContentResolver().query( huntUri, projection, null, null, null );
 		String name= "";
 		cursor.moveToFirst();	    
 		name = cursor.getString( cursor.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_NAME ) );
 		cursor.close();
-		i.putExtra(HUNT_NAME, name);
-		i.putExtra( FreeganContentProvider.CONTENT_ITEM_TYPE, huntUri );
-		startActivity( i );
+		mCallback.onArticleSelected(name);
+        
+        // Set the item as checked to be highlighted when in two-pane layout
+        getListView().setItemChecked(position, true);
 	}
 
 	/**
@@ -177,26 +157,27 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 
 			//query to get the hunt name that is bieng deleted
 			String[] projection2 = { ManagerHuntTable.COLUMN_NAME };
-			Cursor cursor2 = getContentResolver().query( uri, projection2, null, null, null );
+			Cursor cursor2 = getActivity().getContentResolver().query( uri, projection2, null, null, null );
 			String name2= "";
 			cursor2.moveToFirst();	    
 			name2 = cursor2.getString( cursor2.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_NAME ) );
 			cursor2.close();
 			this.huntName= name2;
+			
 
-			getContentResolver().delete( uri, null, null );
+			getActivity().getContentResolver().delete( uri, null, null );
 
 			//get all homework associsated with this hunt and delete it.
 			String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME };
 			String[] querySelection = { this.huntName };
 			//gets the uris for the same id, moves it to first position.
 			uri = Uri.parse( FreeganContentProvider.CONTENT_URI_H + "/");
-			Cursor cursor = getContentResolver().query( uri, projection, "hunt=?", querySelection, null );
+			Cursor cursor = getActivity().getContentResolver().query( uri, projection, "hunt=?", querySelection, null );
 			cursor.moveToFirst();
 			for(int i=0; i < cursor.getCount(); ++i){
 				String id =  cursor.getString(cursor.getColumnIndexOrThrow(ItemTable.COLUMN_ID));
 				uri = Uri.parse( FreeganContentProvider.CONTENT_URI_H + "/" + id );
-				getContentResolver().delete( uri, null, null );
+				getActivity().getContentResolver().delete( uri, null, null );
 				cursor.moveToNext();
 			}
 			cursor.close();
@@ -208,19 +189,21 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 			String[] projection3 = { ManagerHuntTable.COLUMN_NAME };
 
 			//gets the uris for the same id, moves it to first position.
-			cursor2 = getContentResolver().query( uri, projection3, null, null, null );
+			cursor2 = getActivity().getContentResolver().query( uri, projection3, null, null, null );
 			name2= "";
 			cursor2.moveToFirst();	    
 			name2 = cursor2.getString( cursor2.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_NAME ) );
 			cursor2.close();
 			this.huntName= name2;
+			ManagerFragment.huntName = name2;
 			Bundle args = new Bundle();
 			args.putInt( "dialogID", 2 );
 			args.putString( "prompt", getString( R.string.statement ) );
-
+			
+			Log.d("FREEGANQUEST: " , "Name before dialog: " + name2);
 			InputDialogFragment dialog = new InputDialogFragment();
 			dialog.setArguments( args );
-			dialog.show( getFragmentManager(), "Dialog" );
+			dialog.show( getActivity().getFragmentManager(), "Dialog" );
 			return true;
 		case SHOW_LOC_ID:
 			info = (AdapterContextMenuInfo)item.getMenuInfo();
@@ -228,14 +211,14 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 			String[] projection4 = { ManagerHuntTable.COLUMN_NAME };
 
 			//gets the uris for the same id, moves it to first position.
-			cursor2 = getContentResolver().query( uri, projection4, null, null, null );
+			cursor2 = getActivity().getContentResolver().query( uri, projection4, null, null, null );
 			name2= "";
 			cursor2.moveToFirst();	    
 			name2 = cursor2.getString( cursor2.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_NAME ) );
 			cursor2.close();
 			Log.d("FREEQUEST: ", "name is: " + name2);
 
-			Intent i = new Intent(this, LocationActivity.class);
+			Intent i = new Intent(getActivity(), LocationActivity.class);
 			
 			i.putExtra(HUNT_NAME, name2);
 			startActivity(i);
@@ -248,7 +231,7 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 		String[] projection = { ManagerHuntTable.COLUMN_ID, ManagerHuntTable.COLUMN_NAME };
-		CursorLoader cursorLoader = new CursorLoader( this, FreeganContentProvider.CONTENT_URI, projection, null, null, null );
+		CursorLoader cursorLoader = new CursorLoader( getActivity(), FreeganContentProvider.CONTENT_URI, projection, null, null, null );
 		return cursorLoader;
 	}
 
@@ -280,22 +263,22 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 
 		// Note the last parameter to this constructor (zero), which indicates the adaptor should
 		// not try to automatically re-query the data ... the loader will take care of this.
-		this.adapter = new SimpleCursorAdapter( this, R.layout.list_row, null, from, to, 0 ){
+		this.adapter = new SimpleCursorAdapter( getActivity(), R.layout.list_row, null, from, to, 0 ){
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
 				View v = super.getView(position, convertView, parent);
 
 				if (position %2 ==1) {
-					v.setBackgroundColor(Color.argb(TRIM_MEMORY_MODERATE, 100, 100, 100));
+					v.setBackgroundColor(Color.argb(5, 100, 100, 100));
 				} else {
-					v.setBackgroundColor(Color.argb(TRIM_MEMORY_MODERATE, 170, 170, 170)); //or whatever was original
+					v.setBackgroundColor(Color.argb(5, 170, 170, 170)); //or whatever was original
 				}
 
 				return v;
 			}
 
 		};
-
+		
 
 		// Let this ListActivity display the contents of the cursor adapter.
 		setListAdapter( this.adapter );
@@ -304,34 +287,7 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 	/**
 	 * overrides the dialog fragment for inputting hunt. depending on eit or inserting. 
 	 * @param dialogID : the id returned to see if it is an insert or edit.
-	 * @param input : the returned string.
-	 */
-	@Override
-	public void onInputDone( int dialogID, String input )
-	{
-
-		if(dialogID == 1){
-			this.huntName = input;
-			insertNewHunt();
-		}
-		else if(dialogID == 2){
-			updateNewHunt(input);
-
-
-		}
-
-	}
-
-	/**
-	 * Callback method from InputDialogFragment when the user clicks Cancel.
-	 * 
-	 * @param dialogID The dialog producing the callback.
-	 */
-	@Override
-	public void onInputCancel( int dialogID )
-	{
-	}
-
+	
 	/** The menu displayed on a long touch. */
 	@Override
 	public void onCreateContextMenu( ContextMenu menu, View v, ContextMenuInfo menuInfo )
@@ -341,5 +297,8 @@ public class ManagerMain extends ListActivity implements LoaderManager.LoaderCal
 		menu.add( 0, EDIT_ID, 0, R.string.menu_edit );
 		menu.add(0, SHOW_LOC_ID, 0, R.string.menu_show_loc);
 	}
+	
+
+
 }
 

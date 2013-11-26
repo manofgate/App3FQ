@@ -104,7 +104,8 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
 		{
 		case R.id.action_manage:
 		{
-			Intent i = new Intent(this, ManagerMain.class);
+			//Intent i = new Intent(this, ManagerMain.class);
+			Intent i = new Intent(this, ManagerFragment.class);
 			startActivity(i);
 
 			return true;

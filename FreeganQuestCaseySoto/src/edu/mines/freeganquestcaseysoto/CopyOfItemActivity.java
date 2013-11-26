@@ -14,34 +14,37 @@
  */
 package edu.mines.freeganquestcaseysoto;
 
+
+
 import android.annotation.SuppressLint;
-import android.app.ListActivity;
-import android.app.LoaderManager;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 
 @SuppressLint("NewApi")
-public class ItemActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+public class CopyOfItemActivity extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
 	private static final int DELETE_ID = Menu.FIRST + 1; //integer id for the delete option for long press
 	private SimpleCursorAdapter adapter; //helps assist with database interactions 
 	public static final String HW_NAME = "NameOfitem";
-	private String huntName; //receives and passes on hunt name from the MainActivity
+	private String huntName = ""; //receives and passes on hunt name from the MainActivity
 
 	/**
 	 * The onCreate method retrieves any saved instances and sets the content view layout. It
@@ -50,16 +53,38 @@ public class ItemActivity extends ListActivity implements LoaderManager.LoaderCa
 	 * 
 	 * @param savedInstanceState - a bundle of any saved instance values 
 	 */
+	
+	
 	@Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, 
+        Bundle savedInstanceState) {
+
+        // If activity recreated (such as from screen rotate), restore
+        // the previous article selection set by onSaveInstanceState().
+        // This is primarily necessary when in the two-pane layout.
+        if (savedInstanceState != null) {
+            huntName = savedInstanceState.getString(CopyOfManagerMain.HUNT_NAME);
+        }
+
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.item_list_frag, container, false);
+    }
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+	    super.onActivityCreated(savedInstanceState);
+
+	    registerForContextMenu(this.getListView());
+	}
+	/*@Override
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
-		setContentView( R.layout.item_list );
+		getActivity().setContentView( R.layout.item_list );
 
 		//Get/set the huntName in the activity
-		huntName = getIntent().getStringExtra( ManagerMain.HUNT_NAME);
-		TextView mhuntText = (TextView)findViewById(R.id.huntName);
-		mhuntText.setText(huntName);
-
+		//huntName = getActivity().getIntent().getStringExtra( ManagerMain.HUNT_NAME);
+		//TextView mhuntText = (TextView)getActivity().findViewById(R.id.huntName);
+		//mhuntText.setText(huntName);
+		
 		//Set up ListView
 		this.getListView().setDividerHeight( 2 );
 		registerForContextMenu( getListView() );
@@ -67,31 +92,35 @@ public class ItemActivity extends ListActivity implements LoaderManager.LoaderCa
 		//Fill the Listview table
 		fillData();
 	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.mm, menu);
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-	@Override
-	  public boolean onOptionsItemSelected( MenuItem item )
-	  {
-	    switch( item.getItemId() )
-	    {
-	      case R.id.action_manage:
-	      {
-	        Intent i = new Intent(this, ManagerMain.class);
-	        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-	        startActivity(i);
-
-	        return true;
-	      }
-	      default:
-	          return super.onOptionsItemSelected(item);
+	
+	*/
+	 @Override
+	    public void onStart() {
+	        super.onStart();
+	        Log.d("FQ::COIA", "hunt name is" + huntName);
+	        // During startup, check if there are arguments passed to the fragment.
+	        // onStart is a good place to do this because the layout has already been
+	        // applied to the fragment at this point so we can safely call the method
+	        // below that sets the article text.
+	        updateArticleView(huntName);
+	        Bundle args = getArguments();
+	        if (args != null) {
+	            // Set article based on argument passed in
+	            updateArticleView(args.getString(CopyOfManagerMain.HUNT_NAME));
+	        } else if (huntName != "") {
+	        	
+	            // Set article based on saved instance state defined during onCreateView
+	            updateArticleView(huntName);
+	        }
 	    }
-	  }
+	 
+	 
+	    public void updateArticleView(String position) {
+	    	huntName = position;
+	    	getLoaderManager().restartLoader(0, null, this); 
+	        fillData();
+	    }
+	
 	/**
 	 * The onCreateLoader loads the item specific to the hunt. This makes sure we only see the 
 	 * item for that hunt and no others. 
@@ -107,7 +136,7 @@ public class ItemActivity extends ListActivity implements LoaderManager.LoaderCa
 		//Retrieve item info from database
 		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME };
 		String[] selection = {huntName};
-		CursorLoader cursorLoader = new CursorLoader( this, FreeganContentProvider.CONTENT_URI_H, projection, "hunt=?", selection, null );
+		CursorLoader cursorLoader = new CursorLoader( getActivity(), FreeganContentProvider.CONTENT_URI_H, projection, "hunt=?", selection, null );
 
 		return cursorLoader;
 	}
@@ -148,43 +177,28 @@ public class ItemActivity extends ListActivity implements LoaderManager.LoaderCa
 
 		// Note the last parameter to this constructor (zero), which indicates the adaptor should
 		// not try to automatically re-query the data ... the loader will take care of this.
-		this.adapter = new SimpleCursorAdapter( this, R.layout.item_list_row, null, from, to, 0 ){
+		this.adapter = new SimpleCursorAdapter( getActivity(), R.layout.item_list_row, null, from, to, 0 ){
 			//Change the color of each ListItem to help the user
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
 				View v = super.getView(position, convertView, parent);
 
 				if (position %2 ==1) {
-					v.setBackgroundColor(Color.argb(TRIM_MEMORY_MODERATE, 100, 100, 100));
+					v.setBackgroundColor(Color.argb(5, 100, 100, 100));
 				} else {
-					v.setBackgroundColor(Color.argb(TRIM_MEMORY_MODERATE, 170, 170, 170)); //or whatever was original
+					v.setBackgroundColor(Color.argb(5, 170, 170, 170)); //or whatever was original
 				}
 
 				return v;
 			}
 
 		};
-
+		
 		// Let this ListActivity display the contents of the cursor adapter.
 		setListAdapter( this.adapter );
 	}
 
-	/**
-	 * The additemToList method starts the AdditemActivity. It also sets the needed elements
-	 * used in that activity. 
-	 * 
-	 * @param view - this is necessary for the button to interact with the activity
-	 */
-	public void addItemToList(View view) {
-		Intent intent = new Intent(this, AddItemActivity.class);
-		intent.putExtra(ManagerMain.HUNT_NAME, huntName);
-		//Set these to empty strings to prevent null point exception and prevent filling changeable
-		//elements in the next activity. 
-		/*intent.putExtra(MainActivity.HW_NAME_TEXT, "");
-		intent.putExtra(MainActivity.DATE_TEXT, "");
-		intent.putExtra(MainActivity.DESC_TEXT, "");*/
-		startActivity(intent);
-	}
+	
 
 	/**
 	 * The onCreateContextMenu method sets up the menu displayed on a long touch.
@@ -214,7 +228,7 @@ public class ItemActivity extends ListActivity implements LoaderManager.LoaderCa
 		case DELETE_ID:
 			AdapterContextMenuInfo info = (AdapterContextMenuInfo)item.getMenuInfo();
 			Uri uri = Uri.parse( FreeganContentProvider.CONTENT_URI_H + "/" + info.id );
-			getContentResolver().delete( uri, null, null );
+			getActivity().getContentResolver().delete( uri, null, null );
 			fillData();
 			return true;
 		}
@@ -232,16 +246,16 @@ public class ItemActivity extends ListActivity implements LoaderManager.LoaderCa
 	 * @param id - the id of the list item
 	 */
 	@Override
-	protected void onListItemClick( ListView l, View v, int position, long id ) {
+	public void onListItemClick( ListView l, View v, int position, long id ) {
 		super.onListItemClick( l, v, position, id );
 
 		//Get the AdditemActivity intent
-		Intent i = new Intent( this, AddItemActivity.class );
+		Intent i = new Intent( getActivity(), AddItemActivity.class );
 
 		//Query the database for the necessary information
 		Uri huntUri = Uri.parse( FreeganContentProvider.CONTENT_URI_H + "/" + id );
 		String[] projection = { ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME };
-		Cursor cursor = getContentResolver().query( huntUri, projection, null, null, null );
+		Cursor cursor = getActivity().getContentResolver().query( huntUri, projection, null, null, null );
 
 		//Retrieve the information from the database. 
 		cursor.moveToFirst();	    
@@ -252,10 +266,10 @@ public class ItemActivity extends ListActivity implements LoaderManager.LoaderCa
 		cursor.close();
 
 		//Set the variables that will be used in the AdditemActivity
-		i.putExtra(ManagerMain.ITEM_NAME_TEXT, name);
-		i.putExtra(ManagerMain.LOC_TEXT, date);
-		i.putExtra(ManagerMain.DESC_TEXT, desc);
-		i.putExtra(ManagerMain.HUNT_NAME, huntName);
+		i.putExtra(CopyOfManagerMain.ITEM_NAME_TEXT, name);
+		i.putExtra(CopyOfManagerMain.LOC_TEXT, date);
+		i.putExtra(CopyOfManagerMain.DESC_TEXT, desc);
+		i.putExtra(CopyOfManagerMain.HUNT_NAME, huntName);
 
 		startActivity( i );
 	}

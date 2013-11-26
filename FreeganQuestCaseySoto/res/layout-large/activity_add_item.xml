@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    tools:ignore="NewApi" >
+
+    <LinearLayout
+        android:id="@+id/huntLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="True" >
+
+        <TextView
+            android:id="@+id/huntNameText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".3"
+            android:text="@string/huntName"
+           
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/huntName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".7"
+            android:text=""
+            android:textSize="32sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/itemLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/huntLayout" >
+
+        <TextView
+            android:id="@+id/itemNameText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".3"
+            android:text="@string/name"
+            android:textSize="32sp"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <EditText
+            android:id="@+id/itemNameInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".7"
+            android:ems="10"
+            android:textSize="32sp"
+            android:inputType="textPersonName" >
+
+            <requestFocus android:layout_width="match_parent" />
+        </EditText>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/dateLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/itemLayout" >
+
+        <TextView
+            android:id="@+id/locationText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".3"
+            android:text="@string/location"
+            android:textSize="32sp"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <EditText
+            android:id="@+id/locationInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".7"
+            android:ems="10"
+            android:textSize="32sp"
+            android:hint="@string/locationHint"
+            android:inputType="textPersonName" />
+    </LinearLayout>
+
+    
+
+    <TextView
+        android:id="@+id/descriptionText"
+        android:layout_width="168dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/radGDisp"
+        android:layout_gravity="left"
+        android:text="@string/description"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <EditText
+        android:id="@+id/descriptionInput"
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
+        android:layout_below="@id/descriptionText"
+        android:layout_gravity="left"
+        android:ems="10"
+     	android:textSize = "32sp"
+        android:hint="@string/descriptionHint" />
+
+    <Button
+        android:id="@+id/submitButton"
+        android:layout_width="150dp"
+        android:layout_height="100dp"
+        android:layout_below="@+id/descriptionInput"
+        android:layout_centerHorizontal="true"
+        android:onClick="submit"
+        android:textSize="32sp"
+        android:text="@string/submit" />
+
+   
+
+    <RadioGroup
+        android:id="@+id/radGDisp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/dateLayout"
+        android:layout_marginTop="7dp" 
+        android:orientation="horizontal">
+
+        <RadioButton
+        android:id="@+id/radBWord"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        
+        android:checked="true"
+        android:onClick="onRadioButtonClicked"
+        android:text="@string/radWord" />
+        
+         <RadioButton
+        android:id="@+id/radBPic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:onClick="onRadioButtonClicked"
+        android:text="@string/radPics" />
+    </RadioGroup>
+
+</RelativeLayout>

@@ -9,14 +9,14 @@
     <string name="resultsName"> Results</string>
     <string name="action_manage"> Manager Mode </string>
     <string name="huntName">Hunt</string>
-    <string name="addHunt">Add</string>
+    <string name="addHunt">Add Hunt</string>
     <string name="statement">Add Quest</string>
     <string name="menu_delete">Delete</string>
     <string name="menu_edit">Edit</string>
     <string name="default_message">Default Message</string>
     <string name="dialog_done">Done</string>
     <string name="dialog_cancel">Cancel</string>
-    <string name="addItem">Add</string>
+    <string name="addItem">Add Item</string>
     <string name="name">Item:</string>
     <string name="location">Location:</string>
     <string name="locationHint">e.g. Park</string>

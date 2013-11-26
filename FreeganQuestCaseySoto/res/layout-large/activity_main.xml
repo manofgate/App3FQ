@@ -1,0 +1,54 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity" >
+
+    <TextView
+        android:id="@+id/scavPlayerText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:textSize="48sp"
+        android:text="@string/scavPlayText" />
+
+    <Button
+        android:id="@+id/startButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/scavPlayerText"
+        android:layout_below="@+id/scavPlayerText"
+        android:layout_marginTop="76dp"
+        android:onClick="onStartHunt"
+        android:textSize="32sp"
+        android:text="@string/startName" />
+
+    <Button
+        android:id="@+id/ResultsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/startButton"
+        android:layout_below="@+id/startButton"
+        android:layout_marginTop="79dp"
+        android:onClick="onResults"
+        android:textSize="32sp"
+        android:text="@string/resultsName" />
+
+    <Spinner
+        android:id="@+id/selectHunts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@+id/startButton"
+        android:layout_marginLeft="21dp"
+        android:layout_marginTop="16dp"
+        android:textSize="32sp"
+        android:layout_toLeftOf="@+id/startButton" />
+
+</RelativeLayout>
