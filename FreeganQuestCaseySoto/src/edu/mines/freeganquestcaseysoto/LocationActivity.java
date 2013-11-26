@@ -55,7 +55,7 @@ public class LocationActivity extends ListActivity implements LoaderManager.Load
 		setContentView( R.layout.item_loc_list );
 
 		//Get/set the huntName in the activity
-		huntName = getIntent().getStringExtra( ManagerMain.HUNT_NAME);
+		huntName = getIntent().getStringExtra( CopyOfManagerMain.HUNT_NAME);
 		TextView mhuntText = (TextView)findViewById(R.id.huntName);
 		mhuntText.setText(huntName);
 
@@ -81,7 +81,7 @@ public class LocationActivity extends ListActivity implements LoaderManager.Load
 	    {
 	      case R.id.action_manage:
 	      {
-	        Intent i = new Intent(this, ManagerMain.class);
+	        Intent i = new Intent(this, ManagerFragment.class);
 	        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 	        startActivity(i);
 

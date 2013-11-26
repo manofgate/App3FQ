@@ -85,7 +85,7 @@ public class AddAnswerActivity extends Activity {
 	    {
 	      case R.id.action_manage:
 	      {
-	        Intent i = new Intent(this, ManagerMain.class);
+	        Intent i = new Intent(this,ManagerFragment.class);
 	        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 	        startActivity(i);
 
@@ -107,7 +107,7 @@ public class AddAnswerActivity extends Activity {
 		EditText nameInput = (EditText) findViewById(R.id.answerWord);
 
 		String hwName = nameInput.getText().toString();
-		String hunt = getIntent().getStringExtra( ManagerMain.HUNT_NAME);
+		String hunt = getIntent().getStringExtra( CopyOfManagerMain.HUNT_NAME);
 
 		//Make sure the name and desc have content, if not give it generic information. 
 		

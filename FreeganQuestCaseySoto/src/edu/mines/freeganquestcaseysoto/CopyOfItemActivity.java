@@ -266,10 +266,10 @@ public class CopyOfItemActivity extends ListFragment implements LoaderManager.Lo
 		cursor.close();
 
 		//Set the variables that will be used in the AdditemActivity
-		i.putExtra(ManagerMain.ITEM_NAME_TEXT, name);
-		i.putExtra(ManagerMain.LOC_TEXT, date);
-		i.putExtra(ManagerMain.DESC_TEXT, desc);
-		i.putExtra(ManagerMain.HUNT_NAME, huntName);
+		i.putExtra(CopyOfManagerMain.ITEM_NAME_TEXT, name);
+		i.putExtra(CopyOfManagerMain.LOC_TEXT, date);
+		i.putExtra(CopyOfManagerMain.DESC_TEXT, desc);
+		i.putExtra(CopyOfManagerMain.HUNT_NAME, huntName);
 
 		startActivity( i );
 	}

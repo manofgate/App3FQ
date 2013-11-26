@@ -110,7 +110,7 @@ public class HuntActivity extends ListActivity implements LoaderManager.LoaderCa
 		{
 		case R.id.action_manage:
 		{
-			Intent i = new Intent(this, ManagerMain.class);
+			Intent i = new Intent(this, ManagerFragment.class);
 			i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			startActivity(i);
 
@@ -274,7 +274,7 @@ public class HuntActivity extends ListActivity implements LoaderManager.LoaderCa
 		//Set the variables that will be used in the AdditemActivity
 		//i.putExtra(ManagerMain.ITEM_NAME_TEXT, name);
 
-		i.putExtra(ManagerMain.HUNT_NAME, huntName);
+		i.putExtra(CopyOfManagerMain.HUNT_NAME, huntName);
 
 		startActivity( i );
 

@@ -60,13 +60,13 @@ public class AddItemActivity extends Activity {
 		setContentView(R.layout.activity_add_item);
 
 		//Retrieve strings passed in from the itemActivity
-		String message = getIntent().getStringExtra( ManagerMain.HUNT_NAME);
+		String message = getIntent().getStringExtra( CopyOfManagerMain.HUNT_NAME);
 		huntName = message;
-		if(getIntent().getStringExtra( ManagerMain.ITEM_NAME_TEXT) != null){
-			hwName = getIntent().getStringExtra( ManagerMain.ITEM_NAME_TEXT);
+		if(getIntent().getStringExtra( CopyOfManagerMain.ITEM_NAME_TEXT) != null){
+			hwName = getIntent().getStringExtra( CopyOfManagerMain.ITEM_NAME_TEXT);
 		}
-		location = getIntent().getStringExtra( ManagerMain.LOC_TEXT);
-		description = getIntent().getStringExtra( ManagerMain.DESC_TEXT);
+		location = getIntent().getStringExtra( CopyOfManagerMain.LOC_TEXT);
+		description = getIntent().getStringExtra( CopyOfManagerMain.DESC_TEXT);
 
 		//Get the TextView item to be updated
 		TextView mhuntText = (TextView) findViewById(R.id.huntName);
@@ -108,7 +108,7 @@ public class AddItemActivity extends Activity {
 	    {
 	      case R.id.action_manage:
 	      {
-	        Intent i = new Intent(this, ManagerMain.class);
+	        Intent i = new Intent(this, ManagerFragment.class);
 	        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 	        startActivity(i);
 
@@ -135,7 +135,7 @@ public class AddItemActivity extends Activity {
 		String hwName = nameInput.getText().toString();
 		String desc = descriptionInput.getText().toString();
 		String loc = dateInput.getText().toString();
-		String hunt = getIntent().getStringExtra( ManagerMain.HUNT_NAME);
+		String hunt = getIntent().getStringExtra( CopyOfManagerMain.HUNT_NAME);
 
 		//Make sure the name and desc have content, if not give it generic information. 
 		hwName = hwName.length() > 0 ? hwName : "Untitled";
