@@ -111,6 +111,7 @@ public class AddItemActivity extends Activity {
 	          return super.onOptionsItemSelected(item);
 	    }
 	  }
+	
 	/**
 	 * The submit method retrieves the EditText content for the name, due date, and description from
 	 * the activity. It also validates and normalizes the user input, updates or inserts the input,

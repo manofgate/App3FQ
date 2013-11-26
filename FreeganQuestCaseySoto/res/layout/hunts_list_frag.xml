@@ -12,22 +12,35 @@
         android:text="@string/huntName"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <Button
-        android:id="@+id/addHunt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginRight="34dp"
-        android:onClick="onDialog"
-        android:text="@string/addHunt" />
-
-   <fragment 
+   <FrameLayout
             android:id="@+id/fragment_titles" 
             android:layout_width="fill_parent" 
             android:layout_height="fill_parent"
             android:layout_below="@+id/addHunt"
             android:layout_marginTop="15dp"
-             />
+             >
+
+   </FrameLayout>
+
+   <Button
+       android:id="@+id/addItemButton"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_above="@+id/fragment_titles"
+       android:layout_alignParentRight="true"
+       android:layout_marginRight="26dp"
+       android:onClick="addItemToList"
+       android:text="@string/addItem" />
+
+   <Button
+       android:id="@+id/addHunt"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_alignParentTop="true"
+       android:layout_marginRight="24dp"
+       android:layout_toRightOf="@+id/huntMain"
+       android:layout_marginLeft="25dp"
+       android:onClick="onDialog"
+       android:text="@string/addHunt" />
 
 </RelativeLayout>

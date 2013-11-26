@@ -6,37 +6,19 @@
     android:background="#e5efff" >
 
     <TextView
-        android:id="@+id/huntName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/huntName"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <Button
-        android:id="@+id/addItemButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginRight="34dp"
-        android:onClick="addItemToList"
-        android:text="@string/addItem" />
-
-    <TextView
         android:id="@+id/itemMain"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/huntName"
         android:layout_marginLeft="15dp"
         android:text="@string/itemName"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-	<fragment 
-            android:id="@+id/fragment_items" 
-            android:layout_width="fill_parent" 
-            android:layout_height="fill_parent"
-             android:layout_alignParentBottom="true"
-       		 android:layout_alignParentLeft="true"
-       		 android:layout_below="@+id/itemMain"
-             />
+	 <ListView
+        android:id="@android:id/list"
+        android:layout_width="fill_parent"
+        android:layout_height="300dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/itemMain" >
+    </ListView>
 </RelativeLayout>

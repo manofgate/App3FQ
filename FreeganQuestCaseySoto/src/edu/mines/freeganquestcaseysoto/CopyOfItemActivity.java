@@ -70,7 +70,7 @@ public class CopyOfItemActivity extends ListFragment implements LoaderManager.Lo
         return inflater.inflate(R.layout.item_list_frag, container, false);
     }
 	
-	@Override
+	/*@Override
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
 		getActivity().setContentView( R.layout.item_list );
@@ -88,7 +88,7 @@ public class CopyOfItemActivity extends ListFragment implements LoaderManager.Lo
 		fillData();
 	}
 	
-	
+	*/
 	 @Override
 	    public void onStart() {
 	        super.onStart();
@@ -189,22 +189,7 @@ public class CopyOfItemActivity extends ListFragment implements LoaderManager.Lo
 		setListAdapter( this.adapter );
 	}
 
-	/**
-	 * The additemToList method starts the AdditemActivity. It also sets the needed elements
-	 * used in that activity. 
-	 * 
-	 * @param view - this is necessary for the button to interact with the activity
-	 */
-	public void addItemToList(View view) {
-		Intent intent = new Intent(getActivity(), AddItemActivity.class);
-		intent.putExtra(ManagerMain.HUNT_NAME, huntName);
-		//Set these to empty strings to prevent null point exception and prevent filling changeable
-		//elements in the next activity. 
-		/*intent.putExtra(MainActivity.HW_NAME_TEXT, "");
-		intent.putExtra(MainActivity.DATE_TEXT, "");
-		intent.putExtra(MainActivity.DESC_TEXT, "");*/
-		startActivity(intent);
-	}
+	
 
 	/**
 	 * The onCreateContextMenu method sets up the menu displayed on a long touch.

@@ -15,22 +15,31 @@
  */
 package edu.mines.freeganquestcaseysoto;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 public class ManagerFragment extends FragmentActivity 
-        implements CopyOfManagerMain.OnHeadlineSelectedListener {
+        implements CopyOfManagerMain.OnHeadlineSelectedListener, InputDialogFragment.Listener {
+	
+	private String huntName;
 
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.news_articles);
-
+       
+        setContentView(R.layout.hunts_list_frag);
+        findViewById(R.id.addItemButton).setVisibility(View.GONE);
         // Check whether the activity is using the layout version with
         // the fragment_container FrameLayout. If so, we must add the first fragment
         if (findViewById(R.id.fragment_titles) != null) {
@@ -41,14 +50,14 @@ public class ManagerFragment extends FragmentActivity
             if (savedInstanceState != null) {
                 return;
             }
-
+            Log.d("MANAGER_FRAGEMENT", "we are above the new");
             // Create an instance of ExampleFragment
             CopyOfManagerMain firstFragment = new CopyOfManagerMain();
-
+            Log.d("MANAGER_FRAGEMENT", "we are below this spot");
             // In case this activity was started with special instructions from an Intent,
             // pass the Intent's extras to the fragment as arguments
             firstFragment.setArguments(getIntent().getExtras());
-
+            
             // Add the fragment to the 'fragment_container' FrameLayout
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_titles, firstFragment).commit();
@@ -81,11 +90,12 @@ public class ManagerFragment extends FragmentActivity
 	}
     public void onArticleSelected(String position) {
         // The user selected the headline of an article from the HeadlinesFragment
-
+    	huntName = position;
         // Capture the article fragment from the activity layout
         CopyOfItemActivity articleFrag = (CopyOfItemActivity)
                 getSupportFragmentManager().findFragmentById(R.id.items_fragment);
-
+        findViewById(R.id.addItemButton).setVisibility(View.VISIBLE);
+        //findViewById(R.id.addHunt).setVisibility(View.GONE);
         if (articleFrag != null) {
             // If article frag is available, we're in two-pane layout...
 
@@ -112,4 +122,117 @@ public class ManagerFragment extends FragmentActivity
             transaction.commit();
         }
     }
+    
+    /**
+	 * The additemToList method starts the AdditemActivity. It also sets the needed elements
+	 * used in that activity. 
+	 * 
+	 * @param view - this is necessary for the button to interact with the activity
+	 */
+	public void addItemToList(View view) {
+		Intent intent = new Intent(this, AddItemActivity.class);
+		intent.putExtra(CopyOfManagerMain.HUNT_NAME, huntName);
+		//Set these to empty strings to prevent null point exception and prevent filling changeable
+		//elements in the next activity. 
+		intent.putExtra(CopyOfManagerMain.ITEM_NAME_TEXT, "");
+		intent.putExtra(CopyOfManagerMain.LOC_TEXT, "");
+		intent.putExtra(CopyOfManagerMain.DESC_TEXT, "");
+		startActivity(intent);
+	}
+    public void insertNewHunt(){
+		ContentValues values = new ContentValues();
+
+		values.put( ManagerHuntTable.COLUMN_NAME, huntName );
+		String[] projection = { ManagerHuntTable.COLUMN_ID, ManagerHuntTable.COLUMN_NAME};
+		String[] selection = {huntName};
+		getContentResolver().insert( FreeganContentProvider.CONTENT_URI, values );
+
+		//checks to see if that hunt name has already been added
+		Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI, projection, "name=?", selection, ManagerHuntTable.COLUMN_ID + " DESC" );
+		if(cursor.getCount() >1){
+			cursor.moveToFirst();
+			Uri huntUri = Uri.parse( FreeganContentProvider.CONTENT_URI + "/" +  cursor.getString(cursor.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_ID )) );
+			getContentResolver().delete(huntUri, null, null);
+			Toast toast = Toast.makeText(getApplicationContext(),"Have already added " +huntName+" hunt!" , Toast.LENGTH_LONG);
+			toast.show();
+			//fillData();
+			
+		}
+		cursor.close();
+
+	}
+    
+    /**
+	 * Updates the hunt Name and it's corresponding items.
+	 * @param newhuntName : used to update the name while huntName is the old hunt name to query
+	 */
+	public void updateNewHunt(String newHuntName){
+		ContentValues values = new ContentValues();
+		values.put( ManagerHuntTable.COLUMN_NAME, newHuntName );
+		String[] projection = { ManagerHuntTable.COLUMN_ID, ManagerHuntTable.COLUMN_NAME};
+		String[] selection = {huntName};
+		String[] querySelection = {newHuntName};
+
+		//checks to see if that hunt name is already in database and adds if not. 
+		Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI, projection, "name=?", querySelection, ManagerHuntTable.COLUMN_ID + " DESC" );
+
+		if(cursor.getCount() <1){
+			int rowsUpdated = getContentResolver().update( FreeganContentProvider.CONTENT_URI, values, "name=?", selection );
+			//fillData();
+			Log.d("FREEGANQUEST::EDIT", "updated rows: " + rowsUpdated);
+			String[] selectionC = {huntName};
+			String[] projection2 = {ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME};
+
+			Cursor cursorC = getContentResolver().query(FreeganContentProvider.CONTENT_URI_H, projection2, "hunt=?", selectionC, null);
+			ContentValues valuesC = new ContentValues();
+			valuesC.put( ItemTable.COLUMN_HUNT_NAME, newHuntName );
+			for(int i=0; i < cursorC.getCount(); ++i){
+				rowsUpdated = getContentResolver().update( FreeganContentProvider.CONTENT_URI_H, valuesC, "hunt=?", selectionC );
+
+			}
+		}
+		cursor.close();
+
+
+	}
+	
+	public void onDialog(View view){
+		Bundle args = new Bundle();
+		args.putInt( "dialogID", 1 );
+		args.putString( "prompt", getString( R.string.statement ) );
+
+		InputDialogFragment dialog = new InputDialogFragment();
+		dialog.setArguments( args );
+		dialog.show( getFragmentManager(), "Dialog" );
+
+	}
+    /**
+    * @param input : the returned string.
+	 */
+	@Override
+	public void onInputDone( int dialogID, String input )
+	{
+
+		if(dialogID == 1){
+			this.huntName = input;
+			insertNewHunt();
+		}
+		else if(dialogID == 2){
+			updateNewHunt(input);
+
+
+		}
+
+	}
+
+	/**
+	 * Callback method from InputDialogFragment when the user clicks Cancel.
+	 * 
+	 * @param dialogID The dialog producing the callback.
+	 */
+	@Override
+	public void onInputCancel( int dialogID )
+	{
+	}
+
 }
