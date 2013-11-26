@@ -24,6 +24,8 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,7 +35,6 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 
 @SuppressLint("NewApi")
 public class HuntActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor>{
@@ -41,6 +42,12 @@ public class HuntActivity extends ListActivity implements LoaderManager.LoaderCa
 	private SimpleCursorAdapter adapter; //helps assist with database interactions 
 	public static final String HW_NAME = "NameOfitem";
 	private String huntName; //receives and passes on hunt name from the MainActivity
+	private long startTime = 0L;
+	long timeInMilliseconds = 0L;
+	long timeSwapBuff = 0L;
+	long updatedTime = 0L;
+	private TextView timerValue;
+	private Handler customHandler = new Handler();
 
 	/**
 	 * The onCreate method retrieves any saved instances and sets the content view layout. It
@@ -59,6 +66,11 @@ public class HuntActivity extends ListActivity implements LoaderManager.LoaderCa
 		TextView mhuntText = (TextView)findViewById(R.id.huntName);
 		mhuntText.setText(huntName);
 
+		timerValue = (TextView) findViewById(R.id.timeView);
+		startTime = SystemClock.uptimeMillis();
+		customHandler.postDelayed(updateTimerThread, 0);
+
+
 		//Set up ListView
 		this.getListView().setDividerHeight( 2 );
 		registerForContextMenu( getListView() );
@@ -66,6 +78,23 @@ public class HuntActivity extends ListActivity implements LoaderManager.LoaderCa
 		//Fill the Listview table
 		fillData();
 	}
+
+	private Runnable updateTimerThread = new Runnable() {
+		public void run() {
+			timeInMilliseconds = SystemClock.uptimeMillis() - startTime;
+			updatedTime = timeSwapBuff + timeInMilliseconds;
+			int secs = (int) (updatedTime / 1000);
+			int mins = secs / 60;
+			secs = secs % 60;
+			int milliseconds = (int) (updatedTime % 1000);
+			timerValue.setText("" + mins + ":"
+					+ String.format("%02d", secs) + ":"
+					+ String.format("%03d", milliseconds));
+			customHandler.postDelayed(this, 0);
+		}
+	};
+
+
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -75,22 +104,22 @@ public class HuntActivity extends ListActivity implements LoaderManager.LoaderCa
 		return true;
 	}
 	@Override
-	  public boolean onOptionsItemSelected( MenuItem item )
-	  {
-	    switch( item.getItemId() )
-	    {
-	      case R.id.action_manage:
-	      {
-	        Intent i = new Intent(this, ManagerMain.class);
-	        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-	        startActivity(i);
+	public boolean onOptionsItemSelected( MenuItem item )
+	{
+		switch( item.getItemId() )
+		{
+		case R.id.action_manage:
+		{
+			Intent i = new Intent(this, ManagerMain.class);
+			i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(i);
 
-	        return true;
-	      }
-	      default:
-	          return super.onOptionsItemSelected(item);
-	    }
-	  }
+			return true;
+		}
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
 	/**
 	 * The onCreateLoader loads the item specific to the hunt. This makes sure we only see the 
 	 * item for that hunt and no others. 
@@ -195,7 +224,7 @@ public class HuntActivity extends ListActivity implements LoaderManager.LoaderCa
 	@Override
 	public void onCreateContextMenu( ContextMenu menu, View v, ContextMenuInfo menuInfo ) {
 		super.onCreateContextMenu( menu, v, menuInfo );
-		
+
 	}
 
 	/**
@@ -208,9 +237,9 @@ public class HuntActivity extends ListActivity implements LoaderManager.LoaderCa
 	 */
 	@Override
 	public boolean onContextItemSelected( MenuItem item ) {
-		
+
 		//When the delete option is selected delete the item row from the db
-		
+
 		return super.onContextItemSelected( item );
 	}
 
@@ -244,10 +273,10 @@ public class HuntActivity extends ListActivity implements LoaderManager.LoaderCa
 
 		//Set the variables that will be used in the AdditemActivity
 		//i.putExtra(ManagerMain.ITEM_NAME_TEXT, name);
-		
+
 		i.putExtra(ManagerMain.HUNT_NAME, huntName);
 
 		startActivity( i );
-		
+
 	}
 }

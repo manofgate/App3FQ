@@ -15,9 +15,7 @@ import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,7 +24,6 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 public class MainActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor>, InputDialogFragment.Listener{
 
@@ -127,6 +124,7 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
 	
 	public void onResults(View view){
 		Intent i = new Intent(this, ResultsActivity.class);
+		i.putExtra(HUNT_NAME, arrayList1.get(mHunts.getSelectedItemPosition()));
 		startActivity(i);
 	}
 	
