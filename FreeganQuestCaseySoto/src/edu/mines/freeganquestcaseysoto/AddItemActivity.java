@@ -45,6 +45,7 @@ public class AddItemActivity extends Activity {
 	private String location = ""; //used for checking if date needs to be updated
 	private String description = ""; //used for checking if description needs to be updated
 	private String answerDisp = "word";
+	private String huntName;
 
 	/**
 	 * The onCreate method retrieves any saved instances and sets the content view layout. It
@@ -60,6 +61,7 @@ public class AddItemActivity extends Activity {
 
 		//Retrieve strings passed in from the itemActivity
 		String message = getIntent().getStringExtra( ManagerMain.HUNT_NAME);
+		huntName = message;
 		if(getIntent().getStringExtra( ManagerMain.ITEM_NAME_TEXT) != null){
 			hwName = getIntent().getStringExtra( ManagerMain.ITEM_NAME_TEXT);
 		}
@@ -85,7 +87,12 @@ public class AddItemActivity extends Activity {
 			update = true;
 		}
 	}
-	
+	public void onBackPressed() {
+		super.onBackPressed();
+		
+		finish();
+	return;
+	}
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.

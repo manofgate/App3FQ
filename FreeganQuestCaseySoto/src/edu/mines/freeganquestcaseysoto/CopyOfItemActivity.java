@@ -26,6 +26,7 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -36,7 +37,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
 
 @SuppressLint("NewApi")
 public class CopyOfItemActivity extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>{
@@ -69,7 +69,12 @@ public class CopyOfItemActivity extends ListFragment implements LoaderManager.Lo
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.item_list_frag, container, false);
     }
-	
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+	    super.onActivityCreated(savedInstanceState);
+
+	    registerForContextMenu(this.getListView());
+	}
 	/*@Override
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
@@ -92,23 +97,27 @@ public class CopyOfItemActivity extends ListFragment implements LoaderManager.Lo
 	 @Override
 	    public void onStart() {
 	        super.onStart();
-
+	        Log.d("FQ::COIA", "hunt name is" + huntName);
 	        // During startup, check if there are arguments passed to the fragment.
 	        // onStart is a good place to do this because the layout has already been
 	        // applied to the fragment at this point so we can safely call the method
 	        // below that sets the article text.
+	        updateArticleView(huntName);
 	        Bundle args = getArguments();
 	        if (args != null) {
 	            // Set article based on argument passed in
 	            updateArticleView(args.getString(CopyOfManagerMain.HUNT_NAME));
 	        } else if (huntName != "") {
+	        	
 	            // Set article based on saved instance state defined during onCreateView
 	            updateArticleView(huntName);
 	        }
 	    }
-
+	 
+	 
 	    public void updateArticleView(String position) {
 	    	huntName = position;
+	    	getLoaderManager().restartLoader(0, null, this); 
 	        fillData();
 	    }
 	

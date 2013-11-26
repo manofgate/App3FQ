@@ -31,7 +31,7 @@ import android.widget.Toast;
 public class ManagerFragment extends FragmentActivity 
         implements CopyOfManagerMain.OnHeadlineSelectedListener, InputDialogFragment.Listener {
 	
-	private String huntName;
+	public static String huntName;
 
     /** Called when the activity is first created. */
     @Override
@@ -78,7 +78,7 @@ public class ManagerFragment extends FragmentActivity
 		{
 		case R.id.action_manage:
 		{
-			Intent i = new Intent(this, CopyOfManagerMain.class);
+			Intent i = new Intent(this, ManagerFragment.class);
 			i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			startActivity(i);
 
@@ -88,6 +88,15 @@ public class ManagerFragment extends FragmentActivity
 			return super.onOptionsItemSelected(item);
 		}
 	}
+	
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		findViewById(R.id.addItemButton).setVisibility(View.GONE);
+		findViewById(R.id.addHunt).setVisibility(View.VISIBLE);
+	return;
+	}
+	
     public void onArticleSelected(String position) {
         // The user selected the headline of an article from the HeadlinesFragment
     	huntName = position;
@@ -95,16 +104,16 @@ public class ManagerFragment extends FragmentActivity
         CopyOfItemActivity articleFrag = (CopyOfItemActivity)
                 getSupportFragmentManager().findFragmentById(R.id.items_fragment);
         findViewById(R.id.addItemButton).setVisibility(View.VISIBLE);
-        //findViewById(R.id.addHunt).setVisibility(View.GONE);
+        
         if (articleFrag != null) {
             // If article frag is available, we're in two-pane layout...
-
+        	Log.d("FQ: MF", "here in the articleUpdate");
             // Call a method in the ArticleFragment to update its content
             articleFrag.updateArticleView(position);
 
         } else {
             // If the frag is not available, we're in the one-pane layout and must swap frags...
-
+        	findViewById(R.id.addHunt).setVisibility(View.GONE);
             // Create fragment and give it an argument for the selected article
         	 CopyOfItemActivity newFragment = new  CopyOfItemActivity();
             Bundle args = new Bundle();
@@ -162,11 +171,8 @@ public class ManagerFragment extends FragmentActivity
 
 	}
     
-    /**
-	 * Updates the hunt Name and it's corresponding items.
-	 * @param newhuntName : used to update the name while huntName is the old hunt name to query
-	 */
-	public void updateNewHunt(String newHuntName){
+    
+    public void updateNewHunt(String newHuntName){
 		ContentValues values = new ContentValues();
 		values.put( ManagerHuntTable.COLUMN_NAME, newHuntName );
 		String[] projection = { ManagerHuntTable.COLUMN_ID, ManagerHuntTable.COLUMN_NAME};
@@ -195,7 +201,6 @@ public class ManagerFragment extends FragmentActivity
 
 
 	}
-	
 	public void onDialog(View view){
 		Bundle args = new Bundle();
 		args.putInt( "dialogID", 1 );
@@ -218,11 +223,12 @@ public class ManagerFragment extends FragmentActivity
 			insertNewHunt();
 		}
 		else if(dialogID == 2){
+			Log.d("FREEGAN_QUEST MF: ", "man frag: " + huntName);
 			updateNewHunt(input);
 
 
 		}
-
+		
 	}
 
 	/**

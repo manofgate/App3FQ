@@ -48,11 +48,26 @@ public class CopyOfManagerMain extends ListFragment implements LoaderManager.Loa
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		//getActivity().setContentView(R.layout.hunts_frag);
+		
 		int layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
-                android.R.layout.simple_list_item_activated_1 : android.R.layout.simple_list_item_1;
-
+                R.layout.hunts_frag : R.layout.hunts_frag;
+		
+		
+		//Set up ListView
+		//this.getListView().setDividerHeight( 2 );
+		//registerForContextMenu( getListView() );
+				
+				
         // Create an array adapter for the list view, using the Ipsum headlines array
         fillData();
+	}
+	
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+	    super.onActivityCreated(savedInstanceState);
+
+	    registerForContextMenu(this.getListView());
 	}
 	/*
 	@Override
@@ -95,7 +110,7 @@ public class CopyOfManagerMain extends ListFragment implements LoaderManager.Loa
         }
     }
 
-
+	
 	/**
 	 * Inserts the hunt into the hunt Table.
 	 * checks to see if there are now 2 hunt of the same name and deletes the last inserted hunt
@@ -148,6 +163,7 @@ public class CopyOfManagerMain extends ListFragment implements LoaderManager.Loa
 			name2 = cursor2.getString( cursor2.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_NAME ) );
 			cursor2.close();
 			this.huntName= name2;
+			
 
 			getActivity().getContentResolver().delete( uri, null, null );
 
@@ -179,13 +195,15 @@ public class CopyOfManagerMain extends ListFragment implements LoaderManager.Loa
 			name2 = cursor2.getString( cursor2.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_NAME ) );
 			cursor2.close();
 			this.huntName= name2;
+			ManagerFragment.huntName = name2;
 			Bundle args = new Bundle();
 			args.putInt( "dialogID", 2 );
 			args.putString( "prompt", getString( R.string.statement ) );
-
+			
+			Log.d("FREEGANQUEST: " , "Name before dialog: " + name2);
 			InputDialogFragment dialog = new InputDialogFragment();
 			dialog.setArguments( args );
-			//dialog.show( getFragmentManager(), "Dialog" );
+			dialog.show( getActivity().getFragmentManager(), "Dialog" );
 			return true;
 		case SHOW_LOC_ID:
 			info = (AdapterContextMenuInfo)item.getMenuInfo();
@@ -279,8 +297,7 @@ public class CopyOfManagerMain extends ListFragment implements LoaderManager.Loa
 		menu.add( 0, EDIT_ID, 0, R.string.menu_edit );
 		menu.add(0, SHOW_LOC_ID, 0, R.string.menu_show_loc);
 	}
-
-
+	
 
 
 }
