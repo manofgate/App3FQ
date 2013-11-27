@@ -62,16 +62,16 @@ public class AddAnswerActivity extends Activity {
 
 		//Retrieve strings passed in from the itemActivity
 		//String message = getIntent().getStringExtra( ManagerMain.HUNT_NAME);
-		
+
 
 		//Get the TextView item to be updated
 		//TextView mhuntText = (TextView) findViewById(R.id.huntName);
-		
+
 
 		//Set the TextView item to the new text form the itemActivity
 		//mhuntText.setText(message);
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -81,32 +81,41 @@ public class AddAnswerActivity extends Activity {
 	}
 
 	@Override
-	  public boolean onOptionsItemSelected( MenuItem item )
-	  {
-	    switch( item.getItemId() )
-	    {
-	      case R.id.action_manage:
-	      {
-	        Intent i = new Intent(this,ManagerFragment.class);
-	        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-	        startActivity(i);
+	public boolean onOptionsItemSelected( MenuItem item )
+	{
+		switch( item.getItemId() )
+		{
+		case R.id.action_manage:
+		{
+			Intent i = new Intent(this,ManagerFragment.class);
+			i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(i);
 
-	        return true;
-	      }
-	      case R.id.about_settings:
-			{
-				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		        builder.setTitle("About");
-		        builder.setMessage(MainActivity.ABOUT_INFO);
-		        builder.setPositiveButton("OK", null);
-		        AlertDialog dialog = builder.show();
-		        TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
-		        messageText.setGravity(Gravity.CENTER);
-			}
-	      default:
-	          return super.onOptionsItemSelected(item);
-	    }
-	  }
+			return true;
+		}
+		case R.id.about_settings:
+		{
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("About");
+			builder.setMessage(MainActivity.ABOUT_INFO);
+			builder.setPositiveButton("OK", null);
+			AlertDialog dialog = builder.show();
+			TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
+			messageText.setGravity(Gravity.CENTER);
+		}
+		case R.id.help_settings: {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Help");
+			builder.setMessage(MainActivity.MANAGER_HELP_INFO);
+			builder.setPositiveButton("OK", null);
+			AlertDialog dialog = builder.show();
+			TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
+			messageText.setGravity(Gravity.CENTER);
+		}
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
 	/**
 	 * The submit method retrieves the EditText content for the name, due date, and description from
 	 * the activity. It also validates and normalizes the user input, updates or inserts the input,
@@ -122,7 +131,7 @@ public class AddAnswerActivity extends Activity {
 		String hunt = getIntent().getStringExtra( CopyOfManagerMain.HUNT_NAME);
 
 		//Make sure the name and desc have content, if not give it generic information. 
-		
+
 		//Call the respective method based on what the user is doing
 		if(update){
 			updateHW(hwName);
@@ -132,7 +141,7 @@ public class AddAnswerActivity extends Activity {
 
 		finish();
 	}
-		
+
 	/**
 	 * The updateHW method checks to see if the name, due date, or description needs to be updated. 
 	 * If any of them need to be updated then update it. 
@@ -143,7 +152,7 @@ public class AddAnswerActivity extends Activity {
 	 */
 	private void updateHW(String name) {
 		int rowsUpdated = 0;
-		
+
 		//If the name/date/description was updated by the user it won't match the values that were passed
 		//from itemActivity when the user clicked a item to be updated. In this case, updated
 		//that item respectively. 
@@ -153,7 +162,7 @@ public class AddAnswerActivity extends Activity {
 			String[] selection = {hwName, location, description};
 			rowsUpdated = rowsUpdated + getContentResolver().update( FreeganContentProvider.CONTENT_URI_H, values, "name=? AND date=? AND desc=?", selection );
 		}
-		
+
 
 		if(rowsUpdated == 0){
 			Log.d("ADDitem", "No rows were updated");
@@ -174,7 +183,7 @@ public class AddAnswerActivity extends Activity {
 		values.put( ItemTable.COLUMN_NAME, name );
 		values.put( ItemTable.COLUMN_HUNT_NAME, hunt);
 		values.put(ItemTable.COLUMN_DISPLAY, answerDisp);
-		
+
 		//Insert values into the item Table
 		getContentResolver().insert( FreeganContentProvider.CONTENT_URI_H, values );
 
@@ -182,7 +191,7 @@ public class AddAnswerActivity extends Activity {
 		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME};
 		String[] selection = {name};
 		Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI_H, projection, "name=?", selection, ItemTable.COLUMN_ID + " DESC" );
-		
+
 		//If there were multiple entries remove the last insert then notify the user. 
 		if(cursor.getCount() > 1){
 			cursor.moveToFirst();
@@ -194,5 +203,5 @@ public class AddAnswerActivity extends Activity {
 		}
 		cursor.close();
 	}
-	
+
 }

@@ -32,41 +32,41 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class ManagerFragment extends FragmentActivity 
-        implements CopyOfManagerMain.OnHeadlineSelectedListener, InputDialogFragment.Listener {
-	
+implements CopyOfManagerMain.OnHeadlineSelectedListener, InputDialogFragment.Listener {
+
 	public static String huntName;
 
-    /** Called when the activity is first created. */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-       
-        setContentView(R.layout.hunts_list_frag);
-        findViewById(R.id.addItemButton).setVisibility(View.GONE);
-        // Check whether the activity is using the layout version with
-        // the fragment_container FrameLayout. If so, we must add the first fragment
-        if (findViewById(R.id.fragment_titles) != null) {
+	/** Called when the activity is first created. */
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 
-            // However, if we're being restored from a previous state,
-            // then we don't need to do anything and should return or else
-            // we could end up with overlapping fragments.
-            if (savedInstanceState != null) {
-                return;
-            }
-            Log.d("MANAGER_FRAGEMENT", "we are above the new");
-            // Create an instance of ExampleFragment
-            CopyOfManagerMain firstFragment = new CopyOfManagerMain();
-            Log.d("MANAGER_FRAGEMENT", "we are below this spot");
-            // In case this activity was started with special instructions from an Intent,
-            // pass the Intent's extras to the fragment as arguments
-            firstFragment.setArguments(getIntent().getExtras());
-            
-            // Add the fragment to the 'fragment_container' FrameLayout
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_titles, firstFragment).commit();
-        }
-    }
-    @Override
+		setContentView(R.layout.hunts_list_frag);
+		findViewById(R.id.addItemButton).setVisibility(View.GONE);
+		// Check whether the activity is using the layout version with
+		// the fragment_container FrameLayout. If so, we must add the first fragment
+		if (findViewById(R.id.fragment_titles) != null) {
+
+			// However, if we're being restored from a previous state,
+			// then we don't need to do anything and should return or else
+			// we could end up with overlapping fragments.
+			if (savedInstanceState != null) {
+				return;
+			}
+			Log.d("MANAGER_FRAGEMENT", "we are above the new");
+			// Create an instance of ExampleFragment
+			CopyOfManagerMain firstFragment = new CopyOfManagerMain();
+			Log.d("MANAGER_FRAGEMENT", "we are below this spot");
+			// In case this activity was started with special instructions from an Intent,
+			// pass the Intent's extras to the fragment as arguments
+			firstFragment.setArguments(getIntent().getExtras());
+
+			// Add the fragment to the 'fragment_container' FrameLayout
+			getSupportFragmentManager().beginTransaction()
+			.add(R.id.fragment_titles, firstFragment).commit();
+		}
+	}
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.mm, menu);
@@ -90,62 +90,71 @@ public class ManagerFragment extends FragmentActivity
 		case R.id.about_settings:
 		{
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	        builder.setTitle("About");
-	        builder.setMessage(MainActivity.ABOUT_INFO);
-	        builder.setPositiveButton("OK", null);
-	        AlertDialog dialog = builder.show();
-	        TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
-	        messageText.setGravity(Gravity.CENTER);
+			builder.setTitle("About");
+			builder.setMessage(MainActivity.ABOUT_INFO);
+			builder.setPositiveButton("OK", null);
+			AlertDialog dialog = builder.show();
+			TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
+			messageText.setGravity(Gravity.CENTER);
+		}
+		case R.id.help_settings: {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Help");
+			builder.setMessage(MainActivity.MANAGER_HELP_INFO);
+			builder.setPositiveButton("OK", null);
+			AlertDialog dialog = builder.show();
+			TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
+			messageText.setGravity(Gravity.CENTER);
 		}
 		default:
 			return super.onOptionsItemSelected(item);
 		}
 	}
-	
+
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
 		findViewById(R.id.addItemButton).setVisibility(View.GONE);
 		findViewById(R.id.addHunt).setVisibility(View.VISIBLE);
-	return;
+		return;
 	}
-	
-    public void onArticleSelected(String position) {
-        // The user selected the headline of an article from the HeadlinesFragment
-    	huntName = position;
-        // Capture the article fragment from the activity layout
-        CopyOfItemActivity articleFrag = (CopyOfItemActivity)
-                getSupportFragmentManager().findFragmentById(R.id.items_fragment);
-        findViewById(R.id.addItemButton).setVisibility(View.VISIBLE);
-        
-        if (articleFrag != null) {
-            // If article frag is available, we're in two-pane layout...
-        	Log.d("FQ: MF", "here in the articleUpdate");
-            // Call a method in the ArticleFragment to update its content
-            articleFrag.updateArticleView(position);
 
-        } else {
-            // If the frag is not available, we're in the one-pane layout and must swap frags...
-        	findViewById(R.id.addHunt).setVisibility(View.GONE);
-            // Create fragment and give it an argument for the selected article
-        	 CopyOfItemActivity newFragment = new  CopyOfItemActivity();
-            Bundle args = new Bundle();
-            
-            args.putString( CopyOfManagerMain.HUNT_NAME, position);
-            newFragment.setArguments(args);
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+	public void onArticleSelected(String position) {
+		// The user selected the headline of an article from the HeadlinesFragment
+		huntName = position;
+		// Capture the article fragment from the activity layout
+		CopyOfItemActivity articleFrag = (CopyOfItemActivity)
+				getSupportFragmentManager().findFragmentById(R.id.items_fragment);
+		findViewById(R.id.addItemButton).setVisibility(View.VISIBLE);
 
-            // Replace whatever is in the fragment_container view with this fragment,
-            // and add the transaction to the back stack so the user can navigate back
-            transaction.replace(R.id.fragment_titles, newFragment);
-            transaction.addToBackStack(null);
+		if (articleFrag != null) {
+			// If article frag is available, we're in two-pane layout...
+			Log.d("FQ: MF", "here in the articleUpdate");
+			// Call a method in the ArticleFragment to update its content
+			articleFrag.updateArticleView(position);
 
-            // Commit the transaction
-            transaction.commit();
-        }
-    }
-    
-    /**
+		} else {
+			// If the frag is not available, we're in the one-pane layout and must swap frags...
+			findViewById(R.id.addHunt).setVisibility(View.GONE);
+			// Create fragment and give it an argument for the selected article
+			CopyOfItemActivity newFragment = new  CopyOfItemActivity();
+			Bundle args = new Bundle();
+
+			args.putString( CopyOfManagerMain.HUNT_NAME, position);
+			newFragment.setArguments(args);
+			FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+			// Replace whatever is in the fragment_container view with this fragment,
+			// and add the transaction to the back stack so the user can navigate back
+			transaction.replace(R.id.fragment_titles, newFragment);
+			transaction.addToBackStack(null);
+
+			// Commit the transaction
+			transaction.commit();
+		}
+	}
+
+	/**
 	 * The additemToList method starts the AdditemActivity. It also sets the needed elements
 	 * used in that activity. 
 	 * 
@@ -161,7 +170,7 @@ public class ManagerFragment extends FragmentActivity
 		intent.putExtra(CopyOfManagerMain.DESC_TEXT, "");
 		startActivity(intent);
 	}
-    public void insertNewHunt(){
+	public void insertNewHunt(){
 		ContentValues values = new ContentValues();
 
 		values.put( ManagerHuntTable.COLUMN_NAME, huntName );
@@ -178,14 +187,14 @@ public class ManagerFragment extends FragmentActivity
 			Toast toast = Toast.makeText(getApplicationContext(),"Have already added " +huntName+" hunt!" , Toast.LENGTH_LONG);
 			toast.show();
 			//fillData();
-			
+
 		}
 		cursor.close();
 
 	}
-    
-    
-    public void updateNewHunt(String newHuntName){
+
+
+	public void updateNewHunt(String newHuntName){
 		ContentValues values = new ContentValues();
 		values.put( ManagerHuntTable.COLUMN_NAME, newHuntName );
 		String[] projection = { ManagerHuntTable.COLUMN_ID, ManagerHuntTable.COLUMN_NAME};
@@ -224,8 +233,8 @@ public class ManagerFragment extends FragmentActivity
 		dialog.show( getFragmentManager(), "Dialog" );
 
 	}
-    /**
-    * @param input : the returned string.
+	/**
+	 * @param input : the returned string.
 	 */
 	@Override
 	public void onInputDone( int dialogID, String input )
@@ -241,7 +250,7 @@ public class ManagerFragment extends FragmentActivity
 
 
 		}
-		
+
 	}
 
 	/**

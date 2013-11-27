@@ -77,32 +77,41 @@ public class LocationActivity extends ListActivity implements LoaderManager.Load
 		return true;
 	}
 	@Override
-	  public boolean onOptionsItemSelected( MenuItem item )
-	  {
-	    switch( item.getItemId() )
-	    {
-	      case R.id.action_manage:
-	      {
-	        Intent i = new Intent(this, ManagerFragment.class);
-	        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-	        startActivity(i);
+	public boolean onOptionsItemSelected( MenuItem item )
+	{
+		switch( item.getItemId() )
+		{
+		case R.id.action_manage:
+		{
+			Intent i = new Intent(this, ManagerFragment.class);
+			i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(i);
 
-	        return true;
-	      }
-	      case R.id.about_settings:
-			{
-				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		        builder.setTitle("About");
-		        builder.setMessage(MainActivity.ABOUT_INFO);
-		        builder.setPositiveButton("OK", null);
-		        AlertDialog dialog = builder.show();
-		        TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
-		        messageText.setGravity(Gravity.CENTER);
-			}
-	      default:
-	          return super.onOptionsItemSelected(item);
-	    }
-	  }
+			return true;
+		}
+		case R.id.about_settings:
+		{
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("About");
+			builder.setMessage(MainActivity.ABOUT_INFO);
+			builder.setPositiveButton("OK", null);
+			AlertDialog dialog = builder.show();
+			TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
+			messageText.setGravity(Gravity.CENTER);
+		}
+		case R.id.help_settings: {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Help");
+			builder.setMessage(MainActivity.MANAGER_HELP_INFO);
+			builder.setPositiveButton("OK", null);
+			AlertDialog dialog = builder.show();
+			TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
+			messageText.setGravity(Gravity.CENTER);
+		}
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
 	/**
 	 * The onCreateLoader loads the item specific to the hunt. This makes sure we only see the 
 	 * item for that hunt and no others. 

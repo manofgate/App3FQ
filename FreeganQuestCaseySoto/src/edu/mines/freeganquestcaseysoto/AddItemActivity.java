@@ -91,9 +91,9 @@ public class AddItemActivity extends Activity {
 	}
 	public void onBackPressed() {
 		super.onBackPressed();
-		
+
 		finish();
-	return;
+		return;
 	}
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -104,33 +104,42 @@ public class AddItemActivity extends Activity {
 	}
 
 	@Override
-	  public boolean onOptionsItemSelected( MenuItem item )
-	  {
-	    switch( item.getItemId() )
-	    {
-	      case R.id.action_manage:
-	      {
-	        Intent i = new Intent(this, ManagerFragment.class);
-	        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-	        startActivity(i);
+	public boolean onOptionsItemSelected( MenuItem item )
+	{
+		switch( item.getItemId() )
+		{
+		case R.id.action_manage:
+		{
+			Intent i = new Intent(this, ManagerFragment.class);
+			i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(i);
 
-	        return true;
-	      }
-	      case R.id.about_settings:
-			{
-				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		        builder.setTitle("About");
-		        builder.setMessage(MainActivity.ABOUT_INFO);
-		        builder.setPositiveButton("OK", null);
-		        AlertDialog dialog = builder.show();
-		        TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
-		        messageText.setGravity(Gravity.CENTER);
-			}
-	      default:
-	          return super.onOptionsItemSelected(item);
-	    }
-	  }
-	
+			return true;
+		}
+		case R.id.about_settings:
+		{
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("About");
+			builder.setMessage(MainActivity.ABOUT_INFO);
+			builder.setPositiveButton("OK", null);
+			AlertDialog dialog = builder.show();
+			TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
+			messageText.setGravity(Gravity.CENTER);
+		}
+		case R.id.help_settings: {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Help");
+			builder.setMessage(MainActivity.MANAGER_HELP_INFO);
+			builder.setPositiveButton("OK", null);
+			AlertDialog dialog = builder.show();
+			TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
+			messageText.setGravity(Gravity.CENTER);
+		}
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+
 	/**
 	 * The submit method retrieves the EditText content for the name, due date, and description from
 	 * the activity. It also validates and normalizes the user input, updates or inserts the input,
@@ -168,7 +177,7 @@ public class AddItemActivity extends Activity {
 
 		finish();
 	}
-		
+
 	/**
 	 * The updateHW method checks to see if the name, due date, or description needs to be updated. 
 	 * If any of them need to be updated then update it. 
@@ -179,7 +188,7 @@ public class AddItemActivity extends Activity {
 	 */
 	private void updateHW(String name, String loc, String desc) {
 		int rowsUpdated = 0;
-		
+
 		//If the name/date/description was updated by the user it won't match the values that were passed
 		//from itemActivity when the user clicked a item to be updated. In this case, updated
 		//that item respectively. 
@@ -221,7 +230,7 @@ public class AddItemActivity extends Activity {
 		values.put( ItemTable.COLUMN_DESCRIPTION, desc);
 		values.put( ItemTable.COLUMN_HUNT_NAME, hunt);
 		values.put(ItemTable.COLUMN_DISPLAY, answerDisp);
-		
+
 		//Insert values into the item Table
 		getContentResolver().insert( FreeganContentProvider.CONTENT_URI_H, values );
 
@@ -229,7 +238,7 @@ public class AddItemActivity extends Activity {
 		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME};
 		String[] selection = {name};
 		Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI_H, projection, "name=?", selection, ItemTable.COLUMN_ID + " DESC" );
-		
+
 		//If there were multiple entries remove the last insert then notify the user. 
 		if(cursor.getCount() > 1){
 			cursor.moveToFirst();
@@ -242,19 +251,19 @@ public class AddItemActivity extends Activity {
 		cursor.close();
 	}
 	public void onRadioButtonClicked(View view) {
-	    // Is the button now checked?
-	    boolean checked = ((RadioButton) view).isChecked();
-	    
-	    // Check which radio button was clicked
-	    switch(view.getId()) {
-	        case R.id.radBWord:
-	            if (checked)
-	                answerDisp = "word";
-	            break;
-	        case R.id.radBPic:
-	            if (checked)
-	                answerDisp = "picture";
-	            break;
-	    }
+		// Is the button now checked?
+		boolean checked = ((RadioButton) view).isChecked();
+
+		// Check which radio button was clicked
+		switch(view.getId()) {
+		case R.id.radBWord:
+			if (checked)
+				answerDisp = "word";
+			break;
+		case R.id.radBPic:
+			if (checked)
+				answerDisp = "picture";
+			break;
+		}
 	}
 }
