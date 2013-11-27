@@ -12,24 +12,16 @@
         android:text="@string/huntName"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <ListView
-        android:id="@android:id/list"
-        android:layout_width="fill_parent"
-        android:layout_height="300dp"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/huntMain" >
+    <FrameLayout
+            android:id="@+id/fragment_hunts" 
+            android:layout_width="fill_parent" 
+            android:layout_height="fill_parent"
+            android:layout_below="@+id/huntMain"
+            android:layout_above="@+id/finishB"
+            android:layout_marginTop="45dp"
+             >
 
-    </ListView>
-    
-    <Button
-        android:id="@+id/finishB"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@android:id/list"
-        android:layout_marginTop="10dp"
-        android:onClick="onDialog"
-        android:text="@string/finishName" />
+   </FrameLayout>
 
     <TextView
         android:id="@+id/timeView"
@@ -50,5 +42,15 @@
         android:layout_marginLeft="26dp"
         android:layout_toRightOf="@+id/huntMain"
         android:text="" />
+
+    <Button
+        android:id="@+id/finishB"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="31dp"
+        android:onClick="onDialog"
+        android:text="@string/finishName" />
 
 </RelativeLayout>
