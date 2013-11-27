@@ -15,6 +15,7 @@
 package edu.mines.freeganquestcaseysoto;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.LoaderManager;
 import android.content.ContentValues;
@@ -28,6 +29,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.view.ContextMenu;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -110,6 +112,16 @@ public class HuntActivity extends ListActivity implements LoaderManager.LoaderCa
 			startActivity(i);
 
 			return true;
+		}
+		case R.id.about_settings:
+		{
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	        builder.setTitle("About");
+	        builder.setMessage(MainActivity.ABOUT_INFO);
+	        builder.setPositiveButton("OK", null);
+	        AlertDialog dialog = builder.show();
+	        TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
+	        messageText.setGravity(Gravity.CENTER);
 		}
 		default:
 			return super.onOptionsItemSelected(item);
@@ -312,7 +324,7 @@ public class HuntActivity extends ListActivity implements LoaderManager.LoaderCa
 	
 	public void onDialog(View view){
 		Intent i = new Intent(this, MainActivity.class);
-		i.putExtra(ManagerMain.HUNT_NAME, huntName);
+		i.putExtra(CopyOfManagerMain.HUNT_NAME, huntName);
 		startActivity(i);		
 		
 		String finalTime = getTime(SystemClock.uptimeMillis() - startTime, 0L, 0L);

@@ -11,11 +11,13 @@ package edu.mines.freeganquestcaseysoto;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +26,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 public class MainActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor>, InputDialogFragment.Listener{
 
@@ -31,6 +34,8 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
 	private SimpleCursorAdapter adapter;
 	private String hName = "";
 	public static final String HUNT_NAME = "NameofHunt";
+	public static final String ABOUT_INFO = "\t \tTeam 2:42 \n Authors: \n \t Criag S. --> Software E. "
+			+ "\n	\t Ben C. --> Software E. , Marketing \n \n \t \t Version 1.5 \n \t 11/29/13";
 	private ArrayList<String> arrayList1 = new ArrayList<String>();
 
 	@Override
@@ -109,6 +114,16 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
 			startActivity(i);
 
 			return true;
+		}
+		case R.id.about_settings:
+		{
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	        builder.setTitle("About");
+	        builder.setMessage(ABOUT_INFO);
+	        builder.setPositiveButton("OK", null);
+	        AlertDialog dialog = builder.show();
+	        TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
+	        messageText.setGravity(Gravity.CENTER);
 		}
 		default:
 			return super.onOptionsItemSelected(item);

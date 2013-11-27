@@ -15,6 +15,7 @@
  */
 package edu.mines.freeganquestcaseysoto;
 
+import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -23,9 +24,11 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class ManagerFragment extends FragmentActivity 
@@ -83,6 +86,16 @@ public class ManagerFragment extends FragmentActivity
 			startActivity(i);
 
 			return true;
+		}
+		case R.id.about_settings:
+		{
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	        builder.setTitle("About");
+	        builder.setMessage(MainActivity.ABOUT_INFO);
+	        builder.setPositiveButton("OK", null);
+	        AlertDialog dialog = builder.show();
+	        TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
+	        messageText.setGravity(Gravity.CENTER);
 		}
 		default:
 			return super.onOptionsItemSelected(item);
