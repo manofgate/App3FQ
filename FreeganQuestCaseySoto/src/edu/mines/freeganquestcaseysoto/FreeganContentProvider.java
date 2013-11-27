@@ -19,6 +19,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 
 public class FreeganContentProvider extends ContentProvider
@@ -109,11 +110,14 @@ public class FreeganContentProvider extends ContentProvider
 
 
 		int uriType = sURIMatcher.match( uri );
+		Log.d("FQ::ConenetProvider " , "uriType is " + uriType);
 		switch( uriType )
 		{
 		case HUNTS:
 			break;
 		case ITEMS:
+			break;
+		case TIMERS:
 			break;
 		case HUNTS_ID:
 			// Adding the ID to the original query
