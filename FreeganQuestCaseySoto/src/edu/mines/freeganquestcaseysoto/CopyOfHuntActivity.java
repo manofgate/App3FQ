@@ -72,9 +72,10 @@ public class CopyOfHuntActivity extends ListFragment implements LoaderManager.Lo
 		//this.getListView().setDividerHeight( 2 );
 		//registerForContextMenu( getListView() );
 				
-				
+		getLoaderManager().restartLoader(0, null, this); 
         // Create an array adapter for the list view, using the Ipsum headlines array
         fillData();
+        
 	}
 
 	@Override
@@ -104,9 +105,9 @@ public class CopyOfHuntActivity extends ListFragment implements LoaderManager.Lo
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 
-		//Retrieve item info from database
+		Log.d("FQ::HA ", "onCreate loader huntName" + HuntPlayFragment.huntName);
 		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME };
-		String[] selection = {huntName};
+		String[] selection = {HuntPlayFragment.huntName};
 		CursorLoader cursorLoader = new CursorLoader( getActivity(), FreeganContentProvider.CONTENT_URI_H, projection, "hunt=?", selection, null );
 
 		return cursorLoader;
@@ -259,14 +260,19 @@ public class CopyOfHuntActivity extends ListFragment implements LoaderManager.Lo
 	@Override
     public void onStart() {
         super.onStart();
-
+        Log.d("FQ::HA ", "start huntName" + huntName);
         // When in two-pane layout, set the listview to highlight the selected list item
         // (We do this during onStart because at the point the listview is available.)
-        //if (getFragmentManager().findFragmentById(R.id.answers_fragment) != null) {
-            //getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        //}
+        if (getFragmentManager().findFragmentById(R.id.answers_fragment) != null) {
+            getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        }
     }
-
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+	    super.onActivityCreated(savedInstanceState);
+	    Log.d("FQ::HA ", "onActivityCreated huntName" + huntName);
+	    registerForContextMenu(this.getListView());
+	}
 	
 	/**
 	 * The onSaveInstanceState method saves all the global variables used within the activity. It does 

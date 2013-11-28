@@ -58,10 +58,11 @@ public class HuntPlayFragment extends FragmentActivity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       
+        huntName = getIntent().getStringExtra( MainActivity.HUNT_NAME);
         setContentView(R.layout.hunts_list_player);
       //Get/set the huntName in the activity
-      		huntName = getIntent().getStringExtra( MainActivity.HUNT_NAME);
+      		
+      		Log.d("FQ::HP ", "huntName here is " +huntName);
       		//TextView mhuntText = (TextView)findViewById(R.id.huntName);
       		//mhuntText.setText(huntName);
       		 
@@ -91,6 +92,7 @@ public class HuntPlayFragment extends FragmentActivity
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_hunts, firstFragment).commit();
         }
+       
     }
     @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
