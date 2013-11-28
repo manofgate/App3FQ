@@ -116,12 +116,21 @@ public class HuntActivity extends ListActivity implements LoaderManager.LoaderCa
 		case R.id.about_settings:
 		{
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	        builder.setTitle("About");
-	        builder.setMessage(MainActivity.ABOUT_INFO);
-	        builder.setPositiveButton("OK", null);
-	        AlertDialog dialog = builder.show();
-	        TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
-	        messageText.setGravity(Gravity.CENTER);
+			builder.setTitle("About");
+			builder.setMessage(MainActivity.ABOUT_INFO);
+			builder.setPositiveButton("OK", null);
+			AlertDialog dialog = builder.show();
+			TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
+			messageText.setGravity(Gravity.CENTER);
+		}
+		case R.id.help_settings: {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Help");
+			builder.setMessage(MainActivity.MANAGER_HELP_INFO);
+			builder.setPositiveButton("OK", null);
+			AlertDialog dialog = builder.show();
+			TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
+			messageText.setGravity(Gravity.CENTER);
 		}
 		default:
 			return super.onOptionsItemSelected(item);
@@ -292,7 +301,7 @@ public class HuntActivity extends ListActivity implements LoaderManager.LoaderCa
 		Toast.makeText(getApplicationContext(), "Must finish Quest before going back", Toast.LENGTH_LONG).show();
 	}
 
-	
+
 	/**
 	 * The onSaveInstanceState method saves all the global variables used within the activity. It does 
 	 * this when the phone changes its orientation so that the variables can maintain the same values 
@@ -321,16 +330,16 @@ public class HuntActivity extends ListActivity implements LoaderManager.LoaderCa
 		//Sets the respective values for game information
 		startTime = savedInstanceState.getLong("START_TIME");
 	}
-	
+
 	public void onDialog(View view){
 		Intent i = new Intent(this, MainActivity.class);
 		i.putExtra(CopyOfManagerMain.HUNT_NAME, huntName);
 		startActivity(i);		
-		
+
 		String finalTime = getTime(SystemClock.uptimeMillis() - startTime, 0L, 0L);
-		
+
 		insertTimer(finalTime);
-		
+
 		finish();
 	}
 	/**
@@ -342,7 +351,7 @@ public class HuntActivity extends ListActivity implements LoaderManager.LoaderCa
 
 		values.put( TimerTable.COLUMN_HUNT_NAME, huntName );
 		values.put(TimerTable.COLUMN_TIME, finalTime);
-		
+
 		String[] projection = { TimerTable.COLUMN_ID, TimerTable.COLUMN_HUNT_NAME, TimerTable.COLUMN_TIME};
 		String[] selection = {huntName, finalTime};
 		getContentResolver().insert( FreeganContentProvider.CONTENT_URI_T, values );
@@ -360,20 +369,20 @@ public class HuntActivity extends ListActivity implements LoaderManager.LoaderCa
 		cursor.close();
 
 	}
-	
+
 	private String getTime(long milliTime, long locTimeSwapBuff, long locUpdatedTime ){
 		String time = "";
-		
+
 		locUpdatedTime = locTimeSwapBuff + milliTime;
 		int secs = (int) (locUpdatedTime / 1000);
 		int mins = secs / 60;
 		secs = secs % 60;
 		int milliseconds = (int) (locUpdatedTime % 1000);
-		
+
 		time = "" + mins + ":"
 				+ String.format("%02d", secs) + ":"
 				+ String.format("%03d", milliseconds);
-		
+
 		return time;
 	}
 }

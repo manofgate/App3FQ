@@ -34,5 +34,6 @@
     <string name="capture">Capture</string>
     <string name="title_activity_results">ResultsActivity</string>
     <string name="aboutName">About</string>
+    <string name="helpName">Help</string>
 	<string name="dialog_ok">OK</string>
 </resources>

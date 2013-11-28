@@ -34,8 +34,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class HuntPlayFragment extends FragmentActivity 
-        implements CopyOfHuntActivity.OnHeadlineSelectedListener {
-	
+implements CopyOfHuntActivity.OnHeadlineSelectedListener {
+
 	public static String huntName;
 	public static String desc;
 	private long startTime = 0L;
@@ -46,7 +46,7 @@ public class HuntPlayFragment extends FragmentActivity
 	private TextView timerValue;
 	public static final String DESCRIP = "description";
 	private Handler customHandler = new Handler();
-	
+
 	private Runnable updateTimerThread = new Runnable() {
 		public void run() {
 			timeInMilliseconds = SystemClock.uptimeMillis() - startTime;
@@ -94,7 +94,7 @@ public class HuntPlayFragment extends FragmentActivity
         }
        
     }
-    @Override
+
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.mm, menu);
@@ -118,18 +118,27 @@ public class HuntPlayFragment extends FragmentActivity
 		case R.id.about_settings:
 		{
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	        builder.setTitle("About");
-	        builder.setMessage(MainActivity.ABOUT_INFO);
-	        builder.setPositiveButton("OK", null);
-	        AlertDialog dialog = builder.show();
-	        TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
-	        messageText.setGravity(Gravity.CENTER);
+			builder.setTitle("About");
+			builder.setMessage(MainActivity.ABOUT_INFO);
+			builder.setPositiveButton("OK", null);
+			AlertDialog dialog = builder.show();
+			TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
+			messageText.setGravity(Gravity.CENTER);
+		}
+		case R.id.help_settings: {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Help");
+			builder.setMessage(MainActivity.MANAGER_HELP_INFO);
+			builder.setPositiveButton("OK", null);
+			AlertDialog dialog = builder.show();
+			TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
+			messageText.setGravity(Gravity.CENTER);
 		}
 		default:
 			return super.onOptionsItemSelected(item);
 		}
 	}
-	
+
 	@Override
 	public void onBackPressed() {
 		if(!onAnswer){
@@ -140,43 +149,43 @@ public class HuntPlayFragment extends FragmentActivity
 			onAnswer = false;
 		}
 	}
-	
-    public void onArticleSelected(String position) {
-        // The user selected the headline of an article from the HeadlinesFragment
-    	desc = position;
-    	onAnswer = true;
-    	Log.d("FQ:HUNT_PLAY " , "in the on ariticleSelected " + desc);
-        // Capture the article fragment from the activity layout
-        CopyOfAddAnswerActivity articleFrag = (CopyOfAddAnswerActivity)
-                getSupportFragmentManager().findFragmentById(R.id.hunts_fragment);
-        
-        
-        if (articleFrag != null) {
-            // If article frag is available, we're in two-pane layout...
-        	Log.d("FQ: MF", "here in the articleUpdate");
-            // Call a method in the ArticleFragment to update its content
-            articleFrag.updateArticleView(position);
 
-        } else {
-            // If the frag is not available, we're in the one-pane layout and must swap frags...
-        	
-            // Create fragment and give it an argument for the selected article
-        	 CopyOfAddAnswerActivity newFragment = new  CopyOfAddAnswerActivity();
-            Bundle args = new Bundle();
-            
-            args.putString( HuntPlayFragment.DESCRIP, position);
-            newFragment.setArguments(args);
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+	public void onArticleSelected(String position) {
+		// The user selected the headline of an article from the HeadlinesFragment
+		desc = position;
+		onAnswer = true;
+		Log.d("FQ:HUNT_PLAY " , "in the on ariticleSelected " + desc);
+		// Capture the article fragment from the activity layout
+		CopyOfAddAnswerActivity articleFrag = (CopyOfAddAnswerActivity)
+				getSupportFragmentManager().findFragmentById(R.id.hunts_fragment);
 
-            // Replace whatever is in the fragment_container view with this fragment,
-            // and add the transaction to the back stack so the user can navigate back
-            transaction.replace(R.id.fragment_hunts, newFragment);
-            transaction.addToBackStack(null);
 
-            // Commit the transaction
-            transaction.commit();
-        }
-    }
+		if (articleFrag != null) {
+			// If article frag is available, we're in two-pane layout...
+			Log.d("FQ: MF", "here in the articleUpdate");
+			// Call a method in the ArticleFragment to update its content
+			articleFrag.updateArticleView(position);
+
+		} else {
+			// If the frag is not available, we're in the one-pane layout and must swap frags...
+
+			// Create fragment and give it an argument for the selected article
+			CopyOfAddAnswerActivity newFragment = new  CopyOfAddAnswerActivity();
+			Bundle args = new Bundle();
+
+			args.putString( HuntPlayFragment.DESCRIP, position);
+			newFragment.setArguments(args);
+			FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+			// Replace whatever is in the fragment_container view with this fragment,
+			// and add the transaction to the back stack so the user can navigate back
+			transaction.replace(R.id.fragment_hunts, newFragment);
+			transaction.addToBackStack(null);
+
+			// Commit the transaction
+			transaction.commit();
+		}
+	}
 
 	@Override
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -185,16 +194,16 @@ public class HuntPlayFragment extends FragmentActivity
 		//Sets the respective values for game information
 		startTime = savedInstanceState.getLong("START_TIME");
 	}
-	
+
 	public void onDialog(View view){
 		Intent i = new Intent(this, MainActivity.class);
 		i.putExtra(CopyOfManagerMain.HUNT_NAME, huntName);
 		startActivity(i);		
-		
+
 		String finalTime = getTime(SystemClock.uptimeMillis() - startTime, 0L, 0L);
-		
+
 		insertTimer(finalTime);
-		
+
 		finish();
 	}
 	/**
@@ -206,7 +215,7 @@ public class HuntPlayFragment extends FragmentActivity
 
 		values.put( TimerTable.COLUMN_HUNT_NAME, huntName );
 		values.put(TimerTable.COLUMN_TIME, finalTime);
-		
+
 		String[] projection = { TimerTable.COLUMN_ID, TimerTable.COLUMN_HUNT_NAME, TimerTable.COLUMN_TIME};
 		String[] selection = {huntName, finalTime};
 		getContentResolver().insert( FreeganContentProvider.CONTENT_URI_T, values );
@@ -233,17 +242,17 @@ public class HuntPlayFragment extends FragmentActivity
 	}
 	private String getTime(long milliTime, long locTimeSwapBuff, long locUpdatedTime ){
 		String time = "";
-		
+
 		locUpdatedTime = locTimeSwapBuff + milliTime;
 		int secs = (int) (locUpdatedTime / 1000);
 		int mins = secs / 60;
 		secs = secs % 60;
 		int milliseconds = (int) (locUpdatedTime % 1000);
-		
+
 		time = "" + mins + ":"
 				+ String.format("%02d", secs) + ":"
 				+ String.format("%03d", milliseconds);
-		
+
 		return time;
 	}
 }
