@@ -30,11 +30,12 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class HuntPlayFragment extends FragmentActivity 
-implements CopyOfHuntActivity.OnHeadlineSelectedListener {
+implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivity.OnFinishListener {
 
 	public static String huntName;
 	public static String desc;
@@ -157,7 +158,7 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener {
 		Log.d("FQ:HUNT_PLAY " , "in the on ariticleSelected " + desc);
 		// Capture the article fragment from the activity layout
 		CopyOfAddAnswerActivity articleFrag = (CopyOfAddAnswerActivity)
-				getSupportFragmentManager().findFragmentById(R.id.hunts_fragment);
+				getSupportFragmentManager().findFragmentById(R.id.answers_fragment);
 
 
 		if (articleFrag != null) {
@@ -180,7 +181,7 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener {
 			// Replace whatever is in the fragment_container view with this fragment,
 			// and add the transaction to the back stack so the user can navigate back
 			transaction.replace(R.id.fragment_hunts, newFragment);
-			transaction.addToBackStack(null);
+			transaction.addToBackStack("top");
 
 			// Commit the transaction
 			transaction.commit();
@@ -255,4 +256,123 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener {
 
 		return time;
 	}
+
+	
+	public void onFinishSelected(String position) {
+		
+		Log.d("FQ::HP " , "In the onFinishLisetner");
+		//CopyOfHuntActivity articleFrag = (CopyOfHuntActivity)
+				//getSupportFragmentManager().findFragmentById(R.id.fragment_hunts);
+
+
+		/*if (articleFrag != null) {
+			// If article frag is available, we're in two-pane layout...
+			Log.d("FQ: MF", "here in the articleUpdate");
+			// Call a method in the ArticleFragment to update its content
+			articleFrag.updateArticleView(position);
+
+		} else {*/
+			// If the frag is not available, we're in the one-pane layout and must swap frags...
+
+			//Create fragment and give it an argument for the selected article
+		Log.d("FQ::HP " , "In the above onFinishLisetner");
+		 getSupportFragmentManager().popBackStack();
+			Log.d("FQ::HP " , "In the under onFinishLisetner");
+			
+		//}
+	}
+	
+	
+	
+	/**
+	 * The submit method retrieves the EditText content for the name, due date, and description from
+	 * the activity. It also validates and normalizes the user input, updates or inserts the input,
+	 * then finishes the activity.   
+	 * 
+	 * @param view - this is necessary for the button to interact with the activity
+	 */
+	public void submit(View view){
+		//Retrieve the user input
+		Log.d("FQ::AAA", "in the submit");
+		EditText nameInput = (EditText) findViewById(R.id.answerWord);
+
+		String hwName = nameInput.getText().toString();
+		String hunt = HuntPlayFragment.huntName;
+
+		//Make sure the name and desc have content, if not give it generic information. 
+		
+		//Call the respective method based on what the user is doing
+		//if(update){
+			//updateAnswer(hwName);
+		//} else {
+			//insertNewAnswer(hwName, hunt);
+		//}
+		onFinishSelected(hunt);
+		
+	}
+		
+	/**
+	 * The updateHW method checks to see if the name, due date, or description needs to be updated. 
+	 * If any of them need to be updated then update it. 
+	 * 
+	 * @param name - name retrieved from Activity
+	 * @param loc - date retrieved from Activity
+	 * @param desc - description retrieved from Activity
+	 */
+	/*
+	private void updateAnswer(String name) {
+		int rowsUpdated = 0;
+		
+		//If the name/date/description was updated by the user it won't match the values that were passed
+		//from itemActivity when the user clicked a item to be updated. In this case, updated
+		//that item respectively. 
+		ContentValues values = new ContentValues();
+		if(!name.equals(hwName)){
+			values.put( ItemTable.COLUMN_NAME, name );
+			String[] selection = {hwName, location, description};
+			rowsUpdated = rowsUpdated + getActivity().getContentResolver().update( FreeganContentProvider.CONTENT_URI_H, values, "name=? AND date=? AND desc=?", selection );
+		}
+		
+
+		if(rowsUpdated == 0){
+			Log.d("ADDitem", "No rows were updated");
+		}
+	}
+	*/
+
+	/**
+	 * The insertNewHW method checks to see if the name, due date, or description needs to be updated. 
+	 * If any of them need to be updated then update it.   
+	 * 
+	 * @param name - name retrieved from Activity
+	 * @param loc - date retrieved from Activity
+	 * @param desc - description retrieved from Activity
+	 * @param hunt - name of the hunt
+	 */
+	public void insertNewAnswer(String name, String hunt){
+		ContentValues values = new ContentValues();
+		values.put( ItemTable.COLUMN_NAME, name );
+		values.put( ItemTable.COLUMN_HUNT_NAME, hunt);
+		//values.put(ItemTable.COLUMN_DISPLAY, answerDisp);
+		
+		//Insert values into the item Table
+		getContentResolver().insert( FreeganContentProvider.CONTENT_URI_H, values );
+
+		//Verify if identical entries were inserted into the item Table 
+		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME};
+		String[] selection = {name};
+		Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI_H, projection, "name=?", selection, ItemTable.COLUMN_ID + " DESC" );
+		
+		//If there were multiple entries remove the last insert then notify the user. 
+		if(cursor.getCount() > 1){
+			cursor.moveToFirst();
+			Uri huntUri = Uri.parse( FreeganContentProvider.CONTENT_URI_H + "/" +  cursor.getString(cursor.getColumnIndexOrThrow( ItemTable.COLUMN_ID )) );
+			getContentResolver().delete(huntUri, null, null);
+			Toast toast = Toast.makeText(getApplicationContext(),"Have already added " + name +"!" , Toast.LENGTH_LONG);
+			toast.show();
+			//finish();
+		}
+		cursor.close();
+	}
+	
 }

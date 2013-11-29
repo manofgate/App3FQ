@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <EditText
+  <EditText
         android:id="@+id/answerWord"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -15,24 +15,27 @@
         android:hint="@string/word"
         android:ems="15" >
 
-        <requestFocus />
+       
     </EditText>
-
-    <Button
-        android:id="@+id/submitB"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="60dp"
-        android:text="@string/submit" />
 
     <Button
         android:id="@+id/captureB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/answerWord"
-        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/answerWord"
+        android:layout_marginTop="32dp"
         android:text="@string/capture" />
+
+    <Button
+        android:id="@+id/submitB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/captureB"
+        android:layout_alignBottom="@+id/captureB"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="42dp"
+        android:onClick="submit"
+        android:text="@string/submit" />
 
 </RelativeLayout>
