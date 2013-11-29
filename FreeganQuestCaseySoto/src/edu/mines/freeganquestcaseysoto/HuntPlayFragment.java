@@ -161,7 +161,7 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 	public void onArticleSelected(String position) {
 		// The user selected the headline of an article from the HeadlinesFragment
 		desc = position;
-		onAnswer = true;
+		
 		
 		// Capture the article fragment from the activity layout
 		CopyOfAddAnswerActivity articleFrag = (CopyOfAddAnswerActivity)
@@ -177,7 +177,7 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 
 		} else {
 			// If the frag is not available, we're in the one-pane layout and must swap frags...
-
+			onAnswer = true;
 			// Create fragment and give it an argument for the selected article
 			CopyOfAddAnswerActivity newFragment = new  CopyOfAddAnswerActivity();
 			Bundle args = new Bundle();

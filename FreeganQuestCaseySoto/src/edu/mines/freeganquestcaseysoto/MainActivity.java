@@ -150,17 +150,23 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
 
 	public void onStartHunt(View view){
 		Intent i = new Intent(this, HuntPlayFragment.class);
-		//Intent i = new Intent(this, HuntActivity.class);
+		String hName =arrayList1.get(mHunts.getSelectedItemPosition());
 		i.putExtra(HUNT_NAME, arrayList1.get(mHunts.getSelectedItemPosition()));
-		startActivity(i);
-
-		finish();
+		if(!hName.equals("Select a Hunt...")){
+			startActivity(i);
+			finish();
+		}
+		
 	}
 	
 	public void onResults(View view){
 		Intent i = new Intent(this, ResultsActivity.class);
+		String hName =arrayList1.get(mHunts.getSelectedItemPosition());
 		i.putExtra(HUNT_NAME, arrayList1.get(mHunts.getSelectedItemPosition()));
-		startActivity(i);
+		if(!hName.equals("Select a Hunt...")){
+			startActivity(i);
+			finish();
+		}
 	}
 	
 	@Override
