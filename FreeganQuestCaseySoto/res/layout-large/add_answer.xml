@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+  <EditText
+        android:id="@+id/answerWord"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="86dp"
+        android:layout_marginTop="87dp"
+        android:hint="@string/word"
+        android:textSize="32sp"
+        android:ems="25" >
+
+       
+    </EditText>
+
+    <Button
+        android:id="@+id/captureB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/answerWord"
+        android:layout_marginTop="32dp"
+        android:textSize="32sp"
+        android:text="@string/capture" />
+
+    <Button
+        android:id="@+id/submitB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/captureB"
+        android:layout_alignBottom="@+id/captureB"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="42dp"
+        android:onClick="submit"
+        android:textSize="32sp"
+        android:text="@string/submit" />
+
+</RelativeLayout>
