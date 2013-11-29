@@ -1,17 +1,8 @@
-/*
- * Copyright (C) 2012 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+/**
+ * This class is for the manager main fragment. It will hide the correct buttons, addItem or AddHunt depending on which fragment you are in.
+ * It is the main interaction for the buttons:  addHunt, addItem. Depending on which pane it is in, it will decide how it should be displayed.
+ *	@author Ben
+ *@author Craig
  */
 package edu.mines.freeganquestcaseysoto;
 
@@ -66,6 +57,7 @@ implements CopyOfManagerMain.OnHeadlineSelectedListener, InputDialogFragment.Lis
 			.add(R.id.fragment_titles, firstFragment).commit();
 		}
 	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -73,7 +65,9 @@ implements CopyOfManagerMain.OnHeadlineSelectedListener, InputDialogFragment.Lis
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-
+	/**
+	 * When the menu item is clicked it will decide on Help or About fragment or setting to pop up.
+	 */
 	@Override
 	public boolean onOptionsItemSelected( MenuItem item )
 	{
@@ -110,7 +104,10 @@ implements CopyOfManagerMain.OnHeadlineSelectedListener, InputDialogFragment.Lis
 			return super.onOptionsItemSelected(item);
 		}
 	}
-
+	
+	/**
+	 * When to go between the two fragments, need to hide and show correct buttons
+	 */
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
@@ -119,6 +116,11 @@ implements CopyOfManagerMain.OnHeadlineSelectedListener, InputDialogFragment.Lis
 		return;
 	}
 
+	/**
+	 * This is the method when the user clicks on a hunt in the list, it will take the huntName and start the other fragment
+	 * which will have it's correct list
+	 * @param position - is the hunt Name
+	 */
 	public void onArticleSelected(String position) {
 		// The user selected the headline of an article from the HeadlinesFragment
 		huntName = position;
@@ -170,6 +172,10 @@ implements CopyOfManagerMain.OnHeadlineSelectedListener, InputDialogFragment.Lis
 		intent.putExtra(CopyOfManagerMain.DESC_TEXT, "");
 		startActivity(intent);
 	}
+	
+	/**
+	 * Method to add a new Hunt to the database
+	 */
 	public void insertNewHunt(){
 		ContentValues values = new ContentValues();
 
@@ -193,7 +199,10 @@ implements CopyOfManagerMain.OnHeadlineSelectedListener, InputDialogFragment.Lis
 
 	}
 
-
+/**
+ * method to update the hunt and it's corresponding items
+ * @param newHuntName
+ */
 	public void updateNewHunt(String newHuntName){
 		ContentValues values = new ContentValues();
 		values.put( ManagerHuntTable.COLUMN_NAME, newHuntName );

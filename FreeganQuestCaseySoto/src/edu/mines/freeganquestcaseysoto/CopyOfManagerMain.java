@@ -1,8 +1,9 @@
 package edu.mines.freeganquestcaseysoto;
-
+/**
+ * This class is to display and interact with the database for the list of hunts available to the manager.
+ */
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -16,16 +17,13 @@ import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.Toast;
 
 public class CopyOfManagerMain extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>{
 	private SimpleCursorAdapter adapter;
@@ -48,43 +46,25 @@ public class CopyOfManagerMain extends ListFragment implements LoaderManager.Loa
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//getActivity().setContentView(R.layout.hunts_frag);
 		
+		//it is being used.
+		@SuppressWarnings("unused")
 		int layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
                 R.layout.hunts_frag : R.layout.hunts_frag;
 		
-		
-		//Set up ListView
-		//this.getListView().setDividerHeight( 2 );
-		//registerForContextMenu( getListView() );
-				
-				
         // Create an array adapter for the list view, using the Ipsum headlines array
         fillData();
 	}
-	
+/**
+ * method to start up the long pressed menu
+ */
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 	    super.onActivityCreated(savedInstanceState);
 
 	    registerForContextMenu(this.getListView());
 	}
-	/*
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-		 // We need to use a different list item layout for devices older than Honeycomb
-        int layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
-                android.R.layout.simple_list_item_activated_1 : android.R.layout.simple_list_item_1;
-
-        // Create an array adapter for the list view, using the Ipsum headlines array
-        fillData();
-        
-		//View view = inflater.inflate(R.layout.hunts_list,
-		        //container, false);
-		fillData();
-		return view;
-	}
-	*/
+	
 	 @Override
 	    public void onAttach(Activity activity) {
 	        super.onAttach(activity);
@@ -110,16 +90,8 @@ public class CopyOfManagerMain extends ListFragment implements LoaderManager.Loa
         }
     }
 
-	
 	/**
-	 * Inserts the hunt into the hunt Table.
-	 * checks to see if there are now 2 hunt of the same name and deletes the last inserted hunt
-	 */
-	
-
-	
-	/**
-	 * overriden function from listView that when clicked will open up the Item activity to show the hunts Items.
+	 * overriden function from listView that when clicked will open up the other fragment and pass in the huntName
 	 */
 	@Override
 	public void onListItemClick( ListView l, View v, int position, long id )
@@ -269,9 +241,9 @@ public class CopyOfManagerMain extends ListFragment implements LoaderManager.Loa
 				View v = super.getView(position, convertView, parent);
 
 				if (position %2 ==1) {
-					v.setBackgroundColor(Color.argb(150, 100, 100, 100));
+					v.setBackgroundColor(Color.argb(115, 92, 92, 108));
 				} else {
-					v.setBackgroundColor(Color.argb(150, 170, 170, 170)); //or whatever was original
+					v.setBackgroundColor(Color.argb(115, 162, 162, 178)); //or whatever was original
 				}
 
 				return v;
@@ -284,9 +256,6 @@ public class CopyOfManagerMain extends ListFragment implements LoaderManager.Loa
 		setListAdapter( this.adapter );
 	}
 
-	/**
-	 * overrides the dialog fragment for inputting hunt. depending on eit or inserting. 
-	 * @param dialogID : the id returned to see if it is an insert or edit.
 	
 	/** The menu displayed on a long touch. */
 	@Override
