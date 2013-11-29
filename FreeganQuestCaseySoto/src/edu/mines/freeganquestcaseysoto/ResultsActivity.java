@@ -17,7 +17,7 @@ public class ResultsActivity extends ListActivity implements LoaderManager.Loade
 	private SimpleCursorAdapter adapter; //helps assist with database interactions 
 	public static final String HW_NAME = "NameOfitem";
 	private String huntName; //receives and passes on hunt name from the MainActivity
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -33,6 +33,7 @@ public class ResultsActivity extends ListActivity implements LoaderManager.Loade
 		registerForContextMenu( getListView() );
 
 		//Fill the Listview table
+		fillFinalTime();
 		fillData();
 	}
 
@@ -42,7 +43,7 @@ public class ResultsActivity extends ListActivity implements LoaderManager.Loade
 		getMenuInflater().inflate(R.menu.results, menu);
 		return true;
 	}
-	
+
 	/**
 	 * The fillData method fills the ListView with the item. 
 	 */
@@ -77,6 +78,17 @@ public class ResultsActivity extends ListActivity implements LoaderManager.Loade
 
 		// Let this ListActivity display the contents of the cursor adapter.
 		setListAdapter( this.adapter );
+	}
+
+	private void fillFinalTime(){
+		String[] projection = { TimerTable.COLUMN_ID, TimerTable.COLUMN_HUNT_NAME, TimerTable.COLUMN_TIME};
+		String[] selection = {huntName};
+		Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI_T, projection, "hunt=?", selection, ItemTable.COLUMN_ID + " DESC" );
+		if(cursor.moveToFirst()){
+			String time = cursor.getString(2);
+			TextView timerView = (TextView)findViewById(R.id.timeView);
+			timerView.setText(time);
+		}
 	}
 
 	/**

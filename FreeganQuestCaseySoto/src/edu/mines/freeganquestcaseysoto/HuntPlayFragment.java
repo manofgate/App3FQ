@@ -15,6 +15,8 @@
  */
 package edu.mines.freeganquestcaseysoto;
 
+import java.util.Timer;
+
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -55,50 +57,50 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 			customHandler.postDelayed(this, 0);
 		}
 	};
-    /** Called when the activity is first created. */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        huntName = getIntent().getStringExtra( MainActivity.HUNT_NAME);
-        setContentView(R.layout.hunts_list_player);
-      //Get/set the huntName in the activity
-      		
-      		Log.d("FQ::HP ", "huntName here is " +huntName);
-      		//TextView mhuntText = (TextView)findViewById(R.id.huntName);
-      		//mhuntText.setText(huntName);
-      		 
-      		timerValue = (TextView) findViewById(R.id.timeView);
-      		startTime = SystemClock.uptimeMillis();
-      		customHandler.postDelayed(updateTimerThread, 0);
-      		Log.d("HUNT_PLAY", "we are the timer");
-        // Check whether the activity is using the layout version with
-        // the fragment_container FrameLayout. If so, we must add the first fragment
-        if (findViewById(R.id.fragment_hunts) != null) {
+	/** Called when the activity is first created. */
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		huntName = getIntent().getStringExtra( MainActivity.HUNT_NAME);
+		setContentView(R.layout.hunts_list_player);
+		//Get/set the huntName in the activity
 
-            // However, if we're being restored from a previous state,
-            // then we don't need to do anything and should return or else
-            // we could end up with overlapping fragments.
-            if (savedInstanceState != null) {
-                return;
-            }
-            Log.d("HUNT_PLAY", "we are above the new");
-            // Create an instance of ExampleFragment
-            CopyOfHuntActivity firstFragment = new CopyOfHuntActivity();
-            Log.d("NUNT_PLAY", "we are below this spot");
-            // In case this activity was started with special instructions from an Intent,
-            // pass the Intent's extras to the fragment as arguments
-            firstFragment.setArguments(getIntent().getExtras());
-            
-            // Add the fragment to the 'fragment_container' FrameLayout
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_hunts, firstFragment).commit();
-        }
-        else{
-        	findViewById(R.id.answers_fragment).setVisibility(View.GONE);
-        	
-        }
-       
-    }
+		Log.d("FQ::HP ", "huntName here is " +huntName);
+		//TextView mhuntText = (TextView)findViewById(R.id.huntName);
+		//mhuntText.setText(huntName);
+
+		timerValue = (TextView) findViewById(R.id.timeView);
+		startTime = SystemClock.uptimeMillis();
+		customHandler.postDelayed(updateTimerThread, 0);
+		Log.d("HUNT_PLAY", "we are the timer");
+		// Check whether the activity is using the layout version with
+		// the fragment_container FrameLayout. If so, we must add the first fragment
+		if (findViewById(R.id.fragment_hunts) != null) {
+
+			// However, if we're being restored from a previous state,
+			// then we don't need to do anything and should return or else
+			// we could end up with overlapping fragments.
+			if (savedInstanceState != null) {
+				return;
+			}
+			Log.d("HUNT_PLAY", "we are above the new");
+			// Create an instance of ExampleFragment
+			CopyOfHuntActivity firstFragment = new CopyOfHuntActivity();
+			Log.d("NUNT_PLAY", "we are below this spot");
+			// In case this activity was started with special instructions from an Intent,
+			// pass the Intent's extras to the fragment as arguments
+			firstFragment.setArguments(getIntent().getExtras());
+
+			// Add the fragment to the 'fragment_container' FrameLayout
+			getSupportFragmentManager().beginTransaction()
+			.add(R.id.fragment_hunts, firstFragment).commit();
+		}
+		else{
+			findViewById(R.id.answers_fragment).setVisibility(View.GONE);
+
+		}
+
+	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -202,13 +204,13 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 	}
 
 	public void onDialog(View view){
-		Intent i = new Intent(this, MainActivity.class);
-		i.putExtra(CopyOfManagerMain.HUNT_NAME, huntName);
-		startActivity(i);		
-
 		String finalTime = getTime(SystemClock.uptimeMillis() - startTime, 0L, 0L);
 
 		insertTimer(finalTime);
+
+		Intent i = new Intent(this, MainActivity.class);
+		i.putExtra(CopyOfManagerMain.HUNT_NAME, huntName);
+		startActivity(i);	
 
 		finish();
 	}
@@ -217,27 +219,29 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 	 * checks to see if there are now 2 hunt of the same name and deletes the last inserted hunt
 	 */
 	public void insertTimer(String finalTime){
+		Log.d("TIME", finalTime);
+		
 		ContentValues values = new ContentValues();
-
 		values.put( TimerTable.COLUMN_HUNT_NAME, huntName );
-		values.put(TimerTable.COLUMN_TIME, finalTime);
+		values.put( TimerTable.COLUMN_TIME, finalTime);
 
-		String[] projection = { TimerTable.COLUMN_ID, TimerTable.COLUMN_HUNT_NAME, TimerTable.COLUMN_TIME};
-		String[] selection = {huntName, finalTime};
+		//Insert values into the item Table
 		getContentResolver().insert( FreeganContentProvider.CONTENT_URI_T, values );
 
-		//checks to see if that hunt name has already been added
-		Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI_T, projection, "name=?", selection, TimerTable.COLUMN_ID + " DESC" );
+		//Verify if identical entries were inserted into the item Table 
+		String[] projection = { TimerTable.COLUMN_ID, TimerTable.COLUMN_HUNT_NAME};
+		String[] selection = {huntName};
+		Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI_T, projection, "hunt=?", selection, TimerTable.COLUMN_ID + " DESC" );
+
+		//If there were multiple entries remove the last insert then notify the user. 
 		if(cursor.getCount() >1){
 			cursor.moveToFirst();
 			Uri huntUri = Uri.parse( FreeganContentProvider.CONTENT_URI_T + "/" +  cursor.getString(cursor.getColumnIndexOrThrow( TimerTable.COLUMN_ID )) );
 			getContentResolver().delete(huntUri, null, null);
 			Toast toast = Toast.makeText(getApplicationContext(),"Have already added " +huntName+" hunt!" , Toast.LENGTH_LONG);
 			toast.show();
-			//fillData();
 		}
 		cursor.close();
-
 	}
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -262,9 +266,9 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 		return time;
 	}
 
-	
+
 	public void onFinishSelected(String position) {
-		
+
 		Log.d("FQ::HP " , "In the onFinishLisetner");
 		//CopyOfHuntActivity articleFrag = (CopyOfHuntActivity)
 		CopyOfAddAnswerActivity articleFrag = (CopyOfAddAnswerActivity)
@@ -287,12 +291,12 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 			Log.d("FQ::HP " , "In the above onFinishLisetner");
 			getSupportFragmentManager().popBackStack();
 			Log.d("FQ::HP " , "In the under onFinishLisetner");
-			
+
 		}
 	}
-	
-	
-	
+
+
+
 	/**
 	 * The submit method retrieves the EditText content for the name, due date, and description from
 	 * the activity. It also validates and normalizes the user input, updates or inserts the input,
@@ -309,17 +313,17 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 		String hunt = HuntPlayFragment.huntName;
 
 		//Make sure the name and desc have content, if not give it generic information. 
-		
+
 		//Call the respective method based on what the user is doing
 		//if(update){
-			//updateAnswer(hwName);
+		//updateAnswer(hwName);
 		//} else {
-			//insertNewAnswer(hwName, hunt);
+		//insertNewAnswer(hwName, hunt);
 		//}
 		onFinishSelected(hunt);
-		
+
 	}
-		
+
 	/**
 	 * The updateHW method checks to see if the name, due date, or description needs to be updated. 
 	 * If any of them need to be updated then update it. 
@@ -331,7 +335,7 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 	/*
 	private void updateAnswer(String name) {
 		int rowsUpdated = 0;
-		
+
 		//If the name/date/description was updated by the user it won't match the values that were passed
 		//from itemActivity when the user clicked a item to be updated. In this case, updated
 		//that item respectively. 
@@ -341,13 +345,13 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 			String[] selection = {hwName, location, description};
 			rowsUpdated = rowsUpdated + getActivity().getContentResolver().update( FreeganContentProvider.CONTENT_URI_H, values, "name=? AND date=? AND desc=?", selection );
 		}
-		
+
 
 		if(rowsUpdated == 0){
 			Log.d("ADDitem", "No rows were updated");
 		}
 	}
-	*/
+	 */
 
 	/**
 	 * The insertNewHW method checks to see if the name, due date, or description needs to be updated. 
@@ -363,7 +367,7 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 		values.put( ItemTable.COLUMN_NAME, name );
 		values.put( ItemTable.COLUMN_HUNT_NAME, hunt);
 		//values.put(ItemTable.COLUMN_DISPLAY, answerDisp);
-		
+
 		//Insert values into the item Table
 		getContentResolver().insert( FreeganContentProvider.CONTENT_URI_H, values );
 
@@ -371,7 +375,7 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME};
 		String[] selection = {name};
 		Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI_H, projection, "name=?", selection, ItemTable.COLUMN_ID + " DESC" );
-		
+
 		//If there were multiple entries remove the last insert then notify the user. 
 		if(cursor.getCount() > 1){
 			cursor.moveToFirst();
@@ -383,5 +387,5 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 		}
 		cursor.close();
 	}
-	
+
 }
