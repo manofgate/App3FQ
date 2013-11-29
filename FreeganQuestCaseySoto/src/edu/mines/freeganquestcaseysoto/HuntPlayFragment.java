@@ -93,6 +93,10 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_hunts, firstFragment).commit();
         }
+        else{
+        	findViewById(R.id.answers_fragment).setVisibility(View.GONE);
+        	
+        }
        
     }
 
@@ -165,6 +169,7 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 			// If article frag is available, we're in two-pane layout...
 			Log.d("FQ: MF", "here in the articleUpdate");
 			// Call a method in the ArticleFragment to update its content
+			findViewById(R.id.answers_fragment).setVisibility(View.VISIBLE);
 			articleFrag.updateArticleView(position);
 
 		} else {

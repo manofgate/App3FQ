@@ -22,25 +22,13 @@
 
 package edu.mines.freeganquestcaseysoto;
 
-import edu.mines.freeganquestcaseysoto.CopyOfHuntActivity.OnHeadlineSelectedListener;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.ContentValues;
-import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.view.WindowManager;
 
 public class CopyOfAddAnswerActivity extends Fragment {
 
@@ -92,7 +80,8 @@ public class CopyOfAddAnswerActivity extends Fragment {
         if (savedInstanceState != null) {
             description = savedInstanceState.getString(HuntPlayFragment.DESCRIP);
         }
-
+        
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.add_answer, container, false);
     }
