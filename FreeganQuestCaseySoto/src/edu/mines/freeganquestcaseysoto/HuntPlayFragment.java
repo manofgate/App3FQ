@@ -267,24 +267,28 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 		
 		Log.d("FQ::HP " , "In the onFinishLisetner");
 		//CopyOfHuntActivity articleFrag = (CopyOfHuntActivity)
-				//getSupportFragmentManager().findFragmentById(R.id.fragment_hunts);
+		CopyOfAddAnswerActivity articleFrag = (CopyOfAddAnswerActivity)
+				getSupportFragmentManager().findFragmentById(R.id.answers_fragment);
 
 
-		/*if (articleFrag != null) {
+		if (articleFrag != null) {
 			// If article frag is available, we're in two-pane layout...
 			Log.d("FQ: MF", "here in the articleUpdate");
+			EditText mText = (EditText) findViewById(R.id.answerWord);
+			mText.setText("");
 			// Call a method in the ArticleFragment to update its content
+			findViewById(R.id.answers_fragment).setVisibility(View.GONE);
 			articleFrag.updateArticleView(position);
 
-		} else {*/
+		} else {
 			// If the frag is not available, we're in the one-pane layout and must swap frags...
 
 			//Create fragment and give it an argument for the selected article
-		Log.d("FQ::HP " , "In the above onFinishLisetner");
-		 getSupportFragmentManager().popBackStack();
+			Log.d("FQ::HP " , "In the above onFinishLisetner");
+			getSupportFragmentManager().popBackStack();
 			Log.d("FQ::HP " , "In the under onFinishLisetner");
 			
-		//}
+		}
 	}
 	
 	

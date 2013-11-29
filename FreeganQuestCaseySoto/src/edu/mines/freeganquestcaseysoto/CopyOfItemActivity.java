@@ -184,9 +184,9 @@ public class CopyOfItemActivity extends ListFragment implements LoaderManager.Lo
 				View v = super.getView(position, convertView, parent);
 
 				if (position %2 ==1) {
-					v.setBackgroundColor(Color.argb(5, 100, 100, 100));
+					v.setBackgroundColor(Color.argb(150, 100, 100, 100));
 				} else {
-					v.setBackgroundColor(Color.argb(5, 170, 170, 170)); //or whatever was original
+					v.setBackgroundColor(Color.argb(150, 170, 170, 170)); //or whatever was original
 				}
 
 				return v;
