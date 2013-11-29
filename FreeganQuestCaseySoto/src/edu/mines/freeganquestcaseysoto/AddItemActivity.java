@@ -257,12 +257,18 @@ public class AddItemActivity extends Activity {
 		// Check which radio button was clicked
 		switch(view.getId()) {
 		case R.id.radBWord:
-			if (checked)
+			if (checked){
+				View b = findViewById(R.id.picButton);
+				b.setVisibility(View.INVISIBLE);
 				answerDisp = "word";
+			}
 			break;
 		case R.id.radBPic:
-			if (checked)
+			if (checked){
+				View b = findViewById(R.id.picButton);
+				b.setVisibility(View.VISIBLE);
 				answerDisp = "picture";
+			}
 			break;
 		}
 	}

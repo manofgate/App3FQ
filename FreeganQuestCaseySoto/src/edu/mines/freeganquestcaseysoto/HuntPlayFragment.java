@@ -315,9 +315,9 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 	public void submit(View view){
 		//Retrieve the user input
 		Log.d("FQ::AAA", "in the submit");
-		EditText nameInput = (EditText) findViewById(R.id.answerWord);
+		EditText answerEditView = (EditText) findViewById(R.id.answerWord);
 
-		String hwName = nameInput.getText().toString();
+		String answer = answerEditView.getText().toString();
 		String hunt = HuntPlayFragment.huntName;
 
 		//Make sure the name and desc have content, if not give it generic information. 

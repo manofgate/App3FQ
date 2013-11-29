@@ -35,5 +35,8 @@
     <string name="title_activity_results">ResultsActivity</string>
     <string name="aboutName">About</string>
     <string name="helpName">Help</string>
-	<string name="dialog_ok">OK</string>
+    <string name="dialog_ok">OK</string>
+    <string name="title_activity_image_pick">ImagePickActivity</string>
+    <string name="addPicture">Add Picture</string>
+
 </resources>
