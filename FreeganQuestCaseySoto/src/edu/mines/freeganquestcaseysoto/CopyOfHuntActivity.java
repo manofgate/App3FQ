@@ -1,7 +1,6 @@
 /**
- * Description: This class displays the list of items based on which hunt was selected. The 
- * 	user will be able to either add an item (touching the add button), edit an item (touching
- * 	the item in the list), and deleting an item (long press item in list). 
+ * Description: This class displays the list of items based on which hunt was selected. 
+ * They can tap on the item and add an answer to it.
  *
  * @author Craig J. Soto II
  * @author Ben Casey
@@ -25,10 +24,6 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -58,7 +53,6 @@ public class CopyOfHuntActivity extends ListFragment implements LoaderManager.Lo
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
-		Log.d("FQ::HA ", "above the layout");
 		int layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
                 R.layout.hunts_frag : R.layout.hunts_frag;
 		 
@@ -68,9 +62,6 @@ public class CopyOfHuntActivity extends ListFragment implements LoaderManager.Lo
 	            huntName = args.getString(MainActivity.HUNT_NAME);
 		}
 		
-		//Set up ListView
-		//this.getListView().setDividerHeight( 2 );
-		//registerForContextMenu( getListView() );
 				
 		getLoaderManager().restartLoader(0, null, this); 
         // Create an array adapter for the list view, using the Ipsum headlines array
@@ -105,7 +96,6 @@ public class CopyOfHuntActivity extends ListFragment implements LoaderManager.Lo
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 
-		Log.d("FQ::HA ", "onCreate loader huntName" + HuntPlayFragment.huntName);
 		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME };
 		String[] selection = {HuntPlayFragment.huntName};
 		CursorLoader cursorLoader = new CursorLoader( getActivity(), FreeganContentProvider.CONTENT_URI_H, projection, "hunt=?", selection, null );
@@ -156,9 +146,9 @@ public class CopyOfHuntActivity extends ListFragment implements LoaderManager.Lo
 				View v = super.getView(position, convertView, parent);
 
 				if (position %2 ==1) {
-					v.setBackgroundColor(Color.argb(150, 100, 100, 100));
+					v.setBackgroundColor(Color.argb(120, 100, 100, 100));
 				} else {
-					v.setBackgroundColor(Color.argb(150, 170, 170, 170)); //or whatever was original
+					v.setBackgroundColor(Color.argb(120, 170, 170, 170)); //or whatever was original
 				}
 
 				return v;
@@ -168,52 +158,6 @@ public class CopyOfHuntActivity extends ListFragment implements LoaderManager.Lo
 
 		// Let this ListActivity display the contents of the cursor adapter.
 		setListAdapter( this.adapter );
-	}
-
-	/**
-	 * The additemToList method starts the AdditemActivity. It also sets the needed elements
-	 * used in that activity. 
-	 * 
-	 * @param view - this is necessary for the button to interact with the activity
-	 */
-	public void addItemToList(View view) {
-		//Intent intent = new Intent(this, AddItemActivity.class);
-		//intent.putExtra(ManagerMain.HUNT_NAME, huntName);
-		//Set these to empty strings to prevent null point exception and prevent filling changeable
-		//elements in the next activity. 
-		/*intent.putExtra(MainActivity.HW_NAME_TEXT, "");
-		intent.putExtra(MainActivity.DATE_TEXT, "");
-		intent.putExtra(MainActivity.DESC_TEXT, "");*/
-		//startActivity(intent);
-	}
-
-	/**
-	 * The onCreateContextMenu method sets up the menu displayed on a long touch.
-	 * 
-	 * @param menu - the menu that is created to hold menu options
-	 * @param v - view that will interact with the UI
-	 * @param menuInfo - information needed for the menu
-	 */
-	@Override
-	public void onCreateContextMenu( ContextMenu menu, View v, ContextMenuInfo menuInfo ) {
-		super.onCreateContextMenu( menu, v, menuInfo );
-
-	}
-
-	/**
-	 * The onCreateContextItemSelected method handles the logic when an item in the context menu
-	 * is selected. 
-	 * 
-	 * @param item - item that was selected
-	 * 
-	 * @return super.onContextItemSelected(item) - returns the item that was deleted. 
-	 */
-	@Override
-	public boolean onContextItemSelected( MenuItem item ) {
-
-		//When the delete option is selected delete the item row from the db
-
-		return super.onContextItemSelected( item );
 	}
 
 	/**
@@ -260,7 +204,6 @@ public class CopyOfHuntActivity extends ListFragment implements LoaderManager.Lo
 	@Override
     public void onStart() {
         super.onStart();
-        Log.d("FQ::HA ", "start huntName" + huntName);
         // When in two-pane layout, set the listview to highlight the selected list item
         // (We do this during onStart because at the point the listview is available.)
         if (getFragmentManager().findFragmentById(R.id.answers_fragment) != null) {
@@ -270,24 +213,8 @@ public class CopyOfHuntActivity extends ListFragment implements LoaderManager.Lo
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 	    super.onActivityCreated(savedInstanceState);
-	    Log.d("FQ::HA ", "onActivityCreated huntName" + huntName);
 	    registerForContextMenu(this.getListView());
 	}
 	
-	/**
-	 * The onSaveInstanceState method saves all the global variables used within the activity. It does 
-	 * this when the phone changes its orientation so that the variables can maintain the same values 
-	 * when rotating the phone/emulator. It stores these values in the savedInstanceState.  
-	 * 
-	 * @param savedInstanceState - a bundle of any saved instance values
-	 */
-	
-
-	/**
-	 * The onRestoreInstanceState method restores all the global variables that were saved when the phone
-	 * changed orientation. 
-	 * 
-	 * @param savedInstanceState - a bundle of any saved instance values
-	 */
 	
 }

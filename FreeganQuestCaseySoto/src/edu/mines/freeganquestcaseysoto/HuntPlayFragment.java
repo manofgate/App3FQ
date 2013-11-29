@@ -1,17 +1,10 @@
-/*
- * Copyright (C) 2012 The Android Open Source Project
+/**
+ * Description: This class fragment takes in the name of the hunt. then determines if it should be in 1 pane or two pane.
+ * Then it calls the hunt activity which displays the list of items for that hunt. It also does all the button interaction,
+ * such as finishing the hunt, submitting an answer, and doing the timer.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * @author Craig J. Soto II
+ * @author Ben Casey
  */
 package edu.mines.freeganquestcaseysoto;
 
@@ -57,6 +50,8 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 			customHandler.postDelayed(this, 0);
 		}
 	};
+
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -65,16 +60,15 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 		setContentView(R.layout.hunts_list_player);
 		//Get/set the huntName in the activity
 
-		Log.d("FQ::HP ", "huntName here is " +huntName);
-		//TextView mhuntText = (TextView)findViewById(R.id.huntName);
-		//mhuntText.setText(huntName);
+		TextView mhuntText = (TextView)findViewById(R.id.huntName);
+		mhuntText.setText(huntName);
 
 		timerValue = (TextView) findViewById(R.id.timeView);
 		startTime = SystemClock.uptimeMillis();
 		customHandler.postDelayed(updateTimerThread, 0);
-		Log.d("HUNT_PLAY", "we are the timer");
+
 		// Check whether the activity is using the layout version with
-		// the fragment_container FrameLayout. If so, we must add the first fragment
+		// the fragment_hunts FrameLayout. If so, we must add the first fragment
 		if (findViewById(R.id.fragment_hunts) != null) {
 
 			// However, if we're being restored from a previous state,
@@ -83,19 +77,19 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 			if (savedInstanceState != null) {
 				return;
 			}
-			Log.d("HUNT_PLAY", "we are above the new");
-			// Create an instance of ExampleFragment
+			// Create an instance of firstFragment
 			CopyOfHuntActivity firstFragment = new CopyOfHuntActivity();
-			Log.d("NUNT_PLAY", "we are below this spot");
+
 			// In case this activity was started with special instructions from an Intent,
 			// pass the Intent's extras to the fragment as arguments
 			firstFragment.setArguments(getIntent().getExtras());
 
-			// Add the fragment to the 'fragment_container' FrameLayout
+			// Add the fragment to the 'fragment_hunts' FrameLayout
 			getSupportFragmentManager().beginTransaction()
 			.add(R.id.fragment_hunts, firstFragment).commit();
 		}
 		else{
+			//allows the answer fragment to be invisble for two pane at the begining
 			findViewById(R.id.answers_fragment).setVisibility(View.GONE);
 
 		}
@@ -109,6 +103,9 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 		return true;
 	}
 
+	/**
+	 * for the menu. depending on which is chosen, the help, about, or settings, it will display appropriate fragment.
+	 */
 	@Override
 	public boolean onOptionsItemSelected( MenuItem item )
 	{
@@ -146,6 +143,9 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 		}
 	}
 
+	/**
+	 * To stop the user from backing up out of the hunt unless they hit the finish button.
+	 */
 	@Override
 	public void onBackPressed() {
 		if(!onAnswer){
@@ -157,11 +157,14 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 		}
 	}
 
+	/** method when clicked on in the list of items for the hunt with display the other fragment to add your answer
+	 * @Param position - position is the description of the item to match it up
+	 */
 	public void onArticleSelected(String position) {
 		// The user selected the headline of an article from the HeadlinesFragment
 		desc = position;
-		onAnswer = true;
-		Log.d("FQ:HUNT_PLAY " , "in the on ariticleSelected " + desc);
+
+
 		// Capture the article fragment from the activity layout
 		CopyOfAddAnswerActivity articleFrag = (CopyOfAddAnswerActivity)
 				getSupportFragmentManager().findFragmentById(R.id.answers_fragment);
@@ -169,14 +172,14 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 
 		if (articleFrag != null) {
 			// If article frag is available, we're in two-pane layout...
-			Log.d("FQ: MF", "here in the articleUpdate");
+
 			// Call a method in the ArticleFragment to update its content
 			findViewById(R.id.answers_fragment).setVisibility(View.VISIBLE);
 			articleFrag.updateArticleView(position);
 
 		} else {
 			// If the frag is not available, we're in the one-pane layout and must swap frags...
-
+			onAnswer = true;
 			// Create fragment and give it an argument for the selected article
 			CopyOfAddAnswerActivity newFragment = new  CopyOfAddAnswerActivity();
 			Bundle args = new Bundle();
@@ -185,7 +188,7 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 			newFragment.setArguments(args);
 			FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-			// Replace whatever is in the fragment_container view with this fragment,
+			// Replace whatever is in the fragment_hunts view with this fragment,
 			// and add the transaction to the back stack so the user can navigate back
 			transaction.replace(R.id.fragment_hunts, newFragment);
 			transaction.addToBackStack("top");
@@ -215,12 +218,12 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 		finish();
 	}
 	/**
-	 * Inserts the hunt into the hunt Table.
-	 * checks to see if there are now 2 hunt of the same name and deletes the last inserted hunt
+	 * inserts the timer into it's timer table for completion of the hunt. Used to check the time for results
+	 * @Param finalTime - final time to be inserted into the table
 	 */
 	public void insertTimer(String finalTime){
 		Log.d("TIME", finalTime);
-		
+
 		ContentValues values = new ContentValues();
 		values.put( TimerTable.COLUMN_HUNT_NAME, huntName );
 		values.put( TimerTable.COLUMN_TIME, finalTime);
@@ -250,6 +253,14 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 		//Save the game scores, round scores, and tosses amounts for the respective teams
 		savedInstanceState.putLong("START_TIME", startTime);
 	}
+
+	/**
+	 * gets the current time and formats it for display
+	 * @param milliTime - current time in milli seconds
+	 * @param locTimeSwapBuff
+	 * @param locUpdatedTime
+	 * @return
+	 */
 	private String getTime(long milliTime, long locTimeSwapBuff, long locUpdatedTime ){
 		String time = "";
 
@@ -266,10 +277,12 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 		return time;
 	}
 
-
+	/**
+	 * When the user clicks submit this will fix the answer fragment to be right text and or not visible
+	 * @Param position - 
+	 */
 	public void onFinishSelected(String position) {
 
-		Log.d("FQ::HP " , "In the onFinishLisetner");
 		//CopyOfHuntActivity articleFrag = (CopyOfHuntActivity)
 		CopyOfAddAnswerActivity articleFrag = (CopyOfAddAnswerActivity)
 				getSupportFragmentManager().findFragmentById(R.id.answers_fragment);
@@ -277,7 +290,6 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 
 		if (articleFrag != null) {
 			// If article frag is available, we're in two-pane layout...
-			Log.d("FQ: MF", "here in the articleUpdate");
 			EditText mText = (EditText) findViewById(R.id.answerWord);
 			mText.setText("");
 			// Call a method in the ArticleFragment to update its content
@@ -288,7 +300,6 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 			// If the frag is not available, we're in the one-pane layout and must swap frags...
 
 			//Create fragment and give it an argument for the selected article
-			Log.d("FQ::HP " , "In the above onFinishLisetner");
 			getSupportFragmentManager().popBackStack();
 			Log.d("FQ::HP " , "In the under onFinishLisetner");
 
@@ -354,7 +365,7 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 	 */
 
 	/**
-	 * The insertNewHW method checks to see if the name, due date, or description needs to be updated. 
+	 * The insertNewAnswer method checks to see if the name, due date, or description needs to be updated. 
 	 * If any of them need to be updated then update it.   
 	 * 
 	 * @param name - name retrieved from Activity

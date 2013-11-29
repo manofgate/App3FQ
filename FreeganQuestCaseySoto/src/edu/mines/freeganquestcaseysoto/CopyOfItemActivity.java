@@ -26,7 +26,6 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -69,35 +68,20 @@ public class CopyOfItemActivity extends ListFragment implements LoaderManager.Lo
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.item_list_frag, container, false);
     }
+	
+/**
+ * this method is for the long press menu to show up
+ */
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 	    super.onActivityCreated(savedInstanceState);
 
 	    registerForContextMenu(this.getListView());
 	}
-	/*@Override
-	public void onCreate( Bundle savedInstanceState ) {
-		super.onCreate( savedInstanceState );
-		getActivity().setContentView( R.layout.item_list );
-
-		//Get/set the huntName in the activity
-		//huntName = getActivity().getIntent().getStringExtra( ManagerMain.HUNT_NAME);
-		//TextView mhuntText = (TextView)getActivity().findViewById(R.id.huntName);
-		//mhuntText.setText(huntName);
-		
-		//Set up ListView
-		this.getListView().setDividerHeight( 2 );
-		registerForContextMenu( getListView() );
-
-		//Fill the Listview table
-		fillData();
-	}
 	
-	*/
 	 @Override
 	    public void onStart() {
 	        super.onStart();
-	        Log.d("FQ::COIA", "hunt name is" + huntName);
 	        // During startup, check if there are arguments passed to the fragment.
 	        // onStart is a good place to do this because the layout has already been
 	        // applied to the fragment at this point so we can safely call the method
@@ -184,9 +168,9 @@ public class CopyOfItemActivity extends ListFragment implements LoaderManager.Lo
 				View v = super.getView(position, convertView, parent);
 
 				if (position %2 ==1) {
-					v.setBackgroundColor(Color.argb(150, 100, 100, 100));
+					v.setBackgroundColor(Color.argb(115, 92, 92, 108));
 				} else {
-					v.setBackgroundColor(Color.argb(150, 170, 170, 170)); //or whatever was original
+					v.setBackgroundColor(Color.argb(115, 162, 162, 178)); //or whatever was original
 				}
 
 				return v;

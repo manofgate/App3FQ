@@ -53,23 +53,7 @@ public class CopyOfAddAnswerActivity extends Fragment {
         /** Called by HeadlinesFragment when a list item is selected */
         public void onFinishSelected(String position);
     }
-	/*@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.add_answer);
 
-		//Retrieve strings passed in from the itemActivity
-		//String message = getIntent().getStringExtra( ManagerMain.HUNT_NAME);
-		
-
-		//Get the TextView item to be updated
-		//TextView mhuntText = (TextView) findViewById(R.id.huntName);
-		
-
-		//Set the TextView item to the new text form the itemActivity
-		//mhuntText.setText(message);
-	}
-	*/
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, 
         Bundle savedInstanceState) {
@@ -85,10 +69,10 @@ public class CopyOfAddAnswerActivity extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.add_answer, container, false);
     }
+	
 	 @Override
 	    public void onStart() {
 	        super.onStart();
-	        //Log.d("FQ::COIA", "hunt name is" + huntName);
 	        // During startup, check if there are arguments passed to the fragment.
 	        // onStart is a good place to do this because the layout has already been
 	        // applied to the fragment at this point so we can safely call the method
@@ -109,7 +93,6 @@ public class CopyOfAddAnswerActivity extends Fragment {
 	    public void updateArticleView(String position) {
 	    	description = position;
 	    	
-	        //fillData();
 	    }
 	
 
