@@ -69,6 +69,10 @@
             android:name="edu.mines.freeganquestcaseysoto.ResultsActivity"
             android:label="@string/title_activity_results" >
         </activity>
+        <activity
+            android:name="edu.mines.freeganquestcaseysoto.ImagePickActivity"
+            android:label="@string/title_activity_image_pick" >
+        </activity>
     </application>
 
 </manifest>

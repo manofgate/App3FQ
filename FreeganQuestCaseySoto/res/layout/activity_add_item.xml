@@ -79,13 +79,11 @@
             android:inputType="textPersonName" />
     </LinearLayout>
 
-    
-
     <TextView
         android:id="@+id/descriptionText"
         android:layout_width="168dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/radGDisp"
+        android:layout_below="@+id/picButton"
         android:layout_gravity="left"
         android:text="@string/description"
         android:textAppearance="?android:attr/textAppearanceLarge" />
@@ -108,33 +106,39 @@
         android:onClick="submit"
         android:text="@string/submit" />
 
-   
-
     <RadioGroup
         android:id="@+id/radGDisp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/dateLayout"
-        android:layout_marginTop="7dp" 
-        android:orientation="horizontal">
+        android:layout_marginTop="7dp"
+        android:orientation="horizontal" >
 
         <RadioButton
-        android:id="@+id/radBWord"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        
-        android:checked="true"
-        android:onClick="onRadioButtonClicked"
-        android:text="@string/radWord" />
-        
-         <RadioButton
-        android:id="@+id/radBPic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:onClick="onRadioButtonClicked"
-        android:text="@string/radPics" />
+            android:id="@+id/radBWord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:onClick="onRadioButtonClicked"
+            android:text="@string/radWord" />
+
+        <RadioButton
+            android:id="@+id/radBPic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:onClick="onRadioButtonClicked"
+            android:text="@string/radPics" />
     </RadioGroup>
+
+    <ImageButton
+        android:id="@+id/picButton"
+        android:layout_width="50dip"
+        android:layout_height="50dip"
+        android:layout_below="@+id/radGDisp"
+        android:background="@drawable/plus"
+        android:contentDescription="@string/addPicture"
+        android:visibility="invisible" />
 
 </RelativeLayout>
