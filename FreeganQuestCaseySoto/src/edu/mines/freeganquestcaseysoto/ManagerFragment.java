@@ -222,11 +222,11 @@ implements CopyOfManagerMain.OnHeadlineSelectedListener, InputDialogFragment.Lis
 			String[] selectionC = {huntName};
 			String[] projection2 = {ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME};
 
-			Cursor cursorC = getContentResolver().query(FreeganContentProvider.CONTENT_URI_H, projection2, "hunt=?", selectionC, null);
+			Cursor cursorC = getContentResolver().query(FreeganContentProvider.CONTENT_URI_I, projection2, "hunt=?", selectionC, null);
 			ContentValues valuesC = new ContentValues();
 			valuesC.put( ItemTable.COLUMN_HUNT_NAME, newHuntName );
 			for(int i=0; i < cursorC.getCount(); ++i){
-				rowsUpdated = getContentResolver().update( FreeganContentProvider.CONTENT_URI_H, valuesC, "hunt=?", selectionC );
+				rowsUpdated = getContentResolver().update( FreeganContentProvider.CONTENT_URI_I, valuesC, "hunt=?", selectionC );
 
 			}
 		}

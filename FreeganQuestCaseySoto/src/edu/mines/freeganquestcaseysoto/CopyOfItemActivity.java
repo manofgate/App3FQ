@@ -120,7 +120,7 @@ public class CopyOfItemActivity extends ListFragment implements LoaderManager.Lo
 		//Retrieve item info from database
 		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME };
 		String[] selection = {huntName};
-		CursorLoader cursorLoader = new CursorLoader( getActivity(), FreeganContentProvider.CONTENT_URI_H, projection, "hunt=?", selection, null );
+		CursorLoader cursorLoader = new CursorLoader( getActivity(), FreeganContentProvider.CONTENT_URI_I, projection, "hunt=?", selection, null );
 
 		return cursorLoader;
 	}
@@ -211,7 +211,7 @@ public class CopyOfItemActivity extends ListFragment implements LoaderManager.Lo
 		//When the delete option is selected delete the item row from the db
 		case DELETE_ID:
 			AdapterContextMenuInfo info = (AdapterContextMenuInfo)item.getMenuInfo();
-			Uri uri = Uri.parse( FreeganContentProvider.CONTENT_URI_H + "/" + info.id );
+			Uri uri = Uri.parse( FreeganContentProvider.CONTENT_URI_I + "/" + info.id );
 			getActivity().getContentResolver().delete( uri, null, null );
 			fillData();
 			return true;
@@ -237,7 +237,7 @@ public class CopyOfItemActivity extends ListFragment implements LoaderManager.Lo
 		Intent i = new Intent( getActivity(), AddItemActivity.class );
 
 		//Query the database for the necessary information
-		Uri huntUri = Uri.parse( FreeganContentProvider.CONTENT_URI_H + "/" + id );
+		Uri huntUri = Uri.parse( FreeganContentProvider.CONTENT_URI_I + "/" + id );
 		String[] projection = { ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME };
 		Cursor cursor = getActivity().getContentResolver().query( huntUri, projection, null, null, null );
 

@@ -38,17 +38,17 @@ public class FreeganContentProvider extends ContentProvider
 	private static final String AUTHORITY = "edu.mines.freeganquestcaseysoto.freeganquestcontentprovider";
 
 	private static final String BASE_PATH = "hunts";
-	private static final String BASE_PATH_H = "items";
+	private static final String BASE_PATH_I = "items";
 	private static final String BASE_PATH_T = "timers";
 	public static final Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY + "/" + BASE_PATH );
-	public static final Uri CONTENT_URI_H = Uri.parse( "content://" + AUTHORITY + "/" + BASE_PATH_H );
+	public static final Uri CONTENT_URI_I = Uri.parse( "content://" + AUTHORITY + "/" + BASE_PATH_I );
 	public static final Uri CONTENT_URI_T = Uri.parse( "content://" + AUTHORITY + "/" + BASE_PATH_T );
 
 	public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/hunts";
 	public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/hunts";
 
-	public static final String CONTENT_TYPE_H = ContentResolver.CURSOR_DIR_BASE_TYPE + "/items";
-	public static final String CONTENT_ITEM_TYPE_H = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/items";
+	public static final String CONTENT_TYPE_I = ContentResolver.CURSOR_DIR_BASE_TYPE + "/items";
+	public static final String CONTENT_ITEM_TYPE_I = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/items";
 
 	public static final String CONTENT_TYPE_T = ContentResolver.CURSOR_DIR_BASE_TYPE + "/timers";
 	public static final String CONTENT_ITEM_TYPE_T = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/timers";
@@ -62,8 +62,8 @@ public class FreeganContentProvider extends ContentProvider
 		sURIMatcher.addURI( AUTHORITY, BASE_PATH + "/#", HUNTS_ID );
 
 		//items/objects
-		sURIMatcher.addURI( AUTHORITY, BASE_PATH_H, ITEMS );
-		sURIMatcher.addURI( AUTHORITY, BASE_PATH_H + "/#", ITEMS_ID );
+		sURIMatcher.addURI( AUTHORITY, BASE_PATH_I, ITEMS );
+		sURIMatcher.addURI( AUTHORITY, BASE_PATH_I + "/#", ITEMS_ID );
 
 		//timers
 		sURIMatcher.addURI( AUTHORITY, BASE_PATH_T, TIMERS );

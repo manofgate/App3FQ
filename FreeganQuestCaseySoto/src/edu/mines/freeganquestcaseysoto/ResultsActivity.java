@@ -50,17 +50,17 @@ public class ResultsActivity extends ListActivity implements LoaderManager.Loade
 	 */
 	private void fillData() {
 		//Fields in the DB from which we map 
-		String[] from = new String[] { ItemTable.COLUMN_ID, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION };
+		String[] from = new String[] { ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION };
 
 		// Fields on the UI to which we map
-		int[] to = new int[] { R.id.idName, R.id.loc, R.id.descrption };
+		int[] to = new int[] { R.id.hwName, R.id.date, R.id.descrption };
 
 		// Ensure a loader is initialized and active.
 		getLoaderManager().initLoader( 0, null, this );
 
 		// Note the last parameter to this constructor (zero), which indicates the adaptor should
 		// not try to automatically re-query the data ... the loader will take care of this.
-		this.adapter = new SimpleCursorAdapter( this, R.layout.item_list_row_player, null, from, to, 0 ){
+		this.adapter = new SimpleCursorAdapter( this, R.layout.item_list_row, null, from, to, 0 ){
 			//Change the color of each ListItem to help the user
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
@@ -90,19 +90,6 @@ public class ResultsActivity extends ListActivity implements LoaderManager.Loade
 			TextView timerView = (TextView)findViewById(R.id.timeView);
 			timerView.setText(time);
 		}
-		
-		String[] projection2 = { ItemTable.COLUMN_ID, ItemTable.COLUMN_ANSWER, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_DISPLAY, ItemTable.COLUMN_HUNT_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_NAME};
-		String[] selection2 = {huntName};
-		Cursor cursor2 = getContentResolver().query( FreeganContentProvider.CONTENT_URI_T, projection2, "hunt=?", selection2, ItemTable.COLUMN_ID + " DESC" );
-		
-		String[] col = cursor2.getColumnNames();
-		for(String c : col){
-			Log.d("FILL", c);
-		}
-		
-		if(cursor.moveToFirst()){
-			
-		}
 	}
 
 	/**
@@ -118,9 +105,9 @@ public class ResultsActivity extends ListActivity implements LoaderManager.Loade
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 
 		//Retrieve item info from database
-		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME };
+		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME, ItemTable.COLUMN_ANSWER, ItemTable.COLUMN_NAME, ItemTable.COLUMN_DISPLAY };
 		String[] selection = {huntName};
-		CursorLoader cursorLoader = new CursorLoader( this, FreeganContentProvider.CONTENT_URI_H, projection, "hunt=?", selection, null );
+		CursorLoader cursorLoader = new CursorLoader( this, FreeganContentProvider.CONTENT_URI_I, projection, "hunt=?", selection, null );
 
 		return cursorLoader;
 	}
@@ -129,7 +116,7 @@ public class ResultsActivity extends ListActivity implements LoaderManager.Loade
 	 * The onLoadFinished is a needed abstract method to help load the data in the ListView
 	 * 
 	 * @param arg0 - unused but needed for abstract method
-	 * @param arg1 - used when swaping cursor
+	 * @param arg1 - used when swapping cursor
 	 */
 	@Override
 	public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {

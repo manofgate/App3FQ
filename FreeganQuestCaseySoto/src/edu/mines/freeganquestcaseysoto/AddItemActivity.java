@@ -198,17 +198,17 @@ public class AddItemActivity extends Activity {
 		if(!name.equals(hwName)){
 			values.put( ItemTable.COLUMN_NAME, name );
 			String[] selection = {hwName, location, description};
-			rowsUpdated = rowsUpdated + getContentResolver().update( FreeganContentProvider.CONTENT_URI_H, values, "name=? AND date=? AND desc=?", selection );
+			rowsUpdated = rowsUpdated + getContentResolver().update( FreeganContentProvider.CONTENT_URI_I, values, "name=? AND date=? AND desc=?", selection );
 		}
 		if(!loc.equals(location)){
 			values.put( ItemTable.COLUMN_LOCATION, loc );
 			String[] selection = {location, name, description};
-			rowsUpdated = rowsUpdated + getContentResolver().update( FreeganContentProvider.CONTENT_URI_H, values, "date=? AND name=? AND desc=?", selection );
+			rowsUpdated = rowsUpdated + getContentResolver().update( FreeganContentProvider.CONTENT_URI_I, values, "date=? AND name=? AND desc=?", selection );
 		}
 		if(!desc.equals(description)){
 			values.put( ItemTable.COLUMN_DESCRIPTION, desc );
 			String[] selection = {description, name, loc};
-			rowsUpdated = rowsUpdated + getContentResolver().update( FreeganContentProvider.CONTENT_URI_H, values, "desc=? AND name=? AND date=?", selection );
+			rowsUpdated = rowsUpdated + getContentResolver().update( FreeganContentProvider.CONTENT_URI_I, values, "desc=? AND name=? AND date=?", selection );
 		}
 
 		if(rowsUpdated == 0){
@@ -232,20 +232,20 @@ public class AddItemActivity extends Activity {
 		values.put( ItemTable.COLUMN_DESCRIPTION, desc);
 		values.put( ItemTable.COLUMN_HUNT_NAME, hunt);
 		values.put( ItemTable.COLUMN_DISPLAY, answerDisp);
-		values.put( ItemTable.COLUMN_ANSWER, "????");
+		values.put( ItemTable.COLUMN_ANSWER, "ANSWER");
 
 		//Insert values into the item Table
-		getContentResolver().insert( FreeganContentProvider.CONTENT_URI_H, values );
+		getContentResolver().insert( FreeganContentProvider.CONTENT_URI_I, values );
 
 		//Verify if identical entries were inserted into the item Table 
 		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME};
 		String[] selection = {name};
-		Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI_H, projection, "name=?", selection, ItemTable.COLUMN_ID + " DESC" );
+		Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI_I, projection, "name=?", selection, ItemTable.COLUMN_ID + " DESC" );
 		
 		//If there were multiple entries remove the last insert then notify the user. 
 		if(cursor.getCount() > 1){
 			cursor.moveToFirst();
-			Uri huntUri = Uri.parse( FreeganContentProvider.CONTENT_URI_H + "/" +  cursor.getString(cursor.getColumnIndexOrThrow( ItemTable.COLUMN_ID )) );
+			Uri huntUri = Uri.parse( FreeganContentProvider.CONTENT_URI_I + "/" +  cursor.getString(cursor.getColumnIndexOrThrow( ItemTable.COLUMN_ID )) );
 			getContentResolver().delete(huntUri, null, null);
 			Toast toast = Toast.makeText(getApplicationContext(),"Have already added " + name +"!" , Toast.LENGTH_LONG);
 			toast.show();

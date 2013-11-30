@@ -128,7 +128,7 @@ public class LocationActivity extends ListActivity implements LoaderManager.Load
 		//Retrieve item  info from database
 		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_DESCRIPTION ,ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_HUNT_NAME };
 		String[] selection = {huntName};
-		CursorLoader cursorLoader = new CursorLoader( this, FreeganContentProvider.CONTENT_URI_H, projection, "hunt=?", selection, null );
+		CursorLoader cursorLoader = new CursorLoader( this, FreeganContentProvider.CONTENT_URI_I, projection, "hunt=?", selection, null );
 
 		return cursorLoader;
 	}
@@ -218,7 +218,7 @@ public class LocationActivity extends ListActivity implements LoaderManager.Load
 		//When the delete option is selected delete the homework row from the db
 		case DELETE_ID:
 			AdapterContextMenuInfo info = (AdapterContextMenuInfo)item.getMenuInfo();
-			Uri uri = Uri.parse( FreeganContentProvider.CONTENT_URI_H + "/" + info.id );
+			Uri uri = Uri.parse( FreeganContentProvider.CONTENT_URI_I + "/" + info.id );
 			getContentResolver().delete( uri, null, null );
 			fillData();
 			return true;

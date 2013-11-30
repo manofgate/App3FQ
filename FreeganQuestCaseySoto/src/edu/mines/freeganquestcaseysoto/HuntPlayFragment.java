@@ -40,6 +40,12 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 	private TextView timerValue;
 	public static final String DESCRIP = "description";
 	private Handler customHandler = new Handler();
+	
+	private String name;
+	private String desciption;
+	private String huntName_q;
+	private String loc;
+	
 
 	private Runnable updateTimerThread = new Runnable() {
 		public void run() {
@@ -167,6 +173,19 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 		CopyOfAddAnswerActivity articleFrag = (CopyOfAddAnswerActivity)
 				getSupportFragmentManager().findFragmentById(R.id.answers_fragment);
 
+		/*//Query the database for the necessary information
+		Uri itemUri = Uri.parse( FreeganContentProvider.CONTENT_URI_I + "/" + position );
+		String[] projection = { ItemTable.COLUMN_ANSWER, ItemTable.COLUMN_DESCRIPTION };
+		Cursor cursor = getContentResolver().query( itemUri, projection, null, null, null );
+
+		//Retrieve the information from the database. 
+		cursor.moveToFirst();	    
+		name = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_NAME ) );
+		desciption = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_DESCRIPTION ) );
+		huntName_q = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_HUNT_NAME ) );
+		loc = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_LOCATION ) );
+		cursor.close();*/
+
 		if (articleFrag != null) {
 			// If article frag is available, we're in two-pane layout...
 
@@ -177,7 +196,7 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 			// If the frag is not available, we're in the one-pane layout and must swap frags...
 			onAnswer = true;
 			// Create fragment and give it an argument for the selected article
-			CopyOfAddAnswerActivity newFragment = new  CopyOfAddAnswerActivity();
+			CopyOfAddAnswerActivity newFragment = new CopyOfAddAnswerActivity();
 			Bundle args = new Bundle();
 
 			args.putString( HuntPlayFragment.DESCRIP, position);
@@ -242,7 +261,7 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 		}
 		cursor.close();
 	}
-	
+
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
 		super.onSaveInstanceState(savedInstanceState);
@@ -302,7 +321,7 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 
 		}
 	}
-	
+
 	/**
 	 * The submit method retrieves the EditText content for the name, due date, and description from
 	 * the activity. It also validates and normalizes the user input, updates or inserts the input,
@@ -321,13 +340,22 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 		//Make sure the name and desc have content, if not give it generic information. 
 
 		//Call the respective method based on what the user is doing
-		//if(update){
-		//updateAnswer(hwName);
-		//} else {
-		//insertNewAnswer(hwName, hunt);
-		//}
-		onFinishSelected(hunt);
+		//Verify if identical entries were inserted into the item Table 
+		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_ANSWER, ItemTable.COLUMN_HUNT_NAME};
+		String[] selection = {answer, hunt};
+		Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI_I, projection, "ans=? AND hunt=?", selection, ItemTable.COLUMN_ID + " DESC" );
 
+		//If there were multiple entries remove the last insert then notify the user. 
+		if(cursor.getCount() > 1){
+			cursor.moveToFirst();
+			Uri huntUri = Uri.parse( FreeganContentProvider.CONTENT_URI_I + "/" +  cursor.getString(cursor.getColumnIndexOrThrow( ItemTable.COLUMN_ID )) );
+			getContentResolver().delete(huntUri, null, null);
+		} else {
+			insertNewAnswer(answer, hunt);
+		}
+		cursor.close();
+
+		onFinishSelected(hunt);
 	}
 
 	/**
@@ -363,31 +391,33 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 	 * The insertNewAnswer method checks to see if the name, due date, or description needs to be updated. 
 	 * If any of them need to be updated then update it.   
 	 * 
-	 * @param name - name retrieved from Activity
+	 * @param answer - name retrieved from Activity
 	 * @param loc - date retrieved from Activity
 	 * @param desc - description retrieved from Activity
 	 * @param hunt - name of the hunt
 	 */
-	public void insertNewAnswer(String name, String hunt){
+	public void insertNewAnswer(String answer, String hunt){
 		ContentValues values = new ContentValues();
-		values.put( ItemTable.COLUMN_NAME, name );
-		values.put( ItemTable.COLUMN_HUNT_NAME, hunt);
-		//values.put(ItemTable.COLUMN_DISPLAY, answerDisp);
+		values.put( ItemTable.COLUMN_ANSWER, answer );
+		values.put( ItemTable.COLUMN_HUNT_NAME, huntName_q);
+		values.put( ItemTable.COLUMN_DESCRIPTION, desciption);
+		values.put( ItemTable.COLUMN_LOCATION, loc);
+		values.put( ItemTable.COLUMN_NAME, name);
 
 		//Insert values into the item Table
-		getContentResolver().insert( FreeganContentProvider.CONTENT_URI_H, values );
+		getContentResolver().insert( FreeganContentProvider.CONTENT_URI_I, values );
 
 		//Verify if identical entries were inserted into the item Table 
-		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME};
-		String[] selection = {name};
-		Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI_H, projection, "name=?", selection, ItemTable.COLUMN_ID + " DESC" );
+		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_ANSWER, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_NAME};
+		String[] selection = {answer, desciption, huntName_q, loc, name};
+		Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI_I, projection, "ans=? AND desc=? AND hunt=? AND loc=? AND name=?", selection, ItemTable.COLUMN_ID + " DESC" );
 
 		//If there were multiple entries remove the last insert then notify the user. 
 		if(cursor.getCount() > 1){
 			cursor.moveToFirst();
-			Uri huntUri = Uri.parse( FreeganContentProvider.CONTENT_URI_H + "/" +  cursor.getString(cursor.getColumnIndexOrThrow( ItemTable.COLUMN_ID )) );
+			Uri huntUri = Uri.parse( FreeganContentProvider.CONTENT_URI_I + "/" +  cursor.getString(cursor.getColumnIndexOrThrow( ItemTable.COLUMN_ID )) );
 			getContentResolver().delete(huntUri, null, null);
-			Toast toast = Toast.makeText(getApplicationContext(),"Have already added " + name +"!" , Toast.LENGTH_LONG);
+			Toast toast = Toast.makeText(getApplicationContext(),"Have already added " + answer +"!" , Toast.LENGTH_LONG);
 			toast.show();
 			//finish();
 		}

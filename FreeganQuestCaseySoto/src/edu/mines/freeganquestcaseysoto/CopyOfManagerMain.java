@@ -143,12 +143,12 @@ public class CopyOfManagerMain extends ListFragment implements LoaderManager.Loa
 			String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME };
 			String[] querySelection = { this.huntName };
 			//gets the uris for the same id, moves it to first position.
-			uri = Uri.parse( FreeganContentProvider.CONTENT_URI_H + "/");
+			uri = Uri.parse( FreeganContentProvider.CONTENT_URI_I + "/");
 			Cursor cursor = getActivity().getContentResolver().query( uri, projection, "hunt=?", querySelection, null );
 			cursor.moveToFirst();
 			for(int i=0; i < cursor.getCount(); ++i){
 				String id =  cursor.getString(cursor.getColumnIndexOrThrow(ItemTable.COLUMN_ID));
-				uri = Uri.parse( FreeganContentProvider.CONTENT_URI_H + "/" + id );
+				uri = Uri.parse( FreeganContentProvider.CONTENT_URI_I + "/" + id );
 				getActivity().getContentResolver().delete( uri, null, null );
 				cursor.moveToNext();
 			}
