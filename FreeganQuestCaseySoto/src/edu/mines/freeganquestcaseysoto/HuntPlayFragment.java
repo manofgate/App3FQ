@@ -113,7 +113,7 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 		{
 		case R.id.action_manage:
 		{
-			Intent i = new Intent(this, HuntPlayFragment.class);
+			Intent i = new Intent(this, ManagerFragment.class);
 			i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			startActivity(i);
 
