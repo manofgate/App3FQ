@@ -287,7 +287,7 @@ public class FreeganContentProvider extends ContentProvider
 		int tableName = 0;
 
 		String[] availableHunts = { ManagerHuntTable.COLUMN_ID, ManagerHuntTable.COLUMN_NAME};
-		String[] availableItems = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME };
+		String[] availableItems = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME, ItemTable.COLUMN_DISPLAY, ItemTable.COLUMN_ANSWER };
 		String[] availableTimers = { TimerTable.COLUMN_ID, TimerTable.COLUMN_TIME, TimerTable.COLUMN_HUNT_NAME };
 		if( projection != null )
 		{

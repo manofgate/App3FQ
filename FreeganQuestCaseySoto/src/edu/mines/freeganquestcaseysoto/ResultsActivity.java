@@ -7,6 +7,7 @@ import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,6 +89,19 @@ public class ResultsActivity extends ListActivity implements LoaderManager.Loade
 			String time = cursor.getString(2);
 			TextView timerView = (TextView)findViewById(R.id.timeView);
 			timerView.setText(time);
+		}
+		
+		String[] projection2 = { ItemTable.COLUMN_ID, ItemTable.COLUMN_ANSWER, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_DISPLAY, ItemTable.COLUMN_HUNT_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_NAME};
+		String[] selection2 = {huntName};
+		Cursor cursor2 = getContentResolver().query( FreeganContentProvider.CONTENT_URI_T, projection2, "hunt=?", selection2, ItemTable.COLUMN_ID + " DESC" );
+		
+		String[] col = cursor2.getColumnNames();
+		for(String c : col){
+			Log.d("FILL", c);
+		}
+		
+		if(cursor.moveToFirst()){
+			
 		}
 	}
 

@@ -28,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
 @SuppressLint("NewApi")
 public class CopyOfHuntActivity extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>{
@@ -127,12 +128,12 @@ public class CopyOfHuntActivity extends ListFragment implements LoaderManager.Lo
 	/**
 	 * The fillData method fills the ListView with the item. 
 	 */
-	private void fillData() {
+	private void fillData() {	
 		//Fields in the DB from which we map 
-		String[] from = new String[] { ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_ANSWER };
+		String[] from = new String[] { ItemTable.COLUMN_ANSWER, ItemTable.COLUMN_DESCRIPTION };
 
 		// Fields on the UI to which we map
-		int[] to = new int[] { R.id.description_player, R.id.answer };
+		int[] to = new int[] { R.id.answer, R.id.description_player };
 
 		// Ensure a loader is initialized and active.
 		getLoaderManager().initLoader( 0, null, this );
