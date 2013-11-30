@@ -8,8 +8,6 @@
  */
 package edu.mines.freeganquestcaseysoto;
 
-import java.util.Timer;
-
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -91,7 +89,6 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 		else{
 			//allows the answer fragment to be invisble for two pane at the begining
 			findViewById(R.id.answers_fragment).setVisibility(View.GONE);
-
 		}
 
 	}
@@ -128,15 +125,17 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 			AlertDialog dialog = builder.show();
 			TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
 			messageText.setGravity(Gravity.CENTER);
+			return true;
 		}
 		case R.id.help_settings: {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle("Help");
-			builder.setMessage(MainActivity.MANAGER_HELP_INFO);
+			builder.setMessage(MainActivity.HELP_INFO);
 			builder.setPositiveButton("OK", null);
 			AlertDialog dialog = builder.show();
 			TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
 			messageText.setGravity(Gravity.CENTER);
+			return true;
 		}
 		default:
 			return super.onOptionsItemSelected(item);
@@ -164,11 +163,9 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 		// The user selected the headline of an article from the HeadlinesFragment
 		desc = position;
 
-
 		// Capture the article fragment from the activity layout
 		CopyOfAddAnswerActivity articleFrag = (CopyOfAddAnswerActivity)
 				getSupportFragmentManager().findFragmentById(R.id.answers_fragment);
-
 
 		if (articleFrag != null) {
 			// If article frag is available, we're in two-pane layout...
@@ -176,7 +173,6 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 			// Call a method in the ArticleFragment to update its content
 			findViewById(R.id.answers_fragment).setVisibility(View.VISIBLE);
 			articleFrag.updateArticleView(position);
-
 		} else {
 			// If the frag is not available, we're in the one-pane layout and must swap frags...
 			onAnswer = true;
@@ -246,6 +242,7 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 		}
 		cursor.close();
 	}
+	
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
 		super.onSaveInstanceState(savedInstanceState);
@@ -305,9 +302,7 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 
 		}
 	}
-
-
-
+	
 	/**
 	 * The submit method retrieves the EditText content for the name, due date, and description from
 	 * the activity. It also validates and normalizes the user input, updates or inserts the input,

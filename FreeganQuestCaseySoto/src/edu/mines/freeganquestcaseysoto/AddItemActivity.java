@@ -125,6 +125,7 @@ public class AddItemActivity extends Activity {
 			AlertDialog dialog = builder.show();
 			TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
 			messageText.setGravity(Gravity.CENTER);
+			return true;
 		}
 		case R.id.help_settings: {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -134,6 +135,7 @@ public class AddItemActivity extends Activity {
 			AlertDialog dialog = builder.show();
 			TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
 			messageText.setGravity(Gravity.CENTER);
+			return true;
 		}
 		default:
 			return super.onOptionsItemSelected(item);
@@ -229,7 +231,8 @@ public class AddItemActivity extends Activity {
 		values.put( ItemTable.COLUMN_LOCATION, loc );
 		values.put( ItemTable.COLUMN_DESCRIPTION, desc);
 		values.put( ItemTable.COLUMN_HUNT_NAME, hunt);
-		values.put(ItemTable.COLUMN_DISPLAY, answerDisp);
+		values.put( ItemTable.COLUMN_DISPLAY, answerDisp);
+		values.put( ItemTable.COLUMN_ANSWER, "????");
 
 		//Insert values into the item Table
 		getContentResolver().insert( FreeganContentProvider.CONTENT_URI_H, values );
@@ -238,7 +241,7 @@ public class AddItemActivity extends Activity {
 		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME};
 		String[] selection = {name};
 		Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI_H, projection, "name=?", selection, ItemTable.COLUMN_ID + " DESC" );
-
+		
 		//If there were multiple entries remove the last insert then notify the user. 
 		if(cursor.getCount() > 1){
 			cursor.moveToFirst();

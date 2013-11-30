@@ -129,10 +129,10 @@ public class CopyOfHuntActivity extends ListFragment implements LoaderManager.Lo
 	 */
 	private void fillData() {
 		//Fields in the DB from which we map 
-		String[] from = new String[] { ItemTable.COLUMN_ID, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION };
+		String[] from = new String[] { ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_ANSWER };
 
 		// Fields on the UI to which we map
-		int[] to = new int[] { R.id.idName, R.id.loc, R.id.descrption };
+		int[] to = new int[] { R.id.description_player, R.id.answer };
 
 		// Ensure a loader is initialized and active.
 		getLoaderManager().initLoader( 0, null, this );

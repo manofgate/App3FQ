@@ -90,6 +90,7 @@ implements CopyOfManagerMain.OnHeadlineSelectedListener, InputDialogFragment.Lis
 			AlertDialog dialog = builder.show();
 			TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
 			messageText.setGravity(Gravity.CENTER);
+			return true;
 		}
 		case R.id.help_settings: {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -99,6 +100,7 @@ implements CopyOfManagerMain.OnHeadlineSelectedListener, InputDialogFragment.Lis
 			AlertDialog dialog = builder.show();
 			TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
 			messageText.setGravity(Gravity.CENTER);
+			return true;
 		}
 		default:
 			return super.onOptionsItemSelected(item);
@@ -256,8 +258,6 @@ implements CopyOfManagerMain.OnHeadlineSelectedListener, InputDialogFragment.Lis
 		else if(dialogID == 2){
 			Log.d("FREEGAN_QUEST MF: ", "man frag: " + huntName);
 			updateNewHunt(input);
-
-
 		}
 
 	}

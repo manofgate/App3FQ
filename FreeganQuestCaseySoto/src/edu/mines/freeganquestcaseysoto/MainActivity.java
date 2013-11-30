@@ -45,6 +45,7 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
 			+ "Edit/Delete Hunt: \n Press and hold the Hunt you wish to edit or delete. \n Select the option from the list. \n\n" 
 			+ "Edit Item: \nPress the Item you wish to edit. \n Make changes, then click \"Submit\". \n\n"
 			+"Delete Item: \nPress and hold the Item you wish to delete.\nSelect the option from the list.";
+	public static final String PLAYER_HELP_INFO = "";
 	private ArrayList<String> arrayList1 = new ArrayList<String>();
 
 	@Override
@@ -133,6 +134,7 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
 	        AlertDialog dialog = builder.show();
 	        TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
 	        messageText.setGravity(Gravity.CENTER);
+	        return true;
 		}
 		case R.id.help_settings: {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -142,6 +144,7 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
 	        AlertDialog dialog = builder.show();
 	        TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
 	        messageText.setGravity(Gravity.CENTER);
+	        return true;
 		}
 		default:
 			return super.onOptionsItemSelected(item);
@@ -161,11 +164,10 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
 	
 	public void onResults(View view){
 		Intent i = new Intent(this, ResultsActivity.class);
-		String hName =arrayList1.get(mHunts.getSelectedItemPosition());
+		String hName = arrayList1.get(mHunts.getSelectedItemPosition());
 		i.putExtra(HUNT_NAME, arrayList1.get(mHunts.getSelectedItemPosition()));
 		if(!hName.equals("Select a Hunt...")){
 			startActivity(i);
-			finish();
 		}
 	}
 	

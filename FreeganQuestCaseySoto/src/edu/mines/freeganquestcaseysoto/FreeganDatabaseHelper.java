@@ -26,7 +26,6 @@ public class FreeganDatabaseHelper extends SQLiteOpenHelper
   {
     ManagerHuntTable.onCreate( database );
     ItemTable.onCreate(database);
-    AnswerTable.onCreate(database);
     TimerTable.onCreate(database);
   }
 

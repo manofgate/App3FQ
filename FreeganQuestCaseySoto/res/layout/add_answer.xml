@@ -4,38 +4,27 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-  <EditText
-        android:id="@+id/answerWord"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="86dp"
-        android:layout_marginTop="87dp"
-        android:hint="@string/word"
-        android:ems="15" >
-
-       
-    </EditText>
-
-    <Button
-        android:id="@+id/captureB"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/answerWord"
-        android:layout_marginTop="32dp"
-        android:text="@string/capture" />
-
     <Button
         android:id="@+id/submitB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/captureB"
-        android:layout_alignBottom="@+id/captureB"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="42dp"
+        android:layout_below="@+id/answerWord"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="46dp"
         android:onClick="submit"
         android:text="@string/submit" />
+
+    <EditText
+        android:id="@+id/answerWord"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="95dp"
+        android:ems="15"
+        android:hint="@string/word" >
+
+        <requestFocus />
+    </EditText>
 
 </RelativeLayout>

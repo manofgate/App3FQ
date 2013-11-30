@@ -98,6 +98,7 @@ public class LocationActivity extends ListActivity implements LoaderManager.Load
 			AlertDialog dialog = builder.show();
 			TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
 			messageText.setGravity(Gravity.CENTER);
+			return true;
 		}
 		case R.id.help_settings: {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -107,6 +108,7 @@ public class LocationActivity extends ListActivity implements LoaderManager.Load
 			AlertDialog dialog = builder.show();
 			TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
 			messageText.setGravity(Gravity.CENTER);
+			return true;
 		}
 		default:
 			return super.onOptionsItemSelected(item);

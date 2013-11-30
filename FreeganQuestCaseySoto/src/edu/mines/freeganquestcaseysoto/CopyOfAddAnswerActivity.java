@@ -32,12 +32,7 @@ import android.view.WindowManager;
 
 public class CopyOfAddAnswerActivity extends Fragment {
 
-	private final static int DESC_MAX = 140; //used to limit the users description to 140 characters
-	private boolean update = false; //used to help determine if item is being updated or not
-	private String hwName = ""; //used for checking if name needs to be updated
-	private String location = ""; //used for checking if date needs to be updated
 	private String description = ""; //used for checking if description needs to be updated
-	private String answerDisp = "word";
 
 	/**
 	 * The onCreate method retrieves any saved instances and sets the content view layout. It
@@ -46,68 +41,65 @@ public class CopyOfAddAnswerActivity extends Fragment {
 	 * 
 	 * @param savedInstanceState - a bundle of any saved instance values 
 	 */
-	
+
 	OnFinishListener mCallback;
-    // The container Activity must implement this interface so the frag can deliver messages
-    public interface OnFinishListener {
-        /** Called by HeadlinesFragment when a list item is selected */
-        public void onFinishSelected(String position);
-    }
+	// The container Activity must implement this interface so the frag can deliver messages
+	public interface OnFinishListener {
+		/** Called by HeadlinesFragment when a list item is selected */
+		public void onFinishSelected(String position);
+	}
 
 	@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, 
-        Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, 
+			Bundle savedInstanceState) {
 
-        // If activity recreated (such as from screen rotate), restore
-        // the previous article selection set by onSaveInstanceState().
-        // This is primarily necessary when in the two-pane layout.
-        if (savedInstanceState != null) {
-            description = savedInstanceState.getString(HuntPlayFragment.DESCRIP);
-        }
-        
-        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.add_answer, container, false);
-    }
-	
-	 @Override
-	    public void onStart() {
-	        super.onStart();
-	        // During startup, check if there are arguments passed to the fragment.
-	        // onStart is a good place to do this because the layout has already been
-	        // applied to the fragment at this point so we can safely call the method
-	        // below that sets the article text.
-	        updateArticleView(description);
-	        Bundle args = getArguments();
-	        if (args != null) {
-	            // Set article based on argument passed in
-	            updateArticleView(args.getString(HuntPlayFragment.DESCRIP));
-	        } else if (description != "") {
-	        	
-	            // Set article based on saved instance state defined during onCreateView
-	            updateArticleView(description);
-	        }
-	    }
-	 
-	 
-	    public void updateArticleView(String position) {
-	    	description = position;
-	    	
-	    }
-	
+		// If activity recreated (such as from screen rotate), restore
+		// the previous article selection set by onSaveInstanceState().
+		// This is primarily necessary when in the two-pane layout.
+		if (savedInstanceState != null) {
+			description = savedInstanceState.getString(HuntPlayFragment.DESCRIP);
+		}
 
-	
-	 @Override
-	    public void onAttach(Activity activity) {
-	        super.onAttach(activity);
+		getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+		// Inflate the layout for this fragment
+		return inflater.inflate(R.layout.add_answer, container, false);
+	}
 
-	        // This makes sure that the container activity has implemented
-	        // the callback interface. If not, it throws an exception.
-	        try {
-	            mCallback = (OnFinishListener) activity;
-	        } catch (ClassCastException e) {
-	            throw new ClassCastException(activity.toString()
-	                    + " must implement OnFinishListener");
-	        }
-	    }
+	@Override
+	public void onStart() {
+		super.onStart();
+		// During startup, check if there are arguments passed to the fragment.
+		// onStart is a good place to do this because the layout has already been
+		// applied to the fragment at this point so we can safely call the method
+		// below that sets the article text.
+		updateArticleView(description);
+		Bundle args = getArguments();
+		if (args != null) {
+			// Set article based on argument passed in
+			updateArticleView(args.getString(HuntPlayFragment.DESCRIP));
+		} else if (description != "") {
+
+			// Set article based on saved instance state defined during onCreateView
+			updateArticleView(description);
+		}
+	}
+	
+	public void updateArticleView(String position) {
+		description = position;
+
+	}
+	
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+
+		// This makes sure that the container activity has implemented
+		// the callback interface. If not, it throws an exception.
+		try {
+			mCallback = (OnFinishListener) activity;
+		} catch (ClassCastException e) {
+			throw new ClassCastException(activity.toString()
+					+ " must implement OnFinishListener");
+		}
+	}
 }
