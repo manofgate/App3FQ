@@ -43,7 +43,7 @@ public class CopyOfHuntActivity extends ListFragment implements LoaderManager.Lo
 	// The container Activity must implement this interface so the frag can deliver messages
 	public interface OnHeadlineSelectedListener {
 		/** Called by HeadlinesFragment when a list item is selected */
-		public void onArticleSelected(String position);
+		public void onArticleSelected(String position, String itemName, String locName);
 	}
 	/**
 	 * The onCreate method retrieves any saved instances and sets the content view layout. It
@@ -187,8 +187,10 @@ public class CopyOfHuntActivity extends ListFragment implements LoaderManager.Lo
 		cursor.moveToFirst();	    
 		//String name = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_NAME ) );
 		String descName = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_DESCRIPTION ) );
+		String itemName = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_NAME ) );
+		String locName = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_LOCATION ) );
 		cursor.close();
-		mCallback.onArticleSelected("fruit bat");
+		mCallback.onArticleSelected(descName, itemName, locName);
 
 		// Set the item as checked to be highlighted when in two-pane layout
 		getListView().setItemChecked(position, true);

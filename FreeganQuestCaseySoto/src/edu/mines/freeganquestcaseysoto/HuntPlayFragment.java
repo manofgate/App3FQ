@@ -165,10 +165,11 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 	/** method when clicked on in the list of items for the hunt with display the other fragment to add your answer
 	 * @Param position - position is the description of the item to match it up
 	 */
-	public void onArticleSelected(String position) {
+	public void onArticleSelected(String position, String itemName, String locName) {
 		// The user selected the headline of an article from the HeadlinesFragment
 		desc = position;
-
+		name = itemName;
+		loc = locName;
 		// Capture the article fragment from the activity layout
 		CopyOfAddAnswerActivity articleFrag = (CopyOfAddAnswerActivity)
 				getSupportFragmentManager().findFragmentById(R.id.answers_fragment);
@@ -399,14 +400,26 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 	public void insertNewAnswer(String answer, String hunt){
 		ContentValues values = new ContentValues();
 		values.put( ItemTable.COLUMN_ANSWER, answer );
-		values.put( ItemTable.COLUMN_HUNT_NAME, huntName_q);
-		values.put( ItemTable.COLUMN_DESCRIPTION, desciption);
+		//values.put( ItemTable.COLUMN_HUNT_NAME, huntName_q);
+		//values.put( ItemTable.COLUMN_DESCRIPTION, desciption);
 		values.put( ItemTable.COLUMN_LOCATION, loc);
 		values.put( ItemTable.COLUMN_NAME, name);
+		
+		int rowsUpdated =0;
+		//ContentValues values = new ContentValues();
+		
+			//values.put( ItemTable.COLUMN_NAME, name );
+			String[] selection = {name, loc, hunt};
+			rowsUpdated = rowsUpdated + getContentResolver().update( FreeganContentProvider.CONTENT_URI_I, values, "name=? AND loc=? AND hunt=?", selection );
+		
 
+
+		if(rowsUpdated == 0){
+			Log.d("ADDitem", "No rows were updated");
+		}
 		//Insert values into the item Table
-		getContentResolver().insert( FreeganContentProvider.CONTENT_URI_I, values );
-
+		/*getContentResolver().insert( FreeganContentProvider.CONTENT_URI_I, values );
+		Log.d("FQ::HPF", "this is in InsertNewAnsswer");
 		//Verify if identical entries were inserted into the item Table 
 		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_ANSWER, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_NAME};
 		String[] selection = {answer, desciption, huntName_q, loc, name};
@@ -422,6 +435,7 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 			//finish();
 		}
 		cursor.close();
+		*/
 	}
 
 }
