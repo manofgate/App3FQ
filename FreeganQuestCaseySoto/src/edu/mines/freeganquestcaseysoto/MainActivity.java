@@ -1,12 +1,25 @@
 package edu.mines.freeganquestcaseysoto;
 
 /**
+ * Description: This is the MainActivity class. It is the starting point of the app and will direct the app through
+ *  the other activities as needed.
+ * 
  * Description of intermediate submission. There is a manager mode button in the action bar. Once clicked, it will bring up managerMain
- * which is a list of hunts. Can click on add button and it does bring up an inputDialog. This adds hunts. Can click on each hunt and add
- * items to it. The addItemActivity allows to add name, location, description, and wehather the answer should be word or picture.
- * Also Can long tap on each hunt and can delete it, edit it, or show the locations of it. 
+ *  which is a list of hunts. Can click on add button and it does bring up an inputDialog. This adds hunts. Can click on each hunt and add
+ *  items to it. The addItemActivity allows to add name, location, description, and weather the answer should be word or picture.
+ *  Also can long tap on each hunt and can delete it, edit it, or show the locations of it.
+ *  
+ * Description of final submission. The player can now play a hunt, submit answers, and view results. The player can take pictures and enter
+ * in text for their answers.  
+ * 
+ * Documentation Statement: We worked on this Android App all on our own. We did not receive 
+ * 	any help on this project from any other student enrolled or not enrolled in the CSCI498 
+ * 	class. 
+ * 
  * @author Ben Casey
- * @author Craig Soto
+ * @author Craig Soto II
+ * 
+ * point distribution: Ben - 57% : Craig - 43%
  */
 import java.util.ArrayList;
 
@@ -74,19 +87,13 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
 
 		mHunts.setVisibility(View.VISIBLE);
 		//Set listener Called when the item is selected in spinner
-		mHunts.setOnItemSelectedListener(new OnItemSelectedListener() 
-		{
-			public void onItemSelected(AdapterView<?> parent, View view,
-					int position, long arg3) 
-			{
+		mHunts.setOnItemSelectedListener(new OnItemSelectedListener() {
+			public void onItemSelected(AdapterView<?> parent, View view,int position, long arg3) {
 				//String huntN = "The quest is " + parent.getItemAtPosition(position).toString();
 				//Toast.makeText(parent.getContext(), city, Toast.LENGTH_LONG).show();
-
 			}
 
-			public void onNothingSelected(AdapterView<?> arg0) 
-			{
-				// TODO Auto-generated method stub
+			public void onNothingSelected(AdapterView<?> arg0) {
 			}
 		});
 	}
@@ -182,19 +189,14 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
 
 	@Override
 	public void onInputDone(int dialogID, String input) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onInputCancel(int dialogID) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

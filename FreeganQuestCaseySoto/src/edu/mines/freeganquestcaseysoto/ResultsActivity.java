@@ -50,17 +50,17 @@ public class ResultsActivity extends ListActivity implements LoaderManager.Loade
 	 */
 	private void fillData() {
 		//Fields in the DB from which we map 
-		String[] from = new String[] { ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION };
+		String[] from = new String[] { ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_ANSWER, ItemTable.COLUMN_DESCRIPTION };
 
 		// Fields on the UI to which we map
-		int[] to = new int[] { R.id.hwName, R.id.date, R.id.descrption };
+		int[] to = new int[] { R.id.name, R.id.loc, R.id.answer, R.id.descrption };
 
 		// Ensure a loader is initialized and active.
 		getLoaderManager().initLoader( 0, null, this );
 
 		// Note the last parameter to this constructor (zero), which indicates the adaptor should
 		// not try to automatically re-query the data ... the loader will take care of this.
-		this.adapter = new SimpleCursorAdapter( this, R.layout.item_list_row, null, from, to, 0 ){
+		this.adapter = new SimpleCursorAdapter( this, R.layout.item_list_row_results, null, from, to, 0 ){
 			//Change the color of each ListItem to help the user
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
