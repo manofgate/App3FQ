@@ -19,6 +19,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,6 +59,37 @@ implements CopyOfManagerMain.OnHeadlineSelectedListener, InputDialogFragment.Lis
 		}
 	}
 	
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+		super.onSaveInstanceState(savedInstanceState);
+		Button addItem = (Button) findViewById(R.id.addItemButton);
+		if(addItem.getVisibility() ==View.GONE){
+			savedInstanceState.putBoolean("Display", true);
+		}
+		else{
+			savedInstanceState.putBoolean("Display", false);
+		}
+	}
+	
+	
+	@Override
+	public void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+
+		//Sets the respective values for game information
+		Boolean addGone = savedInstanceState.getBoolean("Display");
+		if(addGone){
+			findViewById(R.id.addItemButton).setVisibility(View.GONE);
+			
+		}
+		else if(findViewById(R.id.fragment_titles) != null){
+			findViewById(R.id.addItemButton).setVisibility(View.VISIBLE);
+			findViewById(R.id.addHunt).setVisibility(View.GONE);
+		}
+		else {
+			findViewById(R.id.addItemButton).setVisibility(View.VISIBLE);
+		}
+	}
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.

@@ -104,7 +104,14 @@ public class CopyOfItemActivity extends ListFragment implements LoaderManager.Lo
 	    	getLoaderManager().restartLoader(0, null, this); 
 	        fillData();
 	    }
-	
+	    
+	    @Override
+		public void onSaveInstanceState(Bundle savedInstanceState) {
+			super.onSaveInstanceState(savedInstanceState);
+
+			//Save the game scores, round scores, and tosses amounts for the respective teams
+			savedInstanceState.putString(CopyOfManagerMain.HUNT_NAME, huntName);
+		}
 	/**
 	 * The onCreateLoader loads the item specific to the hunt. This makes sure we only see the 
 	 * item for that hunt and no others. 

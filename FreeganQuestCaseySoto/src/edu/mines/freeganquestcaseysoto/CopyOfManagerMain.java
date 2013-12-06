@@ -55,6 +55,8 @@ public class CopyOfManagerMain extends ListFragment implements LoaderManager.Loa
         // Create an array adapter for the list view, using the Ipsum headlines array
         fillData();
 	}
+	
+	
 /**
  * method to start up the long pressed menu
  */
