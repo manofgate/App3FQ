@@ -9,7 +9,7 @@ package edu.mines.freeganquestcaseysoto;
  *  items to it. The addItemActivity allows to add name, location, description, and weather the answer should be word or picture.
  *  Also can long tap on each hunt and can delete it, edit it, or show the locations of it.
  *  
- * Description of final submission. The player can now play a hunt, submit answers, and view results. The player can take pictures and enter
+ * Description of final submission. The player can now play a hunt, submit answers, and view results. The player enter
  * in text for their answers.  
  * 
  * Documentation Statement: We worked on this Android App all on our own. We did not receive 

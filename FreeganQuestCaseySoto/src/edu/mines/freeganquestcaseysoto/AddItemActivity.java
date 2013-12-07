@@ -1,5 +1,5 @@
 /**
- * Description: This class takes in user input for the item's name, due date, and description. 
+ * Description: This class takes in user input for the item's name, location, text or picture, and description. 
  * 	Once the user submits this data it validates and normalizes the input and adds it to the database. 
  * 	The class handles adding new item as well as updating item.  
  *
@@ -43,11 +43,10 @@ public class AddItemActivity extends Activity {
 
 	private final static int DESC_MAX = 140; //used to limit the users description to 140 characters
 	private boolean update = false; //used to help determine if item is being updated or not
-	private String hwName = ""; //used for checking if name needs to be updated
+	private String itemName = ""; //used for checking if name needs to be updated
 	private String location = ""; //used for checking if date needs to be updated
 	private String description = ""; //used for checking if description needs to be updated
 	private String answerDisp = "word";
-	private String huntName;
 
 	/**
 	 * The onCreate method retrieves any saved instances and sets the content view layout. It
@@ -63,9 +62,9 @@ public class AddItemActivity extends Activity {
 
 		//Retrieve strings passed in from the itemActivity
 		String message = getIntent().getStringExtra( CopyOfManagerMain.HUNT_NAME);
-		huntName = message;
+
 		if(getIntent().getStringExtra( CopyOfManagerMain.ITEM_NAME_TEXT) != null){
-			hwName = getIntent().getStringExtra( CopyOfManagerMain.ITEM_NAME_TEXT);
+			itemName = getIntent().getStringExtra( CopyOfManagerMain.ITEM_NAME_TEXT);
 		}
 		location = getIntent().getStringExtra( CopyOfManagerMain.LOC_TEXT);
 		description = getIntent().getStringExtra( CopyOfManagerMain.DESC_TEXT);
@@ -82,8 +81,8 @@ public class AddItemActivity extends Activity {
 		//If itemActivity will be updating info, the hwName won't be empty nor will description
 		//or date guaranteed (we normalize the info put into the db so we will always have this). We
 		//also set the update value to true to follow update logic. 
-		if(!hwName.equals("")){
-			((TextView) hwNameText).setText(hwName);
+		if(!itemName.equals("")){
+			((TextView) hwNameText).setText(itemName);
 			((TextView) descText).setText(description);
 			((TextView) dateText).setText(location);
 			update = true;
@@ -195,9 +194,9 @@ public class AddItemActivity extends Activity {
 		//from itemActivity when the user clicked a item to be updated. In this case, updated
 		//that item respectively. 
 		ContentValues values = new ContentValues();
-		if(!name.equals(hwName)){
+		if(!name.equals(itemName)){
 			values.put( ItemTable.COLUMN_NAME, name );
-			String[] selection = {hwName, location, description};
+			String[] selection = {itemName, location, description};
 			rowsUpdated = rowsUpdated + getContentResolver().update( FreeganContentProvider.CONTENT_URI_I, values, "name=? AND date=? AND desc=?", selection );
 		}
 		if(!loc.equals(location)){
