@@ -197,17 +197,18 @@ public class AddItemActivity extends Activity {
 		if(!name.equals(itemName)){
 			values.put( ItemTable.COLUMN_NAME, name );
 			String[] selection = {itemName, location, description};
-			rowsUpdated = rowsUpdated + getContentResolver().update( FreeganContentProvider.CONTENT_URI_I, values, "name=? AND date=? AND desc=?", selection );
+			rowsUpdated = rowsUpdated + getContentResolver().update( FreeganContentProvider.CONTENT_URI_I, values, "name=? AND loc=? AND desc=?", selection );
 		}
 		if(!loc.equals(location)){
 			values.put( ItemTable.COLUMN_LOCATION, loc );
 			String[] selection = {location, name, description};
-			rowsUpdated = rowsUpdated + getContentResolver().update( FreeganContentProvider.CONTENT_URI_I, values, "date=? AND name=? AND desc=?", selection );
+			rowsUpdated = rowsUpdated + getContentResolver().update( FreeganContentProvider.CONTENT_URI_I, values, "loc=? AND name=? AND desc=?", selection );
 		}
 		if(!desc.equals(description)){
+			//Log.d("FREEGAN::ASDDITEM", "The name is: " +name + " .: The loc is: " + loc + "  .: The description is: " + description  );
 			values.put( ItemTable.COLUMN_DESCRIPTION, desc );
 			String[] selection = {description, name, loc};
-			rowsUpdated = rowsUpdated + getContentResolver().update( FreeganContentProvider.CONTENT_URI_I, values, "desc=? AND name=? AND date=?", selection );
+			rowsUpdated = rowsUpdated + getContentResolver().update( FreeganContentProvider.CONTENT_URI_I, values, "desc=? AND name=? AND loc=?", selection );
 		}
 
 		if(rowsUpdated == 0){
