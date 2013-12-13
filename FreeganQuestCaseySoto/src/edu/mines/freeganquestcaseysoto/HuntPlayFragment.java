@@ -36,7 +36,7 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 	private long timeInMilliseconds = 0L;
 	private long timeSwapBuff = 0L;
 	private long updatedTime = 0L;
-	private boolean onAnswer = false;
+	private static boolean onAnswer = false;
 	private TextView timerValue;
 	public static final String DESCRIP = "description";
 	private Handler customHandler = new Handler();
@@ -49,6 +49,7 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 
 	private Runnable updateTimerThread = new Runnable() {
 		public void run() {
+			onAnswer = false;
 			timeInMilliseconds = SystemClock.uptimeMillis() - startTime;
 			timerValue.setText(getTime(timeInMilliseconds, timeSwapBuff, updatedTime));
 			customHandler.postDelayed(this, 0);
@@ -59,6 +60,7 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		Log.d("FREEGAN::HUNT", "this is the onCreate()" );
 		super.onCreate(savedInstanceState);
 		huntName = getIntent().getStringExtra( MainActivity.HUNT_NAME);
 		setContentView(R.layout.hunts_list_player);
@@ -161,6 +163,8 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 			onAnswer = false;
 		}
 	}
+	
+
 
 	/** method when clicked on in the list of items for the hunt with display the other fragment to add your answer
 	 * @Param position - position is the description of the item to match it up
@@ -220,7 +224,10 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 
 		//Sets the respective values for game information
 		startTime = savedInstanceState.getLong("START_TIME");
+		onAnswer = savedInstanceState.getBoolean("ONANSWER");
+		//Log.d("FREEGAN::FRAGEMNET", "We are on restored state");
 	}
+	
 
 	public void onDialog(View view){
 		String finalTime = getTime(SystemClock.uptimeMillis() - startTime, 0L, 0L);
@@ -239,7 +246,7 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 	 */
 	public void insertTimer(String finalTime){
 		Log.d("TIME", finalTime);
-
+		onAnswer = true;
 		ContentValues values = new ContentValues();
 		values.put( TimerTable.COLUMN_HUNT_NAME, huntName );
 		values.put( TimerTable.COLUMN_TIME, finalTime);
@@ -266,9 +273,10 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
 		super.onSaveInstanceState(savedInstanceState);
-
+		
 		//Save the game scores, round scores, and tosses amounts for the respective teams
 		savedInstanceState.putLong("START_TIME", startTime);
+		savedInstanceState.putBoolean("ONANSWER", onAnswer);
 	}
 
 	/**
@@ -355,7 +363,7 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 			insertNewAnswer(answer, hunt);
 		}
 		cursor.close();
-
+		Log.d("Freegan::Hunt", "The stack count: " + getSupportFragmentManager().getBackStackEntryCount());
 		onFinishSelected(hunt);
 	}
 
