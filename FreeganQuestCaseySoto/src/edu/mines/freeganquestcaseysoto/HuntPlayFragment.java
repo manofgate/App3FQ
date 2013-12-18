@@ -8,14 +8,22 @@
  */
 package edu.mines.freeganquestcaseysoto;
 
+import java.io.File;
+import java.io.IOException;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -24,11 +32,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class HuntPlayFragment extends FragmentActivity 
-implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivity.OnFinishListener {
+public class HuntPlayFragment extends FragmentActivity implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivity.OnFinishListener {
 
 	public static String huntName;
 	public static String desc;
@@ -39,8 +47,9 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 	private static boolean onAnswer = false;
 	private TextView timerValue;
 	public static final String DESCRIP = "description";
+	private static final String JPEG_FILE_SUFFIX = ".jpg";
 	private Handler customHandler = new Handler();
-	
+	private File storageDir;
 	private String name;
 	private String desciption;
 	private String huntName_q;
@@ -55,8 +64,27 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 			customHandler.postDelayed(this, 0);
 		}
 	};
+	private String mCurrentPhotoPath;
+	private int CAMERA_REQUEST = 10;
+	
 
+	private boolean IsThereAnAppToTakePictures()
+	{
+	    /*Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+	    IList<ResolveInfo> availableActivities = PackageManager.QueryIntentActivities(intent, PackageInfoFlags.MatchDefaultOnly);
+	    return availableActivities != null && availableActivities.Count > 0;
+		*/
+		return false;
+	}
 
+	private void CreateDirectoryForPictures()
+	{
+	    /*_dir = new File(Environment.GetExternalStoragePublicDirectory(Environment.DirectoryPictures), "CameraAppDemo");
+	    if (!_dir.Exists())
+	    {
+	        _dir.Mkdirs();
+	    }*/
+	}
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -444,6 +472,76 @@ implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivit
 		}
 		cursor.close();
 		*/
+	}
+	private File createImageFile() throws IOException {
+	    // Create an image file name
+	    String timeStamp = 
+	        new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date(0));
+	    String imageFileName = "FQ" + timeStamp + "_";
+	    File image = File.createTempFile(
+	        imageFileName, 
+	        JPEG_FILE_SUFFIX, 
+	        getObbDir()
+	    );
+	    mCurrentPhotoPath = image.getAbsolutePath();
+	    return image;
+	}
+	
+	public void dispatchCamera(View view) {
+		/*storageDir = createImageFile();
+		  Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(storageDir));
+		    startActivityForResult(takePictureIntent, 0);*/
+		
+		Intent cameraIntent= new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE); 
+		 startActivityForResult(cameraIntent, CAMERA_REQUEST );  
+		
+	  
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) 
+	{
+	    super.onActivityResult(requestCode, resultCode, data);
+	    Log.d("FREEGAN::QHPF", "In the activityResult");
+	    if (requestCode == CAMERA_REQUEST) {   
+	    	Log.d("FREEGAN::QHPF", "In the camera request");
+	    	Bitmap photo = (Bitmap) data.getExtras().get("data"); 
+	    	 ImageView mImageView = (ImageView) findViewById(R.id.captureView);
+	    	int targetW = mImageView.getWidth();
+	 	    int targetH = mImageView.getHeight();
+
+	 	    BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+	 	    bmOptions.inJustDecodeBounds = true;
+	 	    //BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+	 	    /*int photoW = bmOptions.outWidth;
+	 	    int photoH = bmOptions.outHeight;
+	 	  
+	 	    // Determine how much to scale down the image
+	 	    int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+	 	  
+	 	    // Decode the image file into a Bitmap sized to fill the View
+	 	    bmOptions.inJustDecodeBounds = false;
+	 	    bmOptions.inSampleSize = scaleFactor;
+	 	    bmOptions.inPurgeable = true;
+	 	  */
+	 	   // Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+	 	    mImageView.setImageBitmap(photo);
+	    	}
+	    
+	    // make it available in the gallery
+	   /* Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+	    Uri contentUri = Uri.fromFile(storageDir);
+	    mediaScanIntent.setData(contentUri);
+	    sendBroadcast(mediaScanIntent);
+	   
+	    // display in ImageView. We will resize the bitmap to fit the display
+	    // Loading the full sized image will consume to much memory 
+	    // and cause the application to crash.
+	    // Get the dimensions of the bitmap
+	    */
+	   
+
 	}
 
 }
