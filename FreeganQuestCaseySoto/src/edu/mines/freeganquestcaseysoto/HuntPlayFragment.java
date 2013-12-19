@@ -8,6 +8,7 @@
  */
 package edu.mines.freeganquestcaseysoto;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Date;
@@ -19,11 +20,12 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -388,7 +390,18 @@ public class HuntPlayFragment extends FragmentActivity implements CopyOfHuntActi
 			Uri huntUri = Uri.parse( FreeganContentProvider.CONTENT_URI_I + "/" +  cursor.getString(cursor.getColumnIndexOrThrow( ItemTable.COLUMN_ID )) );
 			getContentResolver().delete(huntUri, null, null);
 		} else {
-			insertNewAnswer(answer, hunt);
+			ImageView mImageView = (ImageView) findViewById(R.id.captureView);
+			//Log.d("FREEGAN::QHPF", "This is matrix's identity: " + (null!=mImageView.getDrawable()));
+			
+			if(null!=mImageView.getDrawable()){
+				
+				Drawable d = mImageView.getDrawable();
+				Bitmap bitmap = Bitmap.createBitmap(d.getIntrinsicWidth(), d.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+				insertNewAnswerPic(bitmap, hunt);
+			}
+			else{
+				insertNewAnswer(answer, hunt);
+			}
 		}
 		cursor.close();
 		Log.d("Freegan::Hunt", "The stack count: " + getSupportFragmentManager().getBackStackEntryCount());
@@ -473,32 +486,62 @@ public class HuntPlayFragment extends FragmentActivity implements CopyOfHuntActi
 		cursor.close();
 		*/
 	}
-	private File createImageFile() throws IOException {
-	    // Create an image file name
-	    String timeStamp = 
-	        new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date(0));
-	    String imageFileName = "FQ" + timeStamp + "_";
-	    File image = File.createTempFile(
-	        imageFileName, 
-	        JPEG_FILE_SUFFIX, 
-	        getObbDir()
-	    );
-	    mCurrentPhotoPath = image.getAbsolutePath();
-	    return image;
+	public void insertNewAnswerPic(Bitmap bm, String hunt){
+		ContentValues values = new ContentValues();
+		
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		bm.compress(Bitmap.CompressFormat.PNG, 100, stream);
+		byte[] data = stream.toByteArray();
+		
+		values.put( ItemTable.COLUMN_ANSWER_PIC, data );
+		//values.put( ItemTable.COLUMN_HUNT_NAME, huntName_q);
+		//values.put( ItemTable.COLUMN_DESCRIPTION, desciption);
+		values.put( ItemTable.COLUMN_LOCATION, loc);
+		values.put( ItemTable.COLUMN_NAME, name);
+		
+		int rowsUpdated =0;
+		//ContentValues values = new ContentValues();
+		
+			//values.put( ItemTable.COLUMN_NAME, name );
+			String[] selection = {name, loc, hunt};
+			rowsUpdated = rowsUpdated + getContentResolver().update( FreeganContentProvider.CONTENT_URI_I, values, "name=? AND loc=? AND hunt=?", selection );
+		
+
+
+		if(rowsUpdated == 0){
+			Log.d("ADDitem", "No rows were updated");
+		}
+		//Insert values into the item Table
+		/*getContentResolver().insert( FreeganContentProvider.CONTENT_URI_I, values );
+		Log.d("FQ::HPF", "this is in InsertNewAnsswer");
+		//Verify if identical entries were inserted into the item Table 
+		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_ANSWER, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_NAME};
+		String[] selection = {answer, desciption, huntName_q, loc, name};
+		Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI_I, projection, "ans=? AND desc=? AND hunt=? AND loc=? AND name=?", selection, ItemTable.COLUMN_ID + " DESC" );
+
+		//If there were multiple entries remove the last insert then notify the user. 
+		if(cursor.getCount() > 1){
+			cursor.moveToFirst();
+			Uri huntUri = Uri.parse( FreeganContentProvider.CONTENT_URI_I + "/" +  cursor.getString(cursor.getColumnIndexOrThrow( ItemTable.COLUMN_ID )) );
+			getContentResolver().delete(huntUri, null, null);
+			Toast toast = Toast.makeText(getApplicationContext(),"Have already added " + answer +"!" , Toast.LENGTH_LONG);
+			toast.show();
+			//finish();
+		}
+		cursor.close();
+		*/
 	}
 	
+	
 	public void dispatchCamera(View view) {
-		/*storageDir = createImageFile();
-		  Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(storageDir));
-		    startActivityForResult(takePictureIntent, 0);*/
-		
 		Intent cameraIntent= new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE); 
 		 startActivityForResult(cameraIntent, CAMERA_REQUEST );  
 		
 	  
 	}
 	
+	
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) 
 	{
@@ -518,15 +561,26 @@ public class HuntPlayFragment extends FragmentActivity implements CopyOfHuntActi
 	 	    int photoH = bmOptions.outHeight;
 	 	  
 	 	    // Determine how much to scale down the image
-	 	    int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+	 	    
 	 	  
 	 	    // Decode the image file into a Bitmap sized to fill the View
 	 	    bmOptions.inJustDecodeBounds = false;
 	 	    bmOptions.inSampleSize = scaleFactor;
 	 	    bmOptions.inPurgeable = true;
 	 	  */
-	 	   // Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-	 	    mImageView.setImageBitmap(photo);
+	 	    float oldW = photo.getWidth();
+	 	    float oldH = photo.getHeight();
+	 	    float dpi = getResources().getDisplayMetrics().densityDpi;
+	 	   float oldWdp = oldW * ( dpi/ 160);
+	 	   float oldHdp = oldH * (dpi/160);
+	 	   float scaleFactor = Math.max(oldWdp/targetW, oldHdp/targetH); 
+	 	  
+	 	    Bitmap bitmap = Bitmap.createScaledBitmap(photo, (int)(targetH/scaleFactor), (int)(targetW/scaleFactor), false);
+	 	    
+	 	    mImageView.setImageBitmap(bitmap);
+	
+	 	    
+	 	    
 	    	}
 	    
 	    // make it available in the gallery

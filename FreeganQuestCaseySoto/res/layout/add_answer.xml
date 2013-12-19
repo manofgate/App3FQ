@@ -39,10 +39,9 @@
 
     <ImageView
         android:id="@+id/captureView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/captureB"
-        android:layout_marginTop="58dp"
-        android:layout_toLeftOf="@+id/submitB"/>
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_above="@+id/captureB"
+        android:layout_toRightOf="@+id/captureB" />
 
 </RelativeLayout>

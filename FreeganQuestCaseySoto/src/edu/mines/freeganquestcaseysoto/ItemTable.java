@@ -21,6 +21,7 @@ public class ItemTable {
 	public static final String COLUMN_HUNT_NAME = "hunt";
 	public static final String COLUMN_DISPLAY = "display";
 	public static final String COLUMN_ANSWER = "ans";
+	public static final String COLUMN_ANSWER_PIC = "ansPic";
 
 	// Database creation SQL statement
 	private static final String TABLE_CREATE = "create table " + TABLE_NAME + "(" + 
@@ -30,7 +31,8 @@ public class ItemTable {
 			COLUMN_DESCRIPTION + " text not null," +
 			COLUMN_ANSWER + " text not null," + 
 			COLUMN_DISPLAY + " text not null," +
-			COLUMN_HUNT_NAME + " text not null" + ");";
+			COLUMN_HUNT_NAME + " text not null," +
+			COLUMN_ANSWER_PIC + " text not null"+ ");";
 
 	/**
 	* The onCreate method is used to create the items Table by executing the .execSQL command.
