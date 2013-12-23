@@ -10,16 +10,30 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="True"
         android:layout_marginTop="6dp" >
-
+		<RelativeLayout
+		    android:id="@+id/idAnswer"
+		    android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+		    >
         <TextView
             android:id="@+id/answer_player"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
             android:text="@+id/TextView01"
             android:textSize="24sp" >
         </TextView>
-
+        
+        <ImageView
+            android:id="@+id/answer_player_pic"
+            android:layout_width="wrap_content"
+            android:layout_below="@+id/answer_player"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            />
+		</RelativeLayout>
+		
         <TextView
             android:id="@+id/description_player"
             android:layout_width="0dp"

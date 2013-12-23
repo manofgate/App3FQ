@@ -10,9 +10,6 @@ package edu.mines.freeganquestcaseysoto;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.sql.Date;
-import java.text.SimpleDateFormat;
 
 import android.app.AlertDialog;
 import android.content.ContentValues;
@@ -20,7 +17,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -123,6 +120,29 @@ public class HuntPlayFragment extends FragmentActivity implements CopyOfHuntActi
 			// Add the fragment to the 'fragment_hunts' FrameLayout
 			getSupportFragmentManager().beginTransaction()
 			.add(R.id.fragment_hunts, firstFragment).commit();
+			
+			String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_ANSWER, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME, ItemTable.COLUMN_DISPLAY, ItemTable.COLUMN_ANSWER_PIC };
+			String[] selection = {HuntPlayFragment.huntName};
+			Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI_I, projection, "hunt=?", selection, null );
+				cursor.moveToNext();
+				byte[] b = cursor.getBlob(cursor.getColumnIndexOrThrow( ItemTable.COLUMN_ANSWER_PIC ));
+				 cursor.close();
+		        if(b !=null){
+		        	Log.d("FREEGAN::HPF", "IN THE ONCEATE() METHoD FOR DRAWABLE");
+		        	Log.d("FREEGAN::HPF", "This is retrieving data"+ b.length);
+		        	Bitmap bit = BitmapFactory.decodeByteArray(b, 0, b.length);
+		        	Log.d("FREEGAN::HPF", "THis is what is getting back: " + bit.getByteCount());
+		        	Log.d("FREEGAN::HPF", "In the image place thing");
+		        	ImageView mImgView = (ImageView)findViewById(R.id.answer_player_picture);
+		        	//mImgView.clearColorFilter();
+		        	
+					Drawable drawable = new BitmapDrawable(getResources(),bit);
+		        	//Log.i("","pre setimage"); 
+		        	mImgView.setImageDrawable(drawable);
+		        	//mImgView.setImageBitmap(bit);
+		        	mImgView.invalidate();
+		        }
+		       
 		}
 		else{
 			//allows the answer fragment to be invisble for two pane at the begining
@@ -394,7 +414,7 @@ public class HuntPlayFragment extends FragmentActivity implements CopyOfHuntActi
 			//Log.d("FREEGAN::QHPF", "This is matrix's identity: " + (null!=mImageView.getDrawable()));
 			
 			if(null!=mImageView.getDrawable()){
-				
+				Log.d("FREEGAN:QHPF", "THis is storring the bitmap");
 				Drawable d = mImageView.getDrawable();
 				Bitmap bitmap = Bitmap.createBitmap(d.getIntrinsicWidth(), d.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
 				insertNewAnswerPic(bitmap, hunt);
@@ -489,10 +509,11 @@ public class HuntPlayFragment extends FragmentActivity implements CopyOfHuntActi
 	public void insertNewAnswerPic(Bitmap bm, String hunt){
 		ContentValues values = new ContentValues();
 		
+		Log.d("FREEGAN::HPF", "THis is what is being stored : " + bm.getByteCount());
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		bm.compress(Bitmap.CompressFormat.PNG, 100, stream);
 		byte[] data = stream.toByteArray();
-		
+		Log.d("FREEGAN::HPF", "This is the length of data: " + data.length);
 		values.put( ItemTable.COLUMN_ANSWER_PIC, data );
 		//values.put( ItemTable.COLUMN_HUNT_NAME, huntName_q);
 		//values.put( ItemTable.COLUMN_DESCRIPTION, desciption);

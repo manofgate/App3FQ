@@ -13,6 +13,9 @@
  */
 package edu.mines.freeganquestcaseysoto;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.database.Cursor;
@@ -34,7 +37,7 @@ import android.widget.TextView;
 @SuppressLint("NewApi")
 public class CopyOfHuntActivity extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
-	private SimpleCursorAdapter adapter; //helps assist with database interactions 
+	private LazyAdapter adapter; //helps assist with database interactions 
 	public static final String HW_NAME = "NameOfitem";
 	private String huntName; //receives and passes on hunt name from the MainActivity
 
@@ -97,7 +100,7 @@ public class CopyOfHuntActivity extends ListFragment implements LoaderManager.Lo
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 
-		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_ANSWER, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME, ItemTable.COLUMN_DISPLAY };
+		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_ANSWER, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME, ItemTable.COLUMN_DISPLAY, ItemTable.COLUMN_ANSWER_PIC };
 		String[] selection = {HuntPlayFragment.huntName};
 		CursorLoader cursorLoader = new CursorLoader( getActivity(), FreeganContentProvider.CONTENT_URI_I, projection, "hunt=?", selection, null );
 
@@ -112,7 +115,7 @@ public class CopyOfHuntActivity extends ListFragment implements LoaderManager.Lo
 	 */
 	@Override
 	public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
-		this.adapter.swapCursor( arg1 );
+		//this.adapter.swapCursor( arg1 );
 	}
 
 	/**
@@ -122,7 +125,7 @@ public class CopyOfHuntActivity extends ListFragment implements LoaderManager.Lo
 	 */
 	@Override
 	public void onLoaderReset(Loader<Cursor> arg0) {
-		this.adapter.swapCursor( null );
+		//this.adapter.swapCursor( null );
 	}
 
 	/**
@@ -130,32 +133,39 @@ public class CopyOfHuntActivity extends ListFragment implements LoaderManager.Lo
 	 */
 	private void fillData() {	
 		//Fields in the DB from which we map 
-		String[] from = new String[] { ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_ANSWER};
+		String[] from = new String[] { ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_ANSWER, ItemTable.COLUMN_ANSWER_PIC};
 
 		// Fields on the UI to which we map
-		int[] to = new int[] { R.id.description_player, R.id.answer_player };
+		int[] to = new int[] { R.id.description_player, R.id.answer_player, R.id.answer_player_pic };
 		
 		// Ensure a loader is initialized and active.
 		getLoaderManager().initLoader( 0, null, this );
 		
 		// Note the last parameter to this constructor (zero), which indicates the adaptor should
 		// not try to automatically re-query the data ... the loader will take care of this.
-		this.adapter = new SimpleCursorAdapter( this.getActivity(), R.layout.item_list_row_player, null, from, to, 0 ){
-			//Change the color of each ListItem to help the user
-			@Override
-			public View getView(int position, View convertView, ViewGroup parent) {
-				View v = super.getView(position, convertView, parent);
-
-				if (position %2 ==1) {
-					v.setBackgroundColor(Color.argb(120, 100, 100, 100));
-				} else {
-					v.setBackgroundColor(Color.argb(120, 170, 170, 170)); //or whatever was original
-				}
-
-				return v;
+		
+		ArrayList<HashMap<String, Object>> d = new ArrayList<HashMap<String, Object>>();
+		//Verify if identical entries were inserted into the item Table 
+		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_ANSWER, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME, ItemTable.COLUMN_DISPLAY, ItemTable.COLUMN_ANSWER_PIC };
+		String[] selection = {HuntPlayFragment.huntName};
+		Cursor cursor = getActivity().getContentResolver().query( FreeganContentProvider.CONTENT_URI_I, projection, "hunt=?", selection, null );
+			for(int i=0; i< cursor.getCount(); ++i){
+					cursor.moveToNext();
+					HashMap<String, Object> items = new HashMap<String, Object>();
+					String ans = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_ANSWER ) );
+					String  desc = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_DESCRIPTION ) );
+					byte[] b = cursor.getBlob(cursor.getColumnIndexOrThrow( ItemTable.COLUMN_ANSWER_PIC ));
+					if(b != null){
+						Log.d("FREEGAN::CHA", "This is in the for loop: " + b.length);
+					}
+					items.put(ItemTable.COLUMN_ANSWER, ans);
+					items.put(ItemTable.COLUMN_DESCRIPTION, desc);
+					items.put(ItemTable.COLUMN_ANSWER_PIC, b);
+					
+					d.add(items);
 			}
-
-		};
+			cursor.close();
+		this.adapter = new LazyAdapter( this.getActivity(),  d);
 		
 		// Let this ListActivity display the contents of the cursor adapter.
 		setListAdapter( this.adapter );
