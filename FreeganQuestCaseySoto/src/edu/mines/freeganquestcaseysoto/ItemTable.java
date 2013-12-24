@@ -32,7 +32,7 @@ public class ItemTable {
 			COLUMN_ANSWER + " text not null," + 
 			COLUMN_DISPLAY + " text not null," +
 			COLUMN_HUNT_NAME + " text not null," +
-			COLUMN_ANSWER_PIC + " blob"+ ");";
+			COLUMN_ANSWER_PIC + " BLOB"+ ");";
 
 	/**
 	* The onCreate method is used to create the items Table by executing the .execSQL command.

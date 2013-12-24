@@ -72,9 +72,10 @@ public class LazyAdapter extends BaseAdapter {
         	//answerPic.clearColorFilter();
         	Drawable drawable = new BitmapDrawable(parent.getResources(),b);
         	//Log.i("","pre setimage"); 
-        	answerPic.setImageDrawable(drawable);
-        	//mImgView.setImageBitmap(bit);
-        	answerPic.invalidateDrawable(drawable);
+        	//answerPic.setImageDrawable(drawable);
+        	answerPic.setImageBitmap(b);
+        	//answerPic.invalidateDrawable(drawable);
+        	answerPic.invalidate();
         }
         return vi;
     }

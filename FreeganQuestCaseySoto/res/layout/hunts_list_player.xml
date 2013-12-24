@@ -58,6 +58,7 @@
          android:layout_width="300dp"
          android:layout_height="100dp"
          android:layout_alignParentBottom="true"
-         android:layout_centerHorizontal="true" />
+         android:layout_centerHorizontal="true" 
+         android:src="@drawable/manager_image"/>
 
 </RelativeLayout>

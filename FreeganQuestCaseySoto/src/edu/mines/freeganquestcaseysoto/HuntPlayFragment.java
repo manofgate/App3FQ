@@ -8,6 +8,7 @@
  */
 package edu.mines.freeganquestcaseysoto;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
@@ -136,9 +137,13 @@ public class HuntPlayFragment extends FragmentActivity implements CopyOfHuntActi
 		        	ImageView mImgView = (ImageView)findViewById(R.id.answer_player_picture);
 		        	//mImgView.clearColorFilter();
 		        	
-					Drawable drawable = new BitmapDrawable(getResources(),bit);
+		        	ByteArrayInputStream imageStream= new ByteArrayInputStream(b);
+                    Bitmap bm = BitmapFactory.decodeStream(imageStream);
+                    mImgView.setImageBitmap(bm);
+		        	
+					//Drawable drawable = new BitmapDrawable(getResources(),bit);
 		        	//Log.i("","pre setimage"); 
-		        	mImgView.setImageDrawable(drawable);
+		        	//mImgView.setImageDrawable(drawable);
 		        	//mImgView.setImageBitmap(bit);
 		        	mImgView.invalidate();
 		        }
@@ -415,8 +420,11 @@ public class HuntPlayFragment extends FragmentActivity implements CopyOfHuntActi
 			
 			if(null!=mImageView.getDrawable()){
 				Log.d("FREEGAN:QHPF", "THis is storring the bitmap");
-				Drawable d = mImageView.getDrawable();
-				Bitmap bitmap = Bitmap.createBitmap(d.getIntrinsicWidth(), d.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+				//Drawable d = mImageView.getDrawable();
+				Drawable d = getResources().getDrawable(R.drawable.search_icon);
+				//Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.search_icon);
+				Bitmap bitmap = ((BitmapDrawable) mImageView.getDrawable()).getBitmap();
+				
 				insertNewAnswerPic(bitmap, hunt);
 			}
 			else{
