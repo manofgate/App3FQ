@@ -115,7 +115,27 @@ public class CopyOfHuntActivity extends ListFragment implements LoaderManager.Lo
 	 */
 	@Override
 	public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
-		//this.adapter.swapCursor( arg1 );
+		ArrayList<HashMap<String, Object>> d = new ArrayList<HashMap<String, Object>>();
+		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_ANSWER, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME, ItemTable.COLUMN_DISPLAY, ItemTable.COLUMN_ANSWER_PIC };
+		String[] selection = {HuntPlayFragment.huntName};
+		Cursor cursor = getActivity().getContentResolver().query( FreeganContentProvider.CONTENT_URI_I, projection, "hunt=?", selection, null );
+			for(int i=0; i< cursor.getCount(); ++i){
+					cursor.moveToNext();
+					HashMap<String, Object> items = new HashMap<String, Object>();
+					String ans = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_ANSWER ) );
+					String  desc = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_DESCRIPTION ) );
+					byte[] b = cursor.getBlob(cursor.getColumnIndexOrThrow( ItemTable.COLUMN_ANSWER_PIC ));
+					items.put(ItemTable.COLUMN_ANSWER, ans);
+					items.put(ItemTable.COLUMN_DESCRIPTION, desc);
+					items.put(ItemTable.COLUMN_ANSWER_PIC, b);
+					
+					d.add(items);
+			}
+			cursor.close();
+			Log.d("FREEGAN::CHA", "The size of d is : " + d.size());
+		this.adapter = new LazyAdapter( this.getActivity(),  d);
+		setListAdapter( this.adapter );
+		//fillData();
 	}
 
 	/**
@@ -125,7 +145,27 @@ public class CopyOfHuntActivity extends ListFragment implements LoaderManager.Lo
 	 */
 	@Override
 	public void onLoaderReset(Loader<Cursor> arg0) {
-		//this.adapter.swapCursor( null );
+		/*ArrayList<HashMap<String, Object>> d = new ArrayList<HashMap<String, Object>>();
+		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_ANSWER, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME, ItemTable.COLUMN_DISPLAY, ItemTable.COLUMN_ANSWER_PIC };
+		String[] selection = {HuntPlayFragment.huntName};
+		Cursor cursor = getActivity().getContentResolver().query( FreeganContentProvider.CONTENT_URI_I, projection, "hunt=?", selection, null );
+			for(int i=0; i< cursor.getCount(); ++i){
+					cursor.moveToNext();
+					HashMap<String, Object> items = new HashMap<String, Object>();
+					String ans = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_ANSWER ) );
+					String  desc = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_DESCRIPTION ) );
+					byte[] b = cursor.getBlob(cursor.getColumnIndexOrThrow( ItemTable.COLUMN_ANSWER_PIC ));
+					items.put(ItemTable.COLUMN_ANSWER, ans);
+					items.put(ItemTable.COLUMN_DESCRIPTION, desc);
+					items.put(ItemTable.COLUMN_ANSWER_PIC, b);
+					
+					d.add(items);
+			}
+			cursor.close();
+			Log.d("FREEGAN::CHA", "The size of d is : " + d.size());
+		this.adapter = new LazyAdapter( this.getActivity(),  d);
+		*/ 
+		fillData();
 	}
 
 	/**

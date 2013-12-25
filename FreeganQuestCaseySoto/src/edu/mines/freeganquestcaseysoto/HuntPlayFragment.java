@@ -121,32 +121,6 @@ public class HuntPlayFragment extends FragmentActivity implements CopyOfHuntActi
 			// Add the fragment to the 'fragment_hunts' FrameLayout
 			getSupportFragmentManager().beginTransaction()
 			.add(R.id.fragment_hunts, firstFragment).commit();
-			
-			String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_ANSWER, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME, ItemTable.COLUMN_DISPLAY, ItemTable.COLUMN_ANSWER_PIC };
-			String[] selection = {HuntPlayFragment.huntName};
-			Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI_I, projection, "hunt=?", selection, null );
-				cursor.moveToNext();
-				byte[] b = cursor.getBlob(cursor.getColumnIndexOrThrow( ItemTable.COLUMN_ANSWER_PIC ));
-				 cursor.close();
-		        if(b !=null){
-		        	Log.d("FREEGAN::HPF", "IN THE ONCEATE() METHoD FOR DRAWABLE");
-		        	Log.d("FREEGAN::HPF", "This is retrieving data"+ b.length);
-		        	Bitmap bit = BitmapFactory.decodeByteArray(b, 0, b.length);
-		        	Log.d("FREEGAN::HPF", "THis is what is getting back: " + bit.getByteCount());
-		        	Log.d("FREEGAN::HPF", "In the image place thing");
-		        	ImageView mImgView = (ImageView)findViewById(R.id.answer_player_picture);
-		        	//mImgView.clearColorFilter();
-		        	
-		        	ByteArrayInputStream imageStream= new ByteArrayInputStream(b);
-                    Bitmap bm = BitmapFactory.decodeStream(imageStream);
-                    mImgView.setImageBitmap(bm);
-		        	
-					//Drawable drawable = new BitmapDrawable(getResources(),bit);
-		        	//Log.i("","pre setimage"); 
-		        	//mImgView.setImageDrawable(drawable);
-		        	//mImgView.setImageBitmap(bit);
-		        	mImgView.invalidate();
-		        }
 		       
 		}
 		else{
@@ -421,7 +395,7 @@ public class HuntPlayFragment extends FragmentActivity implements CopyOfHuntActi
 			if(null!=mImageView.getDrawable()){
 				Log.d("FREEGAN:QHPF", "THis is storring the bitmap");
 				//Drawable d = mImageView.getDrawable();
-				Drawable d = getResources().getDrawable(R.drawable.search_icon);
+				//Drawable d = getResources().getDrawable(R.drawable.search_icon);
 				//Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.search_icon);
 				Bitmap bitmap = ((BitmapDrawable) mImageView.getDrawable()).getBitmap();
 				
