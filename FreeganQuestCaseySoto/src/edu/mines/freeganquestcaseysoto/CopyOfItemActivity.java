@@ -26,6 +26,7 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -239,7 +240,7 @@ public class CopyOfItemActivity extends ListFragment implements LoaderManager.Lo
 	@Override
 	public void onListItemClick( ListView l, View v, int position, long id ) {
 		super.onListItemClick( l, v, position, id );
-
+		
 		//Get the AdditemActivity intent
 		Intent i = new Intent( getActivity(), AddItemActivity.class );
 
@@ -248,6 +249,21 @@ public class CopyOfItemActivity extends ListFragment implements LoaderManager.Lo
 		String[] projection = { ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME };
 		Cursor cursor = getActivity().getContentResolver().query( huntUri, projection, null, null, null );
 
+		Log.d("FREEGAN::CIA", "the cursor size for uri at "+ id + " is :" + cursor.getCount());
+		
+
+String[] projection2 = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_ANSWER, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME, ItemTable.COLUMN_DISPLAY, ItemTable.COLUMN_ANSWER_PIC };
+String[] selection = {huntName};
+Cursor cursor2 = getActivity().getContentResolver().query( FreeganContentProvider.CONTENT_URI_I, projection2, "hunt=?", selection, null );
+	//cursor2.moveToFirst();
+	for(int i1=0; i1< cursor2.getCount(); ++i1){
+			cursor2.moveToNext();
+			String  desc = cursor2.getString( cursor2.getColumnIndexOrThrow( ItemTable.COLUMN_DESCRIPTION ) );
+			int  _id = cursor2.getInt( cursor2.getColumnIndexOrThrow( ItemTable.COLUMN_ID ) );
+			Log.d("FREEGAN::CIA", "the des for " + _id + " is :" + desc );
+			
+	}
+	cursor2.close();
 		//Retrieve the information from the database. 
 		cursor.moveToFirst();	    
 		String name = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_NAME ) );

@@ -124,15 +124,21 @@ public class CopyOfHuntActivity extends ListFragment implements LoaderManager.Lo
 					HashMap<String, Object> items = new HashMap<String, Object>();
 					String ans = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_ANSWER ) );
 					String  desc = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_DESCRIPTION ) );
+					String locName = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_LOCATION ) );
+					String disp =  cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_DISPLAY ) );
+					String itemName = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_NAME ) );
+					//Log.d("FREEGAN::CHA", "THE name of the item is :" + itemName);
 					byte[] b = cursor.getBlob(cursor.getColumnIndexOrThrow( ItemTable.COLUMN_ANSWER_PIC ));
 					items.put(ItemTable.COLUMN_ANSWER, ans);
 					items.put(ItemTable.COLUMN_DESCRIPTION, desc);
 					items.put(ItemTable.COLUMN_ANSWER_PIC, b);
-					
+					items.put(ItemTable.COLUMN_LOCATION, locName);
+					items.put(ItemTable.COLUMN_DISPLAY, disp);
+					items.put(ItemTable.COLUMN_NAME, itemName);
 					d.add(items);
 			}
 			cursor.close();
-			Log.d("FREEGAN::CHA", "The size of d is : " + d.size());
+			//Log.d("FREEGAN::CHA", "The size of d is : " + d.size());
 		this.adapter = new LazyAdapter( this.getActivity(),  d);
 		setListAdapter( this.adapter );
 		//fillData();
@@ -154,15 +160,21 @@ public class CopyOfHuntActivity extends ListFragment implements LoaderManager.Lo
 					HashMap<String, Object> items = new HashMap<String, Object>();
 					String ans = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_ANSWER ) );
 					String  desc = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_DESCRIPTION ) );
+					String locName = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_LOCATION ) );
+					String disp =  cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_DISPLAY ) );
+					String itemName = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_NAME ) );
+					//Log.d("FREEGAN::CHA", "THE name of the item is :" + itemName);
 					byte[] b = cursor.getBlob(cursor.getColumnIndexOrThrow( ItemTable.COLUMN_ANSWER_PIC ));
 					items.put(ItemTable.COLUMN_ANSWER, ans);
 					items.put(ItemTable.COLUMN_DESCRIPTION, desc);
 					items.put(ItemTable.COLUMN_ANSWER_PIC, b);
-					
+					items.put(ItemTable.COLUMN_LOCATION, locName);
+					items.put(ItemTable.COLUMN_DISPLAY, disp);
+					items.put(ItemTable.COLUMN_NAME, itemName);
 					d.add(items);
 			}
 			cursor.close();
-			Log.d("FREEGAN::CHA", "The size of d is : " + d.size());
+			//Log.d("FREEGAN::CHA", "The size of d is : " + d.size());
 		this.adapter = new LazyAdapter( this.getActivity(),  d);
 		 setListAdapter(this.adapter);
 		
@@ -194,12 +206,16 @@ public class CopyOfHuntActivity extends ListFragment implements LoaderManager.Lo
 					HashMap<String, Object> items = new HashMap<String, Object>();
 					String ans = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_ANSWER ) );
 					String  desc = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_DESCRIPTION ) );
+					String locName = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_LOCATION ) );
+					String disp =  cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_DISPLAY ) );
+					String itemName = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_NAME ) );
+					//Log.d("FREEGAN::CHA", "the name of the item is :" + itemName);
 					byte[] b = cursor.getBlob(cursor.getColumnIndexOrThrow( ItemTable.COLUMN_ANSWER_PIC ));
-					if(b != null){
-						Log.d("FREEGAN::CHA", "This is in the for loop: " + b.length);
-					}
 					items.put(ItemTable.COLUMN_ANSWER, ans);
 					items.put(ItemTable.COLUMN_DESCRIPTION, desc);
+					items.put(ItemTable.COLUMN_LOCATION, locName);
+					items.put(ItemTable.COLUMN_DISPLAY, disp);
+					items.put(ItemTable.COLUMN_NAME, itemName);
 					items.put(ItemTable.COLUMN_ANSWER_PIC, b);
 					
 					d.add(items);
@@ -224,45 +240,18 @@ public class CopyOfHuntActivity extends ListFragment implements LoaderManager.Lo
 	@Override
 	public void onListItemClick( ListView l, View v, int position, long id ) {
 		super.onListItemClick( l, v, position, id );
-
-		//Get the AdditemActivity intent
-		//Intent i = new Intent( this, AddAnswerActivity.class );
 		
-		//Query the database for the necessary information
-				Uri huntUri3 = Uri.parse( FreeganContentProvider.CONTENT_URI_I + "/" + (id+1) );
-				String[] projection4 = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME };
-				Cursor cursor4 = getActivity().getContentResolver().query( huntUri3, projection4, null, null, null );
-				Log.d("FREEGAN::CHA", "the cursor size for uri3 at "+ id + " is :" + cursor4.getCount());
-				cursor4.close();
 		
-		String[] projection2 = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_ANSWER, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME, ItemTable.COLUMN_DISPLAY, ItemTable.COLUMN_ANSWER_PIC };
-		String[] selection = {HuntPlayFragment.huntName};
-		Cursor cursor2 = getActivity().getContentResolver().query( FreeganContentProvider.CONTENT_URI_I, projection2, "hunt=?", selection, null );
-			//cursor2.moveToFirst();
-			for(int i=0; i< cursor2.getCount(); ++i){
-					cursor2.moveToNext();
-					String  desc = cursor2.getString( cursor2.getColumnIndexOrThrow( ItemTable.COLUMN_DESCRIPTION ) );
-					int  _id = cursor2.getInt( cursor2.getColumnIndexOrThrow( ItemTable.COLUMN_ID ) );
-					Log.d("FREEGAN::CHA", "the des for " + _id + " is :" + desc );
-					
-			}
-			cursor2.close();
+		//Get the item 
+			
+			@SuppressWarnings("unchecked")
+			HashMap<String, Object> item = (HashMap<String, Object>)this.adapter.getItem(position);	
+			String descName = (String) item.get( ItemTable.COLUMN_DESCRIPTION );
+			String itemName = (String) item.get( ItemTable.COLUMN_NAME  );
+			String locName = (String) item.get( ItemTable.COLUMN_LOCATION  );
+			String disp =  (String) item.get( ItemTable.COLUMN_DISPLAY );
 			
 			
-		//Query the database for the necessary information
-		Uri huntUri = Uri.parse( FreeganContentProvider.CONTENT_URI_I + "/" + (id+1) );
-		String[] projection = { ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME, ItemTable.COLUMN_DISPLAY };
-		Cursor cursor = getActivity().getContentResolver().query( huntUri, projection, null, null, null );
-		Log.d("FREEGAN::CHA", "THE cursor size is :" + cursor.getCount());
-		Log.d("FREEGAN::CHA", "THe id is :" + id);
-		//Retrieve the information from the database. 
-		cursor.moveToFirst();	    
-		//String name = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_NAME ) );
-		String descName = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_DESCRIPTION ) );
-		String itemName = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_NAME ) );
-		String locName = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_LOCATION ) );
-		String disp =  cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_DISPLAY ) );
-		cursor.close();
 		mCallback.onArticleSelected(descName, itemName, locName, disp);
 
 		// Set the item as checked to be highlighted when in two-pane layout
