@@ -1,5 +1,8 @@
 package edu.mines.freeganquestcaseysoto;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import android.os.Bundle;
 import android.app.ListActivity;
 import android.app.LoaderManager;
@@ -15,7 +18,7 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 public class ResultsActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor>{
-	private SimpleCursorAdapter adapter; //helps assist with database interactions 
+	private LazyAdapter adapter; //helps assist with database interactions 
 	public static final String HW_NAME = "NameOfitem";
 	private String huntName; //receives and passes on hunt name from the MainActivity
 
@@ -58,25 +61,32 @@ public class ResultsActivity extends ListActivity implements LoaderManager.Loade
 		// Ensure a loader is initialized and active.
 		getLoaderManager().initLoader( 0, null, this );
 
-		// Note the last parameter to this constructor (zero), which indicates the adaptor should
-		// not try to automatically re-query the data ... the loader will take care of this.
-		this.adapter = new SimpleCursorAdapter( this, R.layout.item_list_row_results, null, from, to, 0 ){
-			//Change the color of each ListItem to help the user
-			@Override
-			public View getView(int position, View convertView, ViewGroup parent) {
-				View v = super.getView(position, convertView, parent);
-
-				if (position %2 ==1) {
-					v.setBackgroundColor(Color.argb(TRIM_MEMORY_MODERATE, 100, 100, 100));
-				} else {
-					v.setBackgroundColor(Color.argb(TRIM_MEMORY_MODERATE, 170, 170, 170)); //or whatever was original
-				}
-
-				return v;
+		ArrayList<HashMap<String, Object>> d = new ArrayList<HashMap<String, Object>>();
+		//Verify if identical entries were inserted into the item Table 
+		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_ANSWER, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME, ItemTable.COLUMN_DISPLAY, ItemTable.COLUMN_ANSWER_PIC };
+		String[] selection = {huntName};
+		Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI_I, projection, "hunt=?", selection, null );
+			for(int i=0; i< cursor.getCount(); ++i){
+					cursor.moveToNext();
+					HashMap<String, Object> items = new HashMap<String, Object>();
+					String ans = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_ANSWER ) );
+					String  desc = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_DESCRIPTION ) );
+					String locName = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_LOCATION ) );
+					String disp =  cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_DISPLAY ) );
+					String itemName = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_NAME ) );
+					//Log.d("FREEGAN::CHA", "the name of the item is :" + itemName);
+					byte[] b = cursor.getBlob(cursor.getColumnIndexOrThrow( ItemTable.COLUMN_ANSWER_PIC ));
+					items.put(ItemTable.COLUMN_ANSWER, ans);
+					items.put(ItemTable.COLUMN_DESCRIPTION, desc);
+					items.put(ItemTable.COLUMN_LOCATION, locName);
+					items.put(ItemTable.COLUMN_DISPLAY, disp);
+					items.put(ItemTable.COLUMN_NAME, itemName);
+					items.put(ItemTable.COLUMN_ANSWER_PIC, b);
+					
+					d.add(items);
 			}
-
-		};
-
+			cursor.close();
+		this.adapter = new LazyAdapter( this,  d, R.layout.item_list_row_results);
 		// Let this ListActivity display the contents of the cursor adapter.
 		setListAdapter( this.adapter );
 	}
@@ -120,7 +130,34 @@ public class ResultsActivity extends ListActivity implements LoaderManager.Loade
 	 */
 	@Override
 	public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
-		this.adapter.swapCursor( arg1 );
+		ArrayList<HashMap<String, Object>> d = new ArrayList<HashMap<String, Object>>();
+		//Verify if identical entries were inserted into the item Table 
+		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_ANSWER, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME, ItemTable.COLUMN_DISPLAY, ItemTable.COLUMN_ANSWER_PIC };
+		String[] selection = {huntName};
+		Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI_I, projection, "hunt=?", selection, null );
+			for(int i=0; i< cursor.getCount(); ++i){
+					cursor.moveToNext();
+					HashMap<String, Object> items = new HashMap<String, Object>();
+					String ans = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_ANSWER ) );
+					String  desc = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_DESCRIPTION ) );
+					String locName = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_LOCATION ) );
+					String disp =  cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_DISPLAY ) );
+					String itemName = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_NAME ) );
+					//Log.d("FREEGAN::CHA", "the name of the item is :" + itemName);
+					byte[] b = cursor.getBlob(cursor.getColumnIndexOrThrow( ItemTable.COLUMN_ANSWER_PIC ));
+					items.put(ItemTable.COLUMN_ANSWER, ans);
+					items.put(ItemTable.COLUMN_DESCRIPTION, desc);
+					items.put(ItemTable.COLUMN_LOCATION, locName);
+					items.put(ItemTable.COLUMN_DISPLAY, disp);
+					items.put(ItemTable.COLUMN_NAME, itemName);
+					items.put(ItemTable.COLUMN_ANSWER_PIC, b);
+					
+					d.add(items);
+			}
+			cursor.close();
+		this.adapter = new LazyAdapter( this,  d, R.layout.item_list_row_results);
+		// Let this ListActivity display the contents of the cursor adapter.
+		setListAdapter( this.adapter );
 	}
 
 	/**
@@ -130,7 +167,7 @@ public class ResultsActivity extends ListActivity implements LoaderManager.Loade
 	 */
 	@Override
 	public void onLoaderReset(Loader<Cursor> arg0) {
-		this.adapter.swapCursor( null );
+		//this.adapter.swapCursor( null );
 	}
 
 }

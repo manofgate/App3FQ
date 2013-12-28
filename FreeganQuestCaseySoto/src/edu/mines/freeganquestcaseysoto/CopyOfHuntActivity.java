@@ -139,7 +139,7 @@ public class CopyOfHuntActivity extends ListFragment implements LoaderManager.Lo
 			}
 			cursor.close();
 			//Log.d("FREEGAN::CHA", "The size of d is : " + d.size());
-		this.adapter = new LazyAdapter( this.getActivity(),  d);
+		this.adapter = new LazyAdapter( this.getActivity(),  d, R.layout.item_list_row_player);
 		setListAdapter( this.adapter );
 		//fillData();
 	}
@@ -175,7 +175,7 @@ public class CopyOfHuntActivity extends ListFragment implements LoaderManager.Lo
 			}
 			cursor.close();
 			//Log.d("FREEGAN::CHA", "The size of d is : " + d.size());
-		this.adapter = new LazyAdapter( this.getActivity(),  d);
+		this.adapter = new LazyAdapter( this.getActivity(),  d, R.layout.item_list_row_player);
 		 setListAdapter(this.adapter);
 		
 	}
@@ -221,7 +221,7 @@ public class CopyOfHuntActivity extends ListFragment implements LoaderManager.Lo
 					d.add(items);
 			}
 			cursor.close();
-		this.adapter = new LazyAdapter( this.getActivity(),  d);
+		this.adapter = new LazyAdapter( this.getActivity(),  d, R.layout.item_list_row_player);
 		
 		// Let this ListActivity display the contents of the cursor adapter.
 		setListAdapter( this.adapter );

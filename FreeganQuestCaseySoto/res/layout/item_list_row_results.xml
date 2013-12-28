@@ -29,19 +29,34 @@
             android:textSize="24sp" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/answer"
+     <LinearLayout
+        android:id="@+id/answerAndPics"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/nameLoc"
+        android:layout_below="@id/nameLoc" >
+        
+    <TextView
+        android:id="@+id/answer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.40"
         android:text="@+id/TextView03"
         android:textSize="24sp" />
+    
+    <ImageView
+            android:id="@+id/answer_player_pic"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.6"
+            />
+    
+    </LinearLayout>
 
     <TextView
         android:id="@+id/descrption"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/answer"
+        android:layout_below="@id/answerAndPics"
         android:text="@+id/TextView04"
         android:textSize="24sp" />
 
