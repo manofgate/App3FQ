@@ -46,7 +46,7 @@ public class CopyOfHuntActivity extends ListFragment implements LoaderManager.Lo
 	// The container Activity must implement this interface so the frag can deliver messages
 	public interface OnHeadlineSelectedListener {
 		/** Called by HeadlinesFragment when a list item is selected */
-		public void onArticleSelected(String position, String itemName, String locName);
+		public void onArticleSelected(String position, String itemName, String locName, String display);
 	}
 	/**
 	 * The onCreate method retrieves any saved instances and sets the content view layout. It
@@ -145,7 +145,7 @@ public class CopyOfHuntActivity extends ListFragment implements LoaderManager.Lo
 	 */
 	@Override
 	public void onLoaderReset(Loader<Cursor> arg0) {
-		/*ArrayList<HashMap<String, Object>> d = new ArrayList<HashMap<String, Object>>();
+		ArrayList<HashMap<String, Object>> d = new ArrayList<HashMap<String, Object>>();
 		String[] projection = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_ANSWER, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME, ItemTable.COLUMN_DISPLAY, ItemTable.COLUMN_ANSWER_PIC };
 		String[] selection = {HuntPlayFragment.huntName};
 		Cursor cursor = getActivity().getContentResolver().query( FreeganContentProvider.CONTENT_URI_I, projection, "hunt=?", selection, null );
@@ -164,8 +164,8 @@ public class CopyOfHuntActivity extends ListFragment implements LoaderManager.Lo
 			cursor.close();
 			Log.d("FREEGAN::CHA", "The size of d is : " + d.size());
 		this.adapter = new LazyAdapter( this.getActivity(),  d);
-		*/ 
-		fillData();
+		 setListAdapter(this.adapter);
+		
 	}
 
 	/**
@@ -227,20 +227,43 @@ public class CopyOfHuntActivity extends ListFragment implements LoaderManager.Lo
 
 		//Get the AdditemActivity intent
 		//Intent i = new Intent( this, AddAnswerActivity.class );
-
+		
 		//Query the database for the necessary information
-		Uri huntUri = Uri.parse( FreeganContentProvider.CONTENT_URI_I + "/" + id );
-		String[] projection = { ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME };
+				Uri huntUri3 = Uri.parse( FreeganContentProvider.CONTENT_URI_I + "/" + (id+1) );
+				String[] projection4 = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME };
+				Cursor cursor4 = getActivity().getContentResolver().query( huntUri3, projection4, null, null, null );
+				Log.d("FREEGAN::CHA", "the cursor size for uri3 at "+ id + " is :" + cursor4.getCount());
+				cursor4.close();
+		
+		String[] projection2 = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_ANSWER, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME, ItemTable.COLUMN_DISPLAY, ItemTable.COLUMN_ANSWER_PIC };
+		String[] selection = {HuntPlayFragment.huntName};
+		Cursor cursor2 = getActivity().getContentResolver().query( FreeganContentProvider.CONTENT_URI_I, projection2, "hunt=?", selection, null );
+			//cursor2.moveToFirst();
+			for(int i=0; i< cursor2.getCount(); ++i){
+					cursor2.moveToNext();
+					String  desc = cursor2.getString( cursor2.getColumnIndexOrThrow( ItemTable.COLUMN_DESCRIPTION ) );
+					int  _id = cursor2.getInt( cursor2.getColumnIndexOrThrow( ItemTable.COLUMN_ID ) );
+					Log.d("FREEGAN::CHA", "the des for " + _id + " is :" + desc );
+					
+			}
+			cursor2.close();
+			
+			
+		//Query the database for the necessary information
+		Uri huntUri = Uri.parse( FreeganContentProvider.CONTENT_URI_I + "/" + (id+1) );
+		String[] projection = { ItemTable.COLUMN_NAME, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME, ItemTable.COLUMN_DISPLAY };
 		Cursor cursor = getActivity().getContentResolver().query( huntUri, projection, null, null, null );
-
+		Log.d("FREEGAN::CHA", "THE cursor size is :" + cursor.getCount());
+		Log.d("FREEGAN::CHA", "THe id is :" + id);
 		//Retrieve the information from the database. 
 		cursor.moveToFirst();	    
 		//String name = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_NAME ) );
 		String descName = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_DESCRIPTION ) );
 		String itemName = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_NAME ) );
 		String locName = cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_LOCATION ) );
+		String disp =  cursor.getString( cursor.getColumnIndexOrThrow( ItemTable.COLUMN_DISPLAY ) );
 		cursor.close();
-		mCallback.onArticleSelected(descName, itemName, locName);
+		mCallback.onArticleSelected(descName, itemName, locName, disp);
 
 		// Set the item as checked to be highlighted when in two-pane layout
 		getListView().setItemChecked(position, true);

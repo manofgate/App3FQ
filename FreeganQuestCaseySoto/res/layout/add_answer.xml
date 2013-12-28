@@ -8,7 +8,6 @@
         android:id="@+id/submitB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/answerWord"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="46dp"
         android:onClick="submit"
@@ -20,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="95dp"
+        android:layout_marginTop="115dp"
         android:ems="15"
         android:hint="@string/word" >
 
@@ -39,9 +38,10 @@
 
     <ImageView
         android:id="@+id/captureView"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:layout_above="@+id/captureB"
-        android:layout_toRightOf="@+id/captureB" />
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="100dp"
+        android:layout_centerHorizontal="true" 
+        android:layout_alignParentTop="true"/>
 
 </RelativeLayout>

@@ -47,6 +47,7 @@ public class HuntPlayFragment extends FragmentActivity implements CopyOfHuntActi
 	private static boolean onAnswer = false;
 	private TextView timerValue;
 	public static final String DESCRIP = "description";
+	public static final String DISPLAY = "disp";
 	private static final String JPEG_FILE_SUFFIX = ".jpg";
 	private Handler customHandler = new Handler();
 	private File storageDir;
@@ -198,7 +199,7 @@ public class HuntPlayFragment extends FragmentActivity implements CopyOfHuntActi
 	/** method when clicked on in the list of items for the hunt with display the other fragment to add your answer
 	 * @Param position - position is the description of the item to match it up
 	 */
-	public void onArticleSelected(String position, String itemName, String locName) {
+	public void onArticleSelected(String position, String itemName, String locName, String display) {
 		// The user selected the headline of an article from the HeadlinesFragment
 		desc = position;
 		name = itemName;
@@ -225,7 +226,7 @@ public class HuntPlayFragment extends FragmentActivity implements CopyOfHuntActi
 
 			// Call a method in the ArticleFragment to update its content
 			findViewById(R.id.answers_fragment).setVisibility(View.VISIBLE);
-			articleFrag.updateArticleView(position);
+			articleFrag.updateArticleView(position, display);
 		} else {
 			// If the frag is not available, we're in the one-pane layout and must swap frags...
 			onAnswer = true;
@@ -234,6 +235,7 @@ public class HuntPlayFragment extends FragmentActivity implements CopyOfHuntActi
 			Bundle args = new Bundle();
 
 			args.putString( HuntPlayFragment.DESCRIP, position);
+			args.putString( HuntPlayFragment.DISPLAY, display);
 			newFragment.setArguments(args);
 			FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
@@ -348,7 +350,7 @@ public class HuntPlayFragment extends FragmentActivity implements CopyOfHuntActi
 			mText.setText("");
 			// Call a method in the ArticleFragment to update its content
 			findViewById(R.id.answers_fragment).setVisibility(View.GONE);
-			articleFrag.updateArticleView(position);
+			//articleFrag.updateArticleView(position, display);
 
 		} else {
 			// If the frag is not available, we're in the one-pane layout and must swap frags...
@@ -600,5 +602,6 @@ public class HuntPlayFragment extends FragmentActivity implements CopyOfHuntActi
 	   
 
 	}
+
 
 }

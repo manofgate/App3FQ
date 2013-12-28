@@ -25,6 +25,7 @@ package edu.mines.freeganquestcaseysoto;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,7 @@ import android.view.WindowManager;
 public class CopyOfAddAnswerActivity extends Fragment {
 
 	private String description = ""; //used for checking if description needs to be updated
+	private String display = "";
 
 	/**
 	 * The onCreate method retrieves any saved instances and sets the content view layout. It
@@ -58,6 +60,7 @@ public class CopyOfAddAnswerActivity extends Fragment {
 		// This is primarily necessary when in the two-pane layout.
 		if (savedInstanceState != null) {
 			description = savedInstanceState.getString(HuntPlayFragment.DESCRIP);
+			display = savedInstanceState.getString(HuntPlayFragment.DISPLAY);
 		}
 
 		getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
@@ -68,24 +71,40 @@ public class CopyOfAddAnswerActivity extends Fragment {
 	@Override
 	public void onStart() {
 		super.onStart();
+		//getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 		// During startup, check if there are arguments passed to the fragment.
 		// onStart is a good place to do this because the layout has already been
 		// applied to the fragment at this point so we can safely call the method
 		// below that sets the article text.
-		updateArticleView(description);
+		updateArticleView(description, display);
 		Bundle args = getArguments();
 		if (args != null) {
 			// Set article based on argument passed in
-			updateArticleView(args.getString(HuntPlayFragment.DESCRIP));
+			updateArticleView(args.getString(HuntPlayFragment.DESCRIP), args.getString(HuntPlayFragment.DISPLAY));
+			
 		} else if (description != "") {
 
 			// Set article based on saved instance state defined during onCreateView
-			updateArticleView(description);
+			updateArticleView(description, display);
 		}
 	}
 	
-	public void updateArticleView(String position) {
+	public void updateArticleView(String position, String disp) {
 		description = position;
+		Log.d("FREEGAN::CAAA", "THe display is :" + disp);
+		
+		if(disp.equals("word")){
+			getActivity().findViewById(R.id.captureView).setEnabled(false);
+			getActivity().findViewById(R.id.captureB).setEnabled(false);
+			getActivity().findViewById(R.id.answerWord).setVisibility(View.VISIBLE);
+			
+		}
+		else if(disp.equals("picture")){
+			getActivity().findViewById(R.id.captureView).setVisibility(View.VISIBLE);
+			getActivity().findViewById(R.id.captureB).setVisibility(View.VISIBLE);
+			getActivity().findViewById(R.id.answerWord).setVisibility(View.INVISIBLE);
+		}
+		
 
 	}
 	

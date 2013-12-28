@@ -90,6 +90,7 @@ public class FreeganContentProvider extends ContentProvider
 		if(tableName == HUNTS){
 			queryBuilder.setTables( ManagerHuntTable.TABLE_NAME );
 		} else if(tableName == ITEMS){
+			Log.d("FREEGAN::FCP", "Type of table is items");
 			queryBuilder.setTables( ItemTable.TABLE_NAME );
 		} else if(tableName == TIMERS){
 			queryBuilder.setTables( TimerTable.TABLE_NAME );
@@ -112,6 +113,7 @@ public class FreeganContentProvider extends ContentProvider
 			break;
 		case ITEMS_ID:
 			// Adding the ID to the original query
+			Log.d("FREEGAN::FCP", "THe last segment is :" + uri.getLastPathSegment());
 			queryBuilder.appendWhere( ItemTable.COLUMN_ID + "=" + uri.getLastPathSegment() );
 			break;
 		case TIMERS_ID:

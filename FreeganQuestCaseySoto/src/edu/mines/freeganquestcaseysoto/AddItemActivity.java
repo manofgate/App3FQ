@@ -233,7 +233,7 @@ public class AddItemActivity extends Activity {
 		values.put( ItemTable.COLUMN_HUNT_NAME, hunt);
 		values.put( ItemTable.COLUMN_DISPLAY, answerDisp);
 		values.put( ItemTable.COLUMN_ANSWER, "ANSWER");
-
+		Log.d("FREEGAN::AIA", "This is the disp in adding" + answerDisp);
 		//Insert values into the item Table
 		getContentResolver().insert( FreeganContentProvider.CONTENT_URI_I, values );
 
