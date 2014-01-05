@@ -19,6 +19,7 @@ public class ManagerHuntTable
   public static final String TABLE_NAME = "hunts";
   public static final String COLUMN_ID = "_id";
   public static final String COLUMN_NAME = "name";
+  public static final String COLUMN_ORIGIN_USER = "user";
 
   /**
    * creates the database strings for the columns of the table.
@@ -26,7 +27,8 @@ public class ManagerHuntTable
   // Database creation SQL statement
   private static final String DATABASE_CREATE = "create table " + TABLE_NAME + "(" + 
 	       COLUMN_ID + " integer primary key autoincrement, " + 
-	       COLUMN_NAME + " text not null" + ");";
+	       COLUMN_NAME + " text not null, " +
+	       COLUMN_ORIGIN_USER + " text not null" + ");";
   public static void onCreate( SQLiteDatabase database )
   {
     database.execSQL( DATABASE_CREATE );

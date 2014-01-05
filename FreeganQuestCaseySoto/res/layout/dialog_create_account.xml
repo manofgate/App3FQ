@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:columnCount="3"
+    android:orientation="vertical"
+    android:rowCount="10" >
+
+    <TextView
+        android:id="@+id/UserText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_column="0"
+        android:layout_gravity="left|top"
+        android:layout_row="3"
+        android:text="@string/usersText"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/passwordText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_column="0"
+        android:layout_gravity="left|top"
+        android:layout_row="5"
+        android:text="@string/passText"
+        android:textSize="24sp" />
+
+    <EditText
+        android:id="@+id/userName"
+        android:layout_width="wrap_content"
+        android:layout_column="1"
+        android:layout_gravity="fill_horizontal|top"
+        android:layout_row="3"
+        android:ems="10"
+        android:hint="@string/usersText" >
+
+        <requestFocus />
+    </EditText>
+
+    <EditText
+        android:id="@+id/password"
+        android:layout_column="1"
+        android:layout_gravity="left|top"
+        android:layout_row="5"
+        android:ems="10"
+        android:inputType="textPassword" >
+    </EditText>
+
+    <Button
+        android:id="@+id/create"
+        android:layout_column="1"
+        android:layout_gravity="left|top"
+        android:layout_row="9"
+        android:text="@string/createText" />
+
+    <TextView
+        android:id="@+id/nameText"
+        android:layout_column="0"
+        android:layout_gravity="left|top"
+        android:layout_row="1"
+        android:text="@string/uName"
+        android:textSize="24sp" />
+
+    <EditText
+        android:id="@+id/name"
+        android:layout_column="1"
+        android:layout_gravity="left|top"
+        android:layout_row="1"
+        android:ems="10"
+        android:inputType="textPersonName" />
+
+    <TextView
+        android:id="@+id/confirmText"
+        android:layout_column="0"
+        android:layout_gravity="center_horizontal|top"
+        android:layout_row="6"
+        android:textSize="18sp"
+        android:text="@string/confirmPass" />
+
+    <EditText
+        android:id="@+id/confirmPassword"
+        android:layout_column="1"
+        android:layout_gravity="left|top"
+        android:layout_row="6"
+        android:ems="10"
+        android:inputType="textPassword" />
+
+</GridLayout>

@@ -205,7 +205,8 @@ public class CopyOfManagerMain extends ListFragment implements LoaderManager.Loa
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 		String[] projection = { ManagerHuntTable.COLUMN_ID, ManagerHuntTable.COLUMN_NAME };
-		CursorLoader cursorLoader = new CursorLoader( getActivity(), FreeganContentProvider.CONTENT_URI, projection, null, null, null );
+		String[] selection = {MainActivity.USER};
+		CursorLoader cursorLoader = new CursorLoader( getActivity(), FreeganContentProvider.CONTENT_URI, projection, "user=?", selection, null );
 		return cursorLoader;
 	}
 

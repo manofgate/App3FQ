@@ -214,6 +214,7 @@ implements CopyOfManagerMain.OnHeadlineSelectedListener, InputDialogFragment.Lis
 		ContentValues values = new ContentValues();
 
 		values.put( ManagerHuntTable.COLUMN_NAME, huntName );
+		values.put( ManagerHuntTable.COLUMN_ORIGIN_USER, MainActivity.USER );
 		String[] projection = { ManagerHuntTable.COLUMN_ID, ManagerHuntTable.COLUMN_NAME};
 		String[] selection = {huntName};
 		getContentResolver().insert( FreeganContentProvider.CONTENT_URI, values );

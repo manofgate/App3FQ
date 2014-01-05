@@ -23,6 +23,7 @@ package edu.mines.freeganquestcaseysoto;
  */
 import java.util.ArrayList;
 
+import edu.mines.freeganquestcaseysoto.LoginDialogFragment.Listener;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.LoaderManager;
@@ -59,6 +60,7 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
 			+ "Edit Item: \nPress the Item you wish to edit. \n Make changes, then click \"Submit\". \n\n"
 			+"Delete Item: \nPress and hold the Item you wish to delete.\nSelect the option from the list.";
 	public static final String PLAYER_HELP_INFO = "";
+	public static String USER = "";
 	private ArrayList<String> arrayList1 = new ArrayList<String>();
 
 	@Override
@@ -126,9 +128,10 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
 		{
 		case R.id.action_manage:
 		{
-			//Intent i = new Intent(this, ManagerMain.class);
-			Intent i = new Intent(this, ManagerFragment.class);
-			startActivity(i);
+			if(!USER.equals("")){
+				Intent i = new Intent(this, ManagerFragment.class);
+				startActivity(i);
+			}
 
 			return true;
 		}
@@ -152,6 +155,16 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
 	        TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
 	        messageText.setGravity(Gravity.CENTER);
 	        return true;
+		}
+		case R.id.loginB:{
+			Bundle args = new Bundle();
+			args.putInt( "dialogID", 1 );
+			args.putString( "prompt", getString( R.string.statement ) );
+
+			LoginDialogFragment dialog = new LoginDialogFragment();
+			dialog.setArguments( args );
+			dialog.show( getFragmentManager(), "Dialog" );
+			return true;
 		}
 		default:
 			return super.onOptionsItemSelected(item);
@@ -211,5 +224,15 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
 		this.adapter.swapCursor( null );
 
 	}
+	 public void onCreateDialog(View view){
+		  
+		  Bundle args = new Bundle();
+			args.putInt( "dialogID", 1 );
+			args.putString( "prompt", getString( R.string.statement ) );
+
+			CreateDialogFragment dialog = new CreateDialogFragment();
+			dialog.setArguments( args );
+			dialog.show( getFragmentManager(), "Dialog" );
+	  }
 
 }

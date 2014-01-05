@@ -38,5 +38,11 @@
     <string name="dialog_ok">OK</string>
     <string name="title_activity_image_pick">ImagePickActivity</string>
     <string name="addPicture">Add Picture</string>
-
+    <string name="usersText">User Name: </string>
+    <string name="passText">Password: </string>
+    <string name="loginText">Login</string>
+	<string name="uName">Name: </string>
+	<string name="createText">Create</string>
+	<string name="confirmPass">Confirm Password: </string>
+	<string name="forgetText">Forget password?</string>
 </resources>
