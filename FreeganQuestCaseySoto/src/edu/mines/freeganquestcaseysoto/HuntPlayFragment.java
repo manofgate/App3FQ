@@ -55,6 +55,7 @@ public class HuntPlayFragment extends FragmentActivity implements CopyOfHuntActi
 	private String desciption;
 	private String huntName_q;
 	private String loc;
+	private static boolean isOwner;
 	
 
 	private Runnable updateTimerThread = new Runnable() {
@@ -101,7 +102,22 @@ public class HuntPlayFragment extends FragmentActivity implements CopyOfHuntActi
 		timerValue = (TextView) findViewById(R.id.timeView);
 		startTime = SystemClock.uptimeMillis();
 		customHandler.postDelayed(updateTimerThread, 0);
-
+		
+		String[] projection = { ManagerHuntTable.COLUMN_ID, ManagerHuntTable.COLUMN_NAME, ManagerHuntTable.COLUMN_ORIGIN_USER };
+		String[] selection = {huntName};
+		Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI, projection, "name=?", selection, null );
+		
+		if(cursor.getCount() >0){
+			cursor.moveToFirst();
+			
+			String user = cursor.getString( cursor.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_ORIGIN_USER ) );
+			if(user.equals(MainActivity.USER)){
+				isOwner = true;
+			}
+			else {
+				isOwner = false;
+			}
+		}
 		// Check whether the activity is using the layout version with
 		// the fragment_hunts FrameLayout. If so, we must add the first fragment
 		if (findViewById(R.id.fragment_hunts) != null) {
@@ -148,10 +164,15 @@ public class HuntPlayFragment extends FragmentActivity implements CopyOfHuntActi
 		{
 		case R.id.action_manage:
 		{
-			Intent i = new Intent(this, ManagerFragment.class);
-			i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(i);
-
+			if(isOwner){
+				Intent i = new Intent(this, ManagerFragment.class);
+				i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				startActivity(i);
+			}
+			else {
+				Toast toast = Toast.makeText(getApplicationContext(),"Not Owner of this hunt", Toast.LENGTH_LONG);
+				toast.show();
+			}
 			return true;
 		}
 		case R.id.about_settings:

@@ -1,5 +1,15 @@
 package edu.mines.freeganquestcaseysoto;
 
+import java.security.InvalidKeyException;
+import java.security.Key;
+import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
+
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.ContentValues;
@@ -12,7 +22,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class CreateDialogFragment extends DialogFragment {
@@ -69,10 +78,43 @@ public class CreateDialogFragment extends DialogFragment {
             	EditText mCPass =  (EditText) dialog.findViewById(R.id.confirmPassword);
             	EditText mName =  (EditText) dialog.findViewById(R.id.name);
             	
-            	
+            	String pass = "";
+        		String cPass = "";
+        		
+		        String key = "Spe12c34Sp51e23c45Co98nt765C9o87"; // 256 bit key
+            		 
+            		         // Create key and cipher
+		        Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
+		        Cipher cipher;
+				try {
+					cipher = Cipher.getInstance("AES");
+					cipher.init(Cipher.ENCRYPT_MODE, aesKey);
+			        byte[] encrypted = cipher.doFinal(mPassword.getText().toString().getBytes());
+			        byte[] encryptedC = cipher.doFinal( mCPass.getText().toString().getBytes());
+			        pass = new String(encrypted);
+			        cPass = new String(encryptedC);
+				} catch (NoSuchAlgorithmException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NoSuchPaddingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InvalidKeyException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalBlockSizeException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (BadPaddingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+            		 
+            		         // encrypt the text
+		        
+		        
+		        
             	String username = mUserName.getText().toString();
-        		String pass = mPassword.getText().toString();
-        		String cPass = mCPass.getText().toString();
         		String name = mName.getText().toString();
 
         		//Make sure the name and desc have content, if not give it generic information. 

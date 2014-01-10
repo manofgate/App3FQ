@@ -1,5 +1,15 @@
 package edu.mines.freeganquestcaseysoto;
 
+import java.security.InvalidKeyException;
+import java.security.Key;
+import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
+
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.ContentValues;
@@ -77,8 +87,42 @@ public class LoginDialogFragment extends DialogFragment {
             	EditText mUserName =  (EditText) dialog.findViewById(R.id.userName);
             	EditText mPassword =  (EditText) dialog.findViewById(R.id.password);
             	
+            	
+            	String pass = "";
+        		
+		        String key = "Spe12c34Sp51e23c45Co98nt765C9o87"; // 256 bit key
+            		 
+            		         // Create key and cipher
+		        Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
+		        Cipher cipher;
+				try {
+					cipher = Cipher.getInstance("AES");
+					cipher.init(Cipher.ENCRYPT_MODE, aesKey);
+			        byte[] encrypted = cipher.doFinal(mPassword.getText().toString().getBytes());
+			        pass = new String(encrypted);
+				} catch (NoSuchAlgorithmException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NoSuchPaddingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InvalidKeyException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalBlockSizeException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (BadPaddingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+            		 
+            		         // encrypt the text
+		        
+		        
+		        
             	String username = mUserName.getText().toString();
-        		String pass = mPassword.getText().toString();
+        		
             	checkUser(username, pass, dialog);
             }
         });
@@ -100,7 +144,41 @@ public class LoginDialogFragment extends DialogFragment {
 			//If there were multiple entries remove the last insert then notify the user. 
 			if(cursor.getCount() == 1){
 				cursor.moveToFirst();
-				MainActivity.USER = uName+pass;
+				String User = uName+pass;
+				 String key2 = "Coe12c34Sp50e23c54Co76nt755S9P87"; // 256 bit key
+        		 String us ="";
+		         // Create key and cipher
+				 Key aesKey = new SecretKeySpec(key2.getBytes(), "AES");
+				 Cipher cipher;
+				 try {
+					 cipher = Cipher.getInstance("AES");
+					 cipher.init(Cipher.ENCRYPT_MODE, aesKey);
+					 byte[] encrypted = cipher.doFinal(User.getBytes());
+					 us = new String(encrypted);
+
+								 
+			
+				 } catch (NoSuchAlgorithmException e) {
+					 // TODO Auto-generated catch block
+					 e.printStackTrace();
+				 } catch (NoSuchPaddingException e) {
+					 // TODO Auto-generated catch block
+					 e.printStackTrace();
+				 } catch (InvalidKeyException e) {
+					 // TODO Auto-generated catch block
+					 e.printStackTrace();
+				 } catch (IllegalBlockSizeException e) {
+					 // TODO Auto-generated catch block
+					 e.printStackTrace();
+				 } catch (BadPaddingException e) {
+					 // TODO Auto-generated catch block
+					 e.printStackTrace();
+				 }
+				
+				
+				
+				MainActivity.USER = us;
+				//Log.d("FREEGAN::LDF", "The USER is : " + MainActivity.USER);
 				Toast toast = Toast.makeText(getActivity().getApplicationContext(),"Have Logged In ", Toast.LENGTH_LONG);
 				toast.show();
 				 d.dismiss();
