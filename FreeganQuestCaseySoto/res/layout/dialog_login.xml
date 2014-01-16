@@ -2,9 +2,9 @@
 <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:columnCount="3"
+    android:columnCount="4"
     android:orientation="vertical"
-    android:rowCount="6" >
+    android:rowCount="7" >
 
     <TextView
         android:id="@+id/UserText"
@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_column="0"
         android:layout_gravity="left|top"
-        android:layout_row="0"
+        android:layout_row="1"
         android:text="@string/usersText"
         android:textSize="24sp" />
 
@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_column="0"
         android:layout_gravity="left|top"
-        android:layout_row="2"
+        android:layout_row="3"
         android:text="@string/passText"
         android:textSize="24sp" />
 
@@ -31,7 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_column="1"
         android:layout_gravity="fill_horizontal|top"
-        android:layout_row="0"
+        android:layout_row="1"
         android:ems="10"
         android:hint="@string/usersText" >
 
@@ -42,7 +42,7 @@
         android:id="@+id/password"
         android:layout_column="1"
         android:layout_gravity="left|top"
-        android:layout_row="2"
+        android:layout_row="3"
         android:ems="10"
         android:inputType="textPassword" >
     </EditText>
@@ -51,14 +51,14 @@
         android:id="@+id/loginButton"
         android:layout_column="1"
         android:layout_gravity="left|top"
-        android:layout_row="3"
+        android:layout_row="4"
         android:text="@string/loginText" />
 
     <Button
         android:id="@+id/create"
         android:layout_column="0"
         android:layout_gravity="left|top"
-        android:layout_row="3"
+        android:layout_row="4"
         android:onClick="onCreateDialog"
         android:text="@string/createText" />
 
@@ -66,9 +66,18 @@
         android:id="@+id/forget"
         android:layout_column="0"
         android:layout_gravity="right|top"
-        android:layout_row="5"
+        android:layout_row="6"
         android:clickable="true"
         android:layout_marginTop="10dp"
         android:text="@string/forgetText" />
+    
+    <TextView
+        android:id="@+id/invalidText"
+        android:layout_column="0"
+        android:layout_gravity="left|center_vertical"
+        android:layout_row="0"
+        android:layout_columnSpan="4"
+        android:textColor="#ff0000"
+        android:text="" />
 
 </GridLayout>

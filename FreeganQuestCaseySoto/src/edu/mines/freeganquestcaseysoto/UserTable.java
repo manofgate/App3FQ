@@ -15,13 +15,13 @@ public class UserTable {
 	// Database table column names
 	public static final String TABLE_NAME = "users";
 	public static final String COLUMN_ID = "_id";
-	public static final String COLUMN_NAME = "name";
+	public static final String COLUMN_EMAIL = "email";
 	public static final String COLUMN_USER_NAME = "username";
 	public static final String COLUMN_PASSWORD = "password";
 	// Database creation SQL statement
 	private static final String TABLE_CREATE = "create table " + TABLE_NAME + "(" + 
 			COLUMN_ID + " integer primary key autoincrement, " + 
-			COLUMN_NAME + " text not null," + 
+			COLUMN_EMAIL + " text not null," + 
 			COLUMN_USER_NAME + " text not null, " +
 			COLUMN_PASSWORD + " text not null" + ");";
 

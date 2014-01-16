@@ -33,10 +33,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.PopupMenu.OnMenuItemClickListener;
 
-public class HuntPlayFragment extends FragmentActivity implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivity.OnFinishListener {
+public class HuntPlayFragment extends FragmentActivity implements CopyOfHuntActivity.OnHeadlineSelectedListener, CopyOfAddAnswerActivity.OnFinishListener, ConfirmDialogFragment.Listener {
 
 	public static String huntName;
 	public static String desc;
@@ -147,10 +149,41 @@ public class HuntPlayFragment extends FragmentActivity implements CopyOfHuntActi
 
 	}
 
+	public OnMenuItemClickListener listener2 = new OnMenuItemClickListener() {
+	    @Override
+	    public boolean onMenuItemClick(MenuItem item) {
+
+	        switch (item.getItemId()) {
+	        case R.id.loginB:  {
+	        	Bundle args = new Bundle();
+				args.putInt( "dialogID", 1 );
+				args.putString( "prompt", getString( R.string.LoginTitle ) );
+
+				LoginDialogFragment dialog = new LoginDialogFragment();
+				dialog.setArguments( args );
+				dialog.show( getFragmentManager(), "Dialog" );
+				return true;
+	        }
+	        case R.id.logoutB:  {
+	        	Bundle args = new Bundle();
+	            args.putString( "message", getString( R.string.confirm_message ) );
+
+	            ConfirmDialogFragment dialog = new ConfirmDialogFragment();
+	            dialog.setArguments( args );
+	            dialog.show( getFragmentManager(), "Dialog" );
+				return true;
+	        }
+	        default:
+				return true;   
+	        }
+	    }};
+	    
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.mm, menu);
-		getMenuInflater().inflate(R.menu.main, menu);
+				getMenuInflater().inflate(R.menu.umenu, menu);
+				
+				getMenuInflater().inflate(R.menu.mm, menu);
+				getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
 
@@ -164,13 +197,14 @@ public class HuntPlayFragment extends FragmentActivity implements CopyOfHuntActi
 		{
 		case R.id.action_manage:
 		{
-			if(isOwner){
+			if(isOwner && MainActivity.USER != ""){
 				Intent i = new Intent(this, ManagerFragment.class);
 				i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				startActivity(i);
 			}
 			else {
-				Toast toast = Toast.makeText(getApplicationContext(),"Not Owner of this hunt", Toast.LENGTH_LONG);
+				Toast toast = Toast.makeText(getApplicationContext(),"Not Owner of this hunt", 5);
+				toast.setGravity(Gravity.TOP|Gravity.RIGHT, 0, 0);
 				toast.show();
 			}
 			return true;
@@ -194,6 +228,17 @@ public class HuntPlayFragment extends FragmentActivity implements CopyOfHuntActi
 			AlertDialog dialog = builder.show();
 			TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
 			messageText.setGravity(Gravity.CENTER);
+			return true;
+		}
+		case R.id.action_user: {
+			View menuItemView = findViewById(R.id.action_user); // SAME ID AS MENU ID
+		    PopupMenu popupMenu = new PopupMenu(this, menuItemView); 
+		    popupMenu.inflate(R.menu.usermain);
+		    popupMenu.setOnMenuItemClickListener(listener2);
+		    
+		    MenuItem UserMenuItem = popupMenu.getMenu().findItem(R.id.userName);
+	           UserMenuItem.setTitle(MainActivity.USERN);
+		    popupMenu.show();
 			return true;
 		}
 		default:
@@ -623,6 +668,31 @@ public class HuntPlayFragment extends FragmentActivity implements CopyOfHuntActi
 	   
 
 	}
+
+	 /**
+	   * Callback method from ConfirmDialogFragment when the user clicks Yes.
+	   * 
+	   * @param dialogID The dialog producing the callback.
+	   */
+	  @Override
+	  public void onConfirmPositive( int dialogID )
+	  {
+	    MainActivity.USER = "";
+	    MainActivity.USERN = "";
+	    Toast toast = Toast.makeText(getApplicationContext(),"Have Logged Out ", Toast.LENGTH_LONG);
+		toast.show();
+	  }
+
+	  /**
+	   * Callback method from ConfirmDialogFragment when the user clicks No.
+	   * 
+	   * @param dialogID The dialog producing the callback.
+	   */
+	  @Override
+	  public void onConfirmNegative( int dialogID )
+	  {
+	    Log.d( "DIALOG_DEMO", "Negative reply from confirm dialog with id =" + dialogID );
+	  }
 
 
 }

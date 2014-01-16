@@ -17,11 +17,14 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class CreateDialogFragment extends DialogFragment {
@@ -70,21 +73,96 @@ public class CreateDialogFragment extends DialogFragment {
 	 // inflate the layout
 	    dialog.setContentView(R.layout.dialog_create_account);
 	    
+	   ((EditText) dialog.findViewById(R.id.password)).setOnFocusChangeListener( new OnFocusChangeListener() {
+
+	        @Override
+	        public void onFocusChange(View v, boolean hasFocus) {
+	           if(!hasFocus) {
+	        	   EditText mPassword =  (EditText) dialog.findViewById(R.id.password);
+	        	   String pass = mPassword.getText().toString(); 
+	        	    if(TextUtils.isEmpty(pass) || pass.length() < 5) 
+	        	    { 
+	        	       mPassword.setError("Must have 5 or more characters"); 
+	        	        return; 
+	        	    }
+	           }
+	   }});
+	   
+	   ((EditText) dialog.findViewById(R.id.confirmPassword)).setOnFocusChangeListener( new OnFocusChangeListener() {
+
+	        @Override
+	        public void onFocusChange(View v, boolean hasFocus) {
+	           if(!hasFocus) {
+	        	   EditText mCPass =  (EditText) dialog.findViewById(R.id.confirmPassword);
+	        	   String pass = mCPass.getText().toString(); 
+	        	    if(TextUtils.isEmpty(pass) || pass.length() < 5) 
+	        	    { 
+	        	       mCPass.setError("Must have 5 or more characters"); 
+	        	        return; 
+	        	    }
+	           }
+	   }});
+	    
+	   ((EditText) dialog.findViewById(R.id.userName)).setOnFocusChangeListener( new OnFocusChangeListener() {
+
+	        @Override
+	        public void onFocusChange(View v, boolean hasFocus) {
+	           if(!hasFocus) {
+	        	   EditText mUserName =  (EditText) dialog.findViewById(R.id.userName);
+	        	   String user = mUserName.getText().toString(); 
+	        	   
+	        	   
+	        	 //Verify if identical entries were inserted into the item Table 
+	   			String[] projection = { UserTable.COLUMN_ID, UserTable.COLUMN_USER_NAME};
+	   			String[] selection = {user};
+	   			Cursor cursor = getActivity().getContentResolver().query( FreeganContentProvider.CONTENT_URI_U, projection, "username=?", selection, UserTable.COLUMN_ID + " DESC" );
+	   				Log.d("FREEGAN::CDF", "The cursor for same user: " +user+ " is :" + cursor.getCount());
+	        	    if(TextUtils.isEmpty(user) || user.length() < 1) 
+	        	    { 
+	        	       mUserName.setError("You must have  characters"); 
+	        	        return; 
+	        	    }
+	        	    
+	        	    else if(cursor.getCount() >= 1){
+	        	    	mUserName.setError("User name already taken");
+	        	    }
+	        	    cursor.close();
+	           }
+	   }});
+	    
+	   ((EditText) dialog.findViewById(R.id.email)).setOnFocusChangeListener( new OnFocusChangeListener() {
+
+	        @Override
+	        public void onFocusChange(View v, boolean hasFocus) {
+	           if(!hasFocus) {
+	        	   EditText mEmail =  (EditText) dialog.findViewById(R.id.email);
+	        	   String pass = mEmail.getText().toString(); 
+	        	    if(TextUtils.isEmpty(pass) || pass.length() < 1) 
+	        	    { 
+	        	       mEmail.setError("Must have 1 or more characters"); 
+	        	        return; 
+	        	    }
+	           }
+	   }});
+	   
 	    ((Button) dialog.findViewById(R.id.create)).setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 // When button is clicked, call up to owning activity.
             	EditText mUserName =  (EditText) dialog.findViewById(R.id.userName);
             	EditText mPassword =  (EditText) dialog.findViewById(R.id.password);
             	EditText mCPass =  (EditText) dialog.findViewById(R.id.confirmPassword);
-            	EditText mName =  (EditText) dialog.findViewById(R.id.name);
+            	EditText mEmail =  (EditText) dialog.findViewById(R.id.email);
+            	TextView mInvalid =(TextView) dialog.findViewById(R.id.invalidText);
+            
             	
             	String pass = "";
         		String cPass = "";
         		
-		        String key = "Spe12c34Sp51e23c45Co98nt765C9o87"; // 256 bit key
+		        GeneratorC c = new GeneratorC();
             		 
             		         // Create key and cipher
-		        Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
+		        Key aesKey = new SecretKeySpec(c.getThatString().getBytes(), "AES");
+		        c = null;
 		        Cipher cipher;
 				try {
 					cipher = Cipher.getInstance("AES");
@@ -115,14 +193,17 @@ public class CreateDialogFragment extends DialogFragment {
 		        
 		        
             	String username = mUserName.getText().toString();
-        		String name = mName.getText().toString();
+        		String email = mEmail.getText().toString();
 
         		//Make sure the name and desc have content, if not give it generic information. 
-        		if(username.length()>0 && pass.length()>5 && cPass.equals(pass) && name.length()>0){
-        			insertNewUser(name, username, pass, dialog);
+        		if(username.length()>0 && pass.length()>5 && cPass.equals(pass) && email.length()>0){
+        			insertNewUser(email, username, pass, dialog);
+        			mInvalid.setText("");
         		}
         		else{
-        			Log.d("FREEGAN::CDF", "It is in the else statment");
+        			if(!cPass.equals(pass)){
+        				mInvalid.setText("Confirm/password not the same.");
+        			}
         		}
             	
             }
@@ -130,9 +211,9 @@ public class CreateDialogFragment extends DialogFragment {
 	  return dialog;
 	  }
 	  
-	  public void insertNewUser(String name, String uName, String pass, Dialog d){
+	  public void insertNewUser(String email, String uName, String pass, Dialog d){
 			ContentValues values = new ContentValues();
-			values.put( UserTable.COLUMN_NAME, name );
+			values.put( UserTable.COLUMN_EMAIL, email );
 			values.put( UserTable.COLUMN_USER_NAME, uName );
 			values.put( UserTable.COLUMN_PASSWORD, pass);
 			Log.d("FREEGAN::CDF", "This is the user in adding" + uName);
@@ -142,7 +223,7 @@ public class CreateDialogFragment extends DialogFragment {
 			//Verify if identical entries were inserted into the item Table 
 			String[] projection = { UserTable.COLUMN_ID, UserTable.COLUMN_USER_NAME};
 			String[] selection = {uName};
-			Cursor cursor = getActivity().getContentResolver().query( FreeganContentProvider.CONTENT_URI_U, projection, "name=?", selection, UserTable.COLUMN_ID + " DESC" );
+			Cursor cursor = getActivity().getContentResolver().query( FreeganContentProvider.CONTENT_URI_U, projection, "username=?", selection, UserTable.COLUMN_ID + " DESC" );
 			
 			//If there were multiple entries remove the last insert then notify the user. 
 			if(cursor.getCount() > 1){

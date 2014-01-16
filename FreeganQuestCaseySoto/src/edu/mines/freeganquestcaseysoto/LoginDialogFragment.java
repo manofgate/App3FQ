@@ -17,11 +17,15 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class LoginDialogFragment extends DialogFragment {
@@ -74,13 +78,29 @@ public class LoginDialogFragment extends DialogFragment {
                 // When button is clicked, call up to owning activity.
             	Bundle args = new Bundle();
     			args.putInt( "dialogID", 1 );
-    			args.putString( "prompt", getString( R.string.statement ) );
+    			args.putString( "prompt", getString( R.string.CreateTitle ) );
 
     			CreateDialogFragment dialog = new CreateDialogFragment();
     			dialog.setArguments( args );
     			dialog.show( getFragmentManager(), "Dialog" );
             }
         });
+	    
+	    
+	    ((EditText) dialog.findViewById(R.id.password)).setOnFocusChangeListener( new OnFocusChangeListener() {
+
+	        @Override
+	        public void onFocusChange(View v, boolean hasFocus) {
+	           if(!hasFocus) {
+	        	   EditText mPassword =  (EditText) dialog.findViewById(R.id.password);
+	        	   String pass = mPassword.getText().toString(); 
+	        	    if(TextUtils.isEmpty(pass) || pass.length() < 5) 
+	        	    { 
+	        	       mPassword.setError("Must have 5 or more characters"); 
+	        	        return; 
+	        	    }
+	           }
+	   }});
 	    ((Button) dialog.findViewById(R.id.loginButton)).setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 // When button is clicked, call up to owning activity.
@@ -90,10 +110,11 @@ public class LoginDialogFragment extends DialogFragment {
             	
             	String pass = "";
         		
-		        String key = "Spe12c34Sp51e23c45Co98nt765C9o87"; // 256 bit key
-            		 
-            		         // Create key and cipher
-		        Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
+            	GeneratorC c = new GeneratorC();
+       		 
+		         // Create key and cipher
+            	Key aesKey = new SecretKeySpec(c.getThatString().getBytes(), "AES");
+            	c = null;
 		        Cipher cipher;
 				try {
 					cipher = Cipher.getInstance("AES");
@@ -133,6 +154,8 @@ public class LoginDialogFragment extends DialogFragment {
 			ContentValues values = new ContentValues();
 			values.put( UserTable.COLUMN_USER_NAME, uName );
 			values.put( UserTable.COLUMN_PASSWORD, pass);
+			
+			TextView mInvalid =(TextView) d.findViewById(R.id.invalidText);
 			Log.d("FREEGAN::CDF", "This is the user in checking " + uName);
 			//Insert values into the item Table
 
@@ -145,10 +168,11 @@ public class LoginDialogFragment extends DialogFragment {
 			if(cursor.getCount() == 1){
 				cursor.moveToFirst();
 				String User = uName+pass;
-				 String key2 = "Coe12c34Sp50e23c54Co76nt755S9P87"; // 256 bit key
+				 CGenerator c = new CGenerator(); // 256 bit key
         		 String us ="";
 		         // Create key and cipher
-				 Key aesKey = new SecretKeySpec(key2.getBytes(), "AES");
+				 Key aesKey = new SecretKeySpec(c.getThatString().getBytes(), "AES");
+				 c = null;
 				 Cipher cipher;
 				 try {
 					 cipher = Cipher.getInstance("AES");
@@ -175,13 +199,30 @@ public class LoginDialogFragment extends DialogFragment {
 					 e.printStackTrace();
 				 }
 				
-				
+				 mInvalid.setText("");
 				
 				MainActivity.USER = us;
+				MainActivity.USERN = uName;
 				//Log.d("FREEGAN::LDF", "The USER is : " + MainActivity.USER);
 				Toast toast = Toast.makeText(getActivity().getApplicationContext(),"Have Logged In ", Toast.LENGTH_LONG);
+				toast.setGravity(Gravity.TOP|Gravity.RIGHT, 0, 0);
 				toast.show();
 				 d.dismiss();
+				 if(dialogID == 6){
+					 getActivity().finish();
+				 }
+			}
+			else{
+				//Verify if identical entries were inserted into the item Table 
+				String[] projection2 = { UserTable.COLUMN_ID, UserTable.COLUMN_USER_NAME};
+				String[] selection2 = {uName};
+				Cursor cursor2 = getActivity().getContentResolver().query( FreeganContentProvider.CONTENT_URI_U, projection2, "username=?", selection2, UserTable.COLUMN_ID + " DESC" );
+				if(cursor2.getCount() <1){
+					mInvalid.setText("user name does not exist");
+				}
+				else{
+					mInvalid.setText("user name or password incorrect");
+				}
 			}
 			cursor.close();
 		}

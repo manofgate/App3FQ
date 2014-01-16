@@ -20,11 +20,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.PopupMenu.OnMenuItemClickListener;
 
 public class ManagerFragment extends FragmentActivity 
-implements CopyOfManagerMain.OnHeadlineSelectedListener, InputDialogFragment.Listener {
+implements CopyOfManagerMain.OnHeadlineSelectedListener, InputDialogFragment.Listener, ConfirmDialogFragment.Listener {
 
 	public static String huntName;
 
@@ -90,11 +92,46 @@ implements CopyOfManagerMain.OnHeadlineSelectedListener, InputDialogFragment.Lis
 			findViewById(R.id.addItemButton).setVisibility(View.VISIBLE);
 		}
 	}
+	
+	
+	public OnMenuItemClickListener listener2 = new OnMenuItemClickListener() {
+	    @Override
+	    public boolean onMenuItemClick(MenuItem item) {
+
+	        switch (item.getItemId()) {
+	        case R.id.loginB:  {
+	        	//TODO: make it so it resets the fragment.
+	        	Bundle args = new Bundle();
+				args.putInt( "dialogID", 6 );
+				args.putString( "prompt", getString( R.string.LoginTitle ) );
+
+				LoginDialogFragment dialog = new LoginDialogFragment();
+				dialog.setArguments( args );
+				dialog.show( getFragmentManager(), "Dialog" );
+				return true;
+	        }
+	        case R.id.logoutB:  {
+	        	Bundle args = new Bundle();
+	            args.putString( "message", getString( R.string.confirm_message ) );
+
+	            ConfirmDialogFragment dialog = new ConfirmDialogFragment();
+	            dialog.setArguments( args );
+	            dialog.show( getFragmentManager(), "Dialog" );
+				return true;
+	        }
+	        default:
+				return true;   
+	        }
+	    }};
+	    
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.mm, menu);
-		getMenuInflater().inflate(R.menu.main, menu);
+		// Inflate the menu; this adds items to the action bar if it is present.
+				getMenuInflater().inflate(R.menu.umenu, menu);
+				
+				getMenuInflater().inflate(R.menu.mm, menu);
+				getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
 	/**
@@ -132,6 +169,17 @@ implements CopyOfManagerMain.OnHeadlineSelectedListener, InputDialogFragment.Lis
 			AlertDialog dialog = builder.show();
 			TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
 			messageText.setGravity(Gravity.CENTER);
+			return true;
+		}
+		case R.id.action_user: {
+			View menuItemView = findViewById(R.id.action_user); // SAME ID AS MENU ID
+		    PopupMenu popupMenu = new PopupMenu(this, menuItemView); 
+		    popupMenu.inflate(R.menu.usermain);
+		    popupMenu.setOnMenuItemClickListener(listener2);
+		    
+		    MenuItem UserMenuItem = popupMenu.getMenu().findItem(R.id.userName);
+	           UserMenuItem.setTitle(MainActivity.USERN);
+		    popupMenu.show();
 			return true;
 		}
 		default:
@@ -304,5 +352,33 @@ implements CopyOfManagerMain.OnHeadlineSelectedListener, InputDialogFragment.Lis
 	public void onInputCancel( int dialogID )
 	{
 	}
+	
+	
+	 /**
+	   * Callback method from ConfirmDialogFragment when the user clicks Yes.
+	   * 
+	   * @param dialogID The dialog producing the callback.
+	   */
+	  @Override
+	  public void onConfirmPositive( int dialogID )
+	  {
+	    MainActivity.USER = "";
+	    MainActivity.USERN = "";
+	    Toast toast = Toast.makeText(getApplicationContext(),"Have Logged Out ", Toast.LENGTH_LONG);
+		toast.show();
+		
+		finish();
+	  }
+
+	  /**
+	   * Callback method from ConfirmDialogFragment when the user clicks No.
+	   * 
+	   * @param dialogID The dialog producing the callback.
+	   */
+	  @Override
+	  public void onConfirmNegative( int dialogID )
+	  {
+	    Log.d( "DIALOG_DEMO", "Negative reply from confirm dialog with id =" + dialogID );
+	  }
 
 }
