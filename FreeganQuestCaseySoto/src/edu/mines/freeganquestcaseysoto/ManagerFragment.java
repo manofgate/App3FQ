@@ -6,12 +6,27 @@
  */
 package edu.mines.freeganquestcaseysoto;
 
+
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.nfc.NfcAdapter;
+import android.nfc.NfcEvent;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -21,16 +36,48 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.PopupMenu;
+import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.PopupMenu.OnMenuItemClickListener;
 
 public class ManagerFragment extends FragmentActivity 
 implements CopyOfManagerMain.OnHeadlineSelectedListener, InputDialogFragment.Listener, ConfirmDialogFragment.Listener {
 
 	public static String huntName;
 
+	 NfcAdapter mNfcAdapter;
+	    // Flag to indicate that Android Beam is available
+	 boolean mAndroidBeamAvailable  = false;
+	 
+	 // Instance that returns available files from this app
+	  private FileUriCallback mFileUriCallback;
+
+	 
+	// List of URIs to provide to Android Beam
+	    private Uri[] mFileUris = new Uri[1];
+	    
+	    /**
+	     * Callback that Android Beam file transfer calls to get
+	     * files to share
+	     */
+	    @SuppressLint("NewApi")
+		private class FileUriCallback implements
+	            NfcAdapter.CreateBeamUrisCallback {
+	        public FileUriCallback() {
+	        }
+	        /**
+	         * Create content URIs as needed to share with another device
+	         */
+	        @Override
+	        public Uri[] createBeamUris(NfcEvent event) {
+	        	 Log.d("FREEGANQUEST::", "Top of createBeamURI ");
+	        	//ContentValues values = new ContentValues();
+	    		
+	            return mFileUris;
+	        }
+	    }
 	/** Called when the activity is first created. */
+	@SuppressLint("NewApi")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -59,7 +106,78 @@ implements CopyOfManagerMain.OnHeadlineSelectedListener, InputDialogFragment.Lis
 			getSupportFragmentManager().beginTransaction()
 			.add(R.id.fragment_titles, firstFragment).commit();
 		}
+		
+		
+		// NFC isn't available on the device
+        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC)) {
+        	
+            /*
+             * Disable NFC features here.
+             * For example, disable menu items or buttons that activate
+             * NFC-related features
+             */
+            
+        // Android Beam file transfer isn't supported
+        } else if (Build.VERSION.SDK_INT <
+                Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            // If Android Beam isn't available, don't continue.
+            mAndroidBeamAvailable = false;
+            /*
+             * Disable Android Beam file transfer features here.
+             */
+            
+        // Android Beam file transfer is available, continue
+        } else {
+        	mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        	String[] projection = { ManagerHuntTable.COLUMN_ID, ManagerHuntTable.COLUMN_NAME, ManagerHuntTable.COLUMN_ORIGIN_USER};
+    		String[] selection = {MainActivity.USERN};
+    		Log.d("FREEGAN::MF", "After proj and select");
+    		//checks to see if that hunt name is already in database and adds if not. 
+    		//Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder
+    		Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI, projection,null, null, null);
+    		Log.d("FREEGANQUEST::MF", "The curesor has " + cursor.getCount());
+    		cursor.moveToFirst();
+    		String data = cursor.getString(cursor.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_NAME )) + " : "+ cursor.getString(cursor.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_ORIGIN_USER )); 
+    		Uri huntUri = Uri.parse( FreeganContentProvider.CONTENT_URI + "/" +  cursor.getString(cursor.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_ID )) );
+            cursor.close();
+            Log.d("FREEGANQUEST::", "the huntUri is " + huntUri);
+            
+            
+            File extDir = getExternalFilesDir(null);
+            File from = new File(extDir, "BeamOver.txt");
+            	 writeToFile(from, data);
+            	from.setReadable(true, false);
+            	Uri uri =  Uri.fromFile(from);
+            	if (uri != null) {
+                    mFileUris[0] = uri;
+                } else {
+                    Log.e("My Activity", "No File URI available for file.");
+                }
+            	
+        	/*
+             * Instantiate a new FileUriCallback to handle requests for
+             * URIs
+             */
+            mFileUriCallback = new FileUriCallback();
+            // Set the dynamic callback for URI requests.
+            mNfcAdapter.setBeamPushUrisCallback(mFileUriCallback,this);
+            Log.d("FREEQUE::ManFrag", "After sending hunts and pushing (on)");
+        
+        }
 	}
+	
+	
+	private void writeToFile(File f, String data) {
+	    try {
+	        FileOutputStream fileout = new FileOutputStream(f);
+	        fileout.write(data.getBytes());
+	        fileout.close();
+	    }
+	    catch (IOException e) {
+	        Log.e("Exception", "File write failed: " + e.toString());
+	    } 
+	}
+
 	
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -131,12 +249,13 @@ implements CopyOfManagerMain.OnHeadlineSelectedListener, InputDialogFragment.Lis
 				getMenuInflater().inflate(R.menu.umenu, menu);
 				
 				getMenuInflater().inflate(R.menu.mm, menu);
-				getMenuInflater().inflate(R.menu.main, menu);
+				getMenuInflater().inflate(R.menu.main_m, menu);
 		return true;
 	}
 	/**
 	 * When the menu item is clicked it will decide on Help or About fragment or setting to pop up.
 	 */
+	@SuppressLint("NewApi")
 	@Override
 	public boolean onOptionsItemSelected( MenuItem item )
 	{
@@ -181,6 +300,17 @@ implements CopyOfManagerMain.OnHeadlineSelectedListener, InputDialogFragment.Lis
 	           UserMenuItem.setTitle(MainActivity.USERN);
 		    popupMenu.show();
 			return true;
+		}
+		
+		case R.id.send_hunts: {
+			/*
+             * Instantiate a new FileUriCallback to handle requests for
+             * URIs
+             */
+            //mFileUriCallback = new FileUriCallback();
+            // Set the dynamic callback for URI requests.
+            //mNfcAdapter.setBeamPushUrisCallback(mFileUriCallback,this);
+            Log.d("FreeQue::ManFrag", "After sending hunts and pushing");
 		}
 		default:
 			return super.onOptionsItemSelected(item);

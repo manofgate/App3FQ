@@ -97,7 +97,7 @@ public class FreeganContentProvider extends ContentProvider
 
 		// Check if the caller has requested a column which does not exist
 		int tableName = checkColumns( projection );
-
+		Log.d("FREEGANQUEST::FCP", "The tableName is" + tableName);
 		// Set the table
 		if(tableName == HUNTS){
 			queryBuilder.setTables( ManagerHuntTable.TABLE_NAME );

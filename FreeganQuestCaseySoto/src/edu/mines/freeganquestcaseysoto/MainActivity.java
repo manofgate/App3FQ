@@ -21,15 +21,24 @@ package edu.mines.freeganquestcaseysoto;
  * 
  * point distribution: Ben - 57% : Craig - 43%
  */
+import java.io.File;
 import java.util.ArrayList;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.LoaderManager;
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.IntentFilter.MalformedMimeTypeException;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.Uri;
+import android.nfc.NfcAdapter;
+import android.nfc.tech.NfcF;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -65,14 +74,139 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
 	public static final String PLAYER_HELP_INFO = "";
 	public static String USER = "";
 	public static String USERN = "";
+	private static PendingIntent pendingIntent;
+	private static Intent intent;
+	private static String[][] techList;
 	private ArrayList<String> arrayList1 = new ArrayList<String>();
+	
+	 NfcAdapter mNfcAdapter;
+	    // Flag to indicate that Android Beam is available
+	 boolean mAndroidBeamAvailable  = false;
+	 
+	 // A File object containing the path to the transferred files
+	    private String mParentPath;
+	    // Incoming Intent
+	    private Intent mIntent;
 
+	 
+	    public void handleViewIntent() {
+	    	Log.d("FREEGANQUEST::MAIN", "this is handleViewIntent");
+	        // Get the Intent action
+	        mIntent = getIntent();
+	        String action = mIntent.getAction();
+	        /*
+	         * For ACTION_VIEW, the Activity is being asked to display data.
+	         * Get the URI.
+	         */
+	        if (TextUtils.equals(action, Intent.ACTION_VIEW)) {
+	            // Get the URI from the Intent
+	            Uri beamUri = mIntent.getData();
+	            /*
+	             * Test for the type of URI, by getting its scheme value
+	             */
+	            if (TextUtils.equals(beamUri.getScheme(), "file")) {
+	            	Log.d("FreegQue::MA", "the type is a file");
+	                mParentPath = handleFileUri(beamUri);
+	            } else if (TextUtils.equals(
+	                    beamUri.getScheme(), "content")) {
+	            	Log.d("FreegQue::MA", "The type s a content");
+	                mParentPath = handleContentUri(beamUri);
+	            }
+	        }
+	    }
+	        public String handleFileUri(Uri beamUri) {
+	            // Get the path part of the URI
+	            String fileName = beamUri.getPath();
+	            // Create a File object for this filename
+	            File copiedFile = new File(fileName);
+	            // Get a string containing the file's parent directory
+	            return copiedFile.getParent();
+	        }
+	        
+	        
+	        public String handleContentUri(Uri beamUri) {
+	            // Position of the filename in the query Cursor
+	            int filenameIndex;
+	            // File object for the filename
+	            File copiedFile;
+	            // The filename stored in MediaStore
+	            String fileName;
+	            // Test the authority of the URI
+	            if (!TextUtils.equals(beamUri.getAuthority(), MediaStore.AUTHORITY)) {
+	                /*
+	                 * Handle content URIs for other content providers
+	                 */
+	            // For a MediaStore content URI
+	            } else {
+	                // Get the column that contains the file name
+	                String[] projection = { MediaStore.MediaColumns.DATA };
+	                Cursor pathCursor =
+	                        getContentResolver().query(beamUri, projection,
+	                        null, null, null);
+	                // Check for a valid cursor
+	                if (pathCursor != null &&
+	                        pathCursor.moveToFirst()) {
+	                    // Get the column index in the Cursor
+	                    filenameIndex = pathCursor.getColumnIndex(
+	                            MediaStore.MediaColumns.DATA);
+	                    // Get the full file name including path
+	                    fileName = pathCursor.getString(filenameIndex);
+	                    // Create a File object for the filename
+	                    copiedFile = new File(fileName);
+	                    // Return the parent directory of the file
+	                    return copiedFile.getParent();
+	                 } else {
+	                    // The query didn't work; return null
+	                    return null;
+	                 }
+	            }
+	            return null;
+	        }
+
+
+	        
+	 @Override
+	 protected void onNewIntent(Intent intent) {
+		 Log.d("FREEGANQUEST::MA", "new Intent, here");
+        handleIntent(intent);
+	 }
+	 private void handleIntent(Intent intent) {
+		 Log.d("FREEGANQUEST::MA", "hadeling a new Intent");
+	        if (intent != null && intent.getAction().contains("android.nfc")) {
+	        	Log.d("FREEGANQUEST::MA", " 1) WE captured the nfc request thingy");
+	        }
+	    }
+	 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		mHunts = (Spinner)findViewById( R.id.selectHunts );
+		Intent intent = getIntent();
+		
+		
+		
+		mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+		
+		Log.d("FREEGANQUEST::MA", "The intent is" + intent);
+		if (intent != null && intent.getAction().contains("android.nfc")) {
+            Log.d("FREEGANQUEST::MA", "2) WE captured the nfc request thingy");
+        }
+		if(mParentPath != null){
+			File f = new File(mParentPath);
+			Uri external = Uri.fromFile(f);
+			
+			/*ContentValues values = new ContentValues();
 
+			values.put( ManagerHuntTable.COLUMN_NAME, huntName );
+			values.put( ManagerHuntTable.COLUMN_ORIGIN_USER, MainActivity.USER );
+			String[] projection = { ManagerHuntTable.COLUMN_ID, ManagerHuntTable.COLUMN_NAME};
+			String[] selection = {huntName};
+			getContentResolver().insert( FreeganContentProvider.CONTENT_URI, values );
+			*/
+			Log.d("FREEQUE::MA", "The uri fromthe file:" + external.getFragment());
+		}
+		
 		ArrayList<String> arrayList1 = new ArrayList<String>();
 
 		arrayList1.add("Select a Hunt...");
@@ -102,6 +236,7 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
 			public void onNothingSelected(AdapterView<?> arg0) {
 			}
 		});
+		
 	}
 	
 	
@@ -136,12 +271,33 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
 	    }};
 	            
 	            
-	            
-	            
+	 
+	    
+	    public static void setupForegroundDispatch(final Activity activity, NfcAdapter adapter) {
+	        intent = new Intent(activity.getApplicationContext(), activity.getClass());
+	        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+	        pendingIntent = PendingIntent.getActivity(activity.getApplicationContext(), 0, intent, 0);
+
+	        techList = new String[][]{};
+	        adapter.enableForegroundDispatch(activity, pendingIntent, null, techList);
+	    }
+	    public static void stopForegroundDispatch(final Activity activity, NfcAdapter adapter) {
+	        adapter.disableForegroundDispatch(activity);
+	    }
+	    
+	    
+	    @Override
+	    protected void onPause() {
+	        super.onPause();
+	        stopForegroundDispatch(this, mNfcAdapter);
+	    }
 	@Override
 	protected void onResume()
 	{
 		super.onResume(); // Must do this or app will crash!
+		setupForegroundDispatch(this, mNfcAdapter);
+
 		arrayList1.clear();
 		arrayList1.add("Select a Hunt...");
 
