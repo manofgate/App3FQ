@@ -161,6 +161,7 @@ public class FreeganContentProvider extends ContentProvider
 	public Uri insert( Uri uri, ContentValues values )
 	{
 		int uriType = sURIMatcher.match( uri );
+		String path = BASE_PATH;
 		SQLiteDatabase sqlDB = database.getWritableDatabase();
 		//int rowsDeleted = 0;
 		long id = 0;
@@ -170,7 +171,9 @@ public class FreeganContentProvider extends ContentProvider
 			id = sqlDB.insert( ManagerHuntTable.TABLE_NAME, null, values );
 			break;
 		case ITEMS:
-			id = sqlDB.insert( ItemTable.TABLE_NAME, null, values );
+			Log.d("FREEGANQUEST::FCP", "insert the Items case : " + values.get(ItemTable.COLUMN_NAME));
+			id = sqlDB.insertOrThrow( ItemTable.TABLE_NAME, null, values );
+			path = BASE_PATH_I;
 			break;
 		case TIMERS:
 			id = sqlDB.insert( TimerTable.TABLE_NAME, null, values );
@@ -182,7 +185,7 @@ public class FreeganContentProvider extends ContentProvider
 			throw new IllegalArgumentException( "Unknown URI: " + uri );
 		}
 		getContext().getContentResolver().notifyChange( uri, null );
-		return Uri.parse( BASE_PATH + "/" + id );
+		return Uri.parse( path + "/" + id );
 	}
 
 	@Override

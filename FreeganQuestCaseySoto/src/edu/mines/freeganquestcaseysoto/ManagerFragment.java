@@ -9,26 +9,30 @@ package edu.mines.freeganquestcaseysoto;
 
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.ParcelFileDescriptor;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.CursorLoader;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -50,32 +54,12 @@ implements CopyOfManagerMain.OnHeadlineSelectedListener, InputDialogFragment.Lis
 	 boolean mAndroidBeamAvailable  = false;
 	 
 	 // Instance that returns available files from this app
-	  private FileUriCallback mFileUriCallback;
-
 	 
-	// List of URIs to provide to Android Beam
-	    private Uri[] mFileUris = new Uri[1];
+
+		private NdefMessage mNdefMessage;
 	    
 	    /**
-	     * Callback that Android Beam file transfer calls to get
-	     * files to share
-	     */
-	    @SuppressLint("NewApi")
-		private class FileUriCallback implements
-	            NfcAdapter.CreateBeamUrisCallback {
-	        public FileUriCallback() {
-	        }
-	        /**
-	         * Create content URIs as needed to share with another device
-	         */
-	        @Override
-	        public Uri[] createBeamUris(NfcEvent event) {
-	        	 Log.d("FREEGANQUEST::", "Top of createBeamURI ");
-	        	//ContentValues values = new ContentValues();
-	    		
-	            return mFileUris;
-	        }
-	    }
+	    
 	/** Called when the activity is first created. */
 	@SuppressLint("NewApi")
 	@Override
@@ -128,56 +112,98 @@ implements CopyOfManagerMain.OnHeadlineSelectedListener, InputDialogFragment.Lis
             
         // Android Beam file transfer is available, continue
         } else {
+        	ArrayList<String> hunts = new ArrayList<String>();
         	mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         	String[] projection = { ManagerHuntTable.COLUMN_ID, ManagerHuntTable.COLUMN_NAME, ManagerHuntTable.COLUMN_ORIGIN_USER};
-    		String[] selection = {MainActivity.USERN};
-    		Log.d("FREEGAN::MF", "After proj and select");
-    		//checks to see if that hunt name is already in database and adds if not. 
-    		//Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder
-    		Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI, projection,null, null, null);
-    		Log.d("FREEGANQUEST::MF", "The curesor has " + cursor.getCount());
-    		cursor.moveToFirst();
-    		String data = cursor.getString(cursor.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_NAME )) + " : "+ cursor.getString(cursor.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_ORIGIN_USER )); 
-    		Uri huntUri = Uri.parse( FreeganContentProvider.CONTENT_URI + "/" +  cursor.getString(cursor.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_ID )) );
-            cursor.close();
-            Log.d("FREEGANQUEST::", "the huntUri is " + huntUri);
-            
-            
-            File extDir = getExternalFilesDir(null);
-            File from = new File(extDir, "BeamOver.txt");
-            	 writeToFile(from, data);
-            	from.setReadable(true, false);
-            	Uri uri =  Uri.fromFile(from);
-            	if (uri != null) {
-                    mFileUris[0] = uri;
-                } else {
-                    Log.e("My Activity", "No File URI available for file.");
-                }
-            	
-        	/*
-             * Instantiate a new FileUriCallback to handle requests for
-             * URIs
-             */
-            mFileUriCallback = new FileUriCallback();
-            // Set the dynamic callback for URI requests.
-            mNfcAdapter.setBeamPushUrisCallback(mFileUriCallback,this);
-            Log.d("FREEQUE::ManFrag", "After sending hunts and pushing (on)");
-        
+        	String[] selection = {MainActivity.USERN};
+        	Log.d("FREEGAN::MF", "After proj and select");
+        	//checks to see if that hunt name is already in database and adds if not. 
+        	//Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder
+        	Cursor cursor = getContentResolver().query( FreeganContentProvider.CONTENT_URI, projection,null, null, null);
+        	Log.d("FREEGANQUEST::MF", "The curesor has " + cursor.getCount());
+        	String data = "";
+        	String dataItems = "";
+        	if(cursor.getCount() > 0){
+        		cursor.moveToFirst();
+
+        		for ( int i=0; i < cursor.getCount(); i++){
+        			//data +=cursor.getString(cursor.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_NAME )) + " : "+ cursor.getString(cursor.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_ORIGIN_USER )) + " } ";
+        			data = data.concat(cursor.getString(cursor.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_NAME )) + " : "+ cursor.getString(cursor.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_ORIGIN_USER )) + "\n "); 
+        			//Uri huntUri = Uri.parse( FreeganContentProvider.CONTENT_URI + "/" +  cursor.getString(cursor.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_ID )) );
+        			hunts.add(cursor.getString(cursor.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_NAME)));
+        			cursor.moveToNext();
+        		}
+        		cursor.close();
+        		Log.d("FREEGANQUEST::", "the hunts size is " + hunts);
+        		Log.d("FREEGANQUEST::MF", "data: " + data);
+
+        		
+        		for (int i =0; i < hunts.size();  i++){
+        			String[] projectionI = { ItemTable.COLUMN_ID, ItemTable.COLUMN_NAME, ItemTable.COLUMN_ANSWER, ItemTable.COLUMN_LOCATION, ItemTable.COLUMN_DESCRIPTION, ItemTable.COLUMN_HUNT_NAME, ItemTable.COLUMN_DISPLAY, ItemTable.COLUMN_ANSWER_PIC };
+        			String[] selectionI = {hunts.get(i)};
+        			Log.d("FREEGAN::MF", "After proj and select");
+        			//checks to see if that hunt name is already in database and adds if not. 
+        			//Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder
+        			Cursor cursor2 = getContentResolver().query( FreeganContentProvider.CONTENT_URI_I, projectionI,"hunt=?", selectionI, null);
+        			Log.d("FREEGANQUEST::MF", "The curesor has " + cursor2.getCount());
+        			if(cursor2.getCount() > 0) {
+        				cursor2.moveToFirst();
+        				for ( int j=0; j< cursor.getCount(); j++){
+        					//data +=cursor.getString(cursor.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_NAME )) + " : "+ cursor.getString(cursor.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_ORIGIN_USER )) + " } ";
+        					dataItems = dataItems.concat(cursor2.getString(cursor2.getColumnIndexOrThrow( ItemTable.COLUMN_NAME )) + " : "+ cursor2.getString(cursor2.getColumnIndexOrThrow( ItemTable.COLUMN_LOCATION )) +" : "+ cursor2.getString(cursor2.getColumnIndexOrThrow( ItemTable.COLUMN_DESCRIPTION )) + 
+        							" : "+ cursor2.getString(cursor2.getColumnIndexOrThrow( ItemTable.COLUMN_ANSWER ))+ " : "+ cursor2.getString(cursor2.getColumnIndexOrThrow( ItemTable.COLUMN_HUNT_NAME)) +" : "+ cursor2.getString(cursor2.getColumnIndexOrThrow( ItemTable.COLUMN_DISPLAY )) + " : "+ cursor2.getString(cursor2.getColumnIndexOrThrow( ItemTable.COLUMN_ANSWER_PIC )) +"\n "); 
+        					//Uri huntUri = Uri.parse( FreeganContentProvider.CONTENT_URI + "/" +  cursor.getString(cursor.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_ID )) );
+        					//hunts.add(cursor.getString(cursor.getColumnIndexOrThrow( ManagerHuntTable.COLUMN_NAME)));
+        					cursor2.moveToNext();
+        				}
+
+        			}
+        			cursor2.close();
+
+        			Log.d("FREGANQUEST::MF", "The dataItems: " + dataItems);
+        		}
+        	}
+        	
+        	
+        	// Set the dynamic callback for URI requests.
+        	// mNfcAdapter.setBeamPushUrisCallback(mFileUriCallback,this);
+        	Log.d("FREEQUE::ManFrag", "After sending hunts and pushing (on)");
+
+
+        	
+        	if(!data.equals("") || !dataItems.equals("")){
+        		mNdefMessage = new NdefMessage(
+        				new NdefRecord[] {
+        						createNewTextRecord(data, Locale.ENGLISH, true),
+        						createNewTextRecord(dataItems, Locale.ENGLISH, true) });
+        	}
+        	else{
+        		mNdefMessage = new NdefMessage(
+        				new NdefRecord[] {
+        						createNewTextRecord("data is null", Locale.ENGLISH, true),
+        						createNewTextRecord("dataItems is null", Locale.ENGLISH, true) });
+        	}
         }
 	}
-	
-	
-	private void writeToFile(File f, String data) {
-	    try {
-	        FileOutputStream fileout = new FileOutputStream(f);
-	        fileout.write(data.getBytes());
-	        fileout.close();
-	    }
-	    catch (IOException e) {
-	        Log.e("Exception", "File write failed: " + e.toString());
-	    } 
+
+public static NdefRecord createNewTextRecord(String text, Locale locale, boolean encodeInUtf8) {
+ byte[] langBytes = locale.getLanguage().getBytes(Charset.forName("US-ASCII"));
+
+ Charset utfEncoding = encodeInUtf8 ? Charset.forName("UTF-8") : Charset.forName("UTF-16");
+ byte[] textBytes = text.getBytes(utfEncoding);
+
+ int utfBit = encodeInUtf8 ? 0 : (1 << 7);
+ char status = (char)(utfBit + langBytes.length);
+
+ byte[] data = new byte[1 + langBytes.length + textBytes.length];
+ data[0] = (byte)status;
+ System.arraycopy(langBytes, 0, data, 1, langBytes.length);
+ System.arraycopy(textBytes, 0, data, 1 + langBytes.length, textBytes.length);
+
+ return new NdefRecord(NdefRecord.TNF_WELL_KNOWN, NdefRecord.RTD_TEXT, new byte[0], data);
 	}
 
+	
 	
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -191,6 +217,23 @@ implements CopyOfManagerMain.OnHeadlineSelectedListener, InputDialogFragment.Lis
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
+	@Override
+    public void onResume() {
+        super.onResume();
+ 
+        if (mNfcAdapter != null)
+            mNfcAdapter.enableForegroundNdefPush(this, mNdefMessage);
+    }
+ 
+    @SuppressWarnings("deprecation")
+	@Override
+    public void onPause() {
+        super.onPause();
+ 
+        if (mNfcAdapter != null)
+            mNfcAdapter.disableForegroundNdefPush(this);
+    }
 	
 	@Override
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
